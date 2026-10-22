@@ -570,10 +570,10 @@ abstract class Comix :
         knownIds: List<Int>,
     ): ChapterList {
         val mangaId = manga.url.removePrefix("/").substringBefore('-')
-        val payload = runInWebView(getMangaUrl(manga), { it.isChapterListRequest() }) { passPayloadName, _, touchName ->
+        val payload = runInWebView(getMangaUrl(manga), { it.isChapterListRequest() }) { passPayloadName, _, progressName ->
             "(${asset("chapter_list.js")})(${asset("site_api.js")}, " +
                 "${knownIds.joinToString(",", "[", "]")}, ${JSONObject.quote(mangaId)}, ${JSONObject.quote("/title/$mangaId-")}, " +
-                "$MAX_CHAPTER_PAGES, window.$touchName, window.$passPayloadName);"
+                "$MAX_CHAPTER_PAGES, window.$passPayloadName, () => window.$progressName.post(\"\"));"
         }
         return payload.parseAs<ChapterList>()
     }
@@ -684,13 +684,12 @@ abstract class Comix :
         url: String,
         isDataRequest: ((HttpUrl) -> Boolean)? = null,
         buildScript: ((passPayloadName: String) -> String)? = null,
-        pageScript: (passPayloadName: String, rejectName: String, touchName: String) -> String = { _, _, _ -> "" },
+        pageScript: (passPayloadName: String, rejectName: String, progressName: String) -> String = { _, _, _ -> "" },
     ): String {
         val waitSeconds = if (isDataRequest != null) DATA_REQUEST_WAIT_SECONDS else WEBVIEW_TIMEOUT_SECONDS
         val timeoutDeadline = AtomicLong(System.nanoTime() + waitSeconds.seconds.inWholeNanoseconds)
         val dataRequests = AtomicInteger()
-        val (bridgeName, errorBridgeName, passPayloadName, rejectName) = List(4) { randomName() }
-        val (touchBridgeName, touchName) = List(2) { randomName() }
+        val (bridgeName, errorBridgeName, passPayloadName, rejectName, progressName) = List(5) { randomName() }
         return runWebView(timeout = Duration.INFINITE) {
             userAgent = headers["User-Agent"].orEmpty()
             blockImages = true
@@ -728,15 +727,11 @@ abstract class Comix :
 
             jsBridge(bridgeName) { resolve(it) }
             jsBridge(errorBridgeName) { reject(Exception(it)) }
-            val siteOrigin = url.toHttpUrl().run { "$scheme://$host" }
-            webMessageBridge(touchBridgeName, setOf(siteOrigin)) { message ->
-                val points = message.split(',').mapNotNull { it.toFloatOrNull() }
-                when (points.size) {
-                    2 -> tap(points[0], points[1])
-                    4 -> swipe(points[0], points[1], points[2], points[3])
-                    else -> throw Exception("Bad touch from the page: $message")
-                }
+            // Some hosts do not intercept WebView traffic; paging progress keeps long walks alive too.
+            jsBridge(progressName) {
+                timeoutDeadline.set(System.nanoTime() + waitSeconds.seconds.inWholeNanoseconds)
             }
+            val siteOrigin = url.toHttpUrl().run { "$scheme://$host" }
             // Refuse the site's first-tap ad window
             withNativeWebView { it.settings.setSupportMultipleWindows(true) }
 
@@ -768,8 +763,7 @@ abstract class Comix :
                 try { localStorage.setItem("__pu1", "[" + Date.now() + "]"); } catch (e) {}
                 window.$passPayloadName = payload => window.$bridgeName.post(payload);
                 window.$rejectName = message => window.$errorBridgeName.post(message);
-                window.$touchName = points => window.$touchBridgeName.postMessage(points.join(","));
-                ${pageScript(passPayloadName, rejectName, touchName)}
+                ${pageScript(passPayloadName, rejectName, progressName)}
                 })();
             """.trimIndent()
             injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))

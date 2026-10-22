@@ -1,106 +1,51 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const { test } = require('node:test');
-const script = fs.readFileSync(`${__dirname}/../src/en/comix/assets/chapter_list.js`, 'utf8');
-
-async function read({ pager = 'hidden', drawAfter = 0, rowsAfter = 0, total = 3, known = [] } = {}) {
-    let ticks = 0;
-    const requests = [];
-    const taps = [];
-    const listeners = new Map();
-    const heading = {
-        getBoundingClientRect: () => ({ top: 160, bottom: 190, left: 12, right: 220, width: ticks >= drawAfter ? 208 : 0, height: 30 }),
-        contains: element => element === heading,
-    };
-    const hiddenPager = {
-        getBoundingClientRect: () => ({ left: 0, right: 0 }),
-        querySelectorAll: () => [{ getBoundingClientRect: () => ({ width: 0, left: 0, right: 0 }) }],
-    };
-    const section = {
-        querySelector: selector => {
-            if (selector === '.mpage__sec-title') return heading;
-            if (selector === '.npager') return pager === 'absent' ? null : hiddenPager;
-            if (selector === '.useg__btn.is-on') return null;
-            if (selector.includes('.mchap-row__primary')) return ticks >= rowsAfter ? {} : null;
-            return null;
-        },
-        addEventListener() {},
-        removeEventListener() {},
-    };
-    const api = {
-        records: [],
-        async method(id, params) {
-            assert.ok(ticks >= drawAfter && ticks >= rowsAfter, 'must wait for a rendered section');
-            requests.push(params.page);
-            const first = (params.page - 1) * 2;
-            const items = Array.from({ length: Math.min(2, Math.max(0, total - first)) }, (_, i) => ({
-                id: first + i + 1, number: first + i + 1, url: `/title/abc-name/${first + i + 1}-chapter-1`,
-            }));
-            this.records.push({ params, result: { items, meta: { lastPage: Math.max(1, Math.ceil(total / 2)), total } } });
-        },
-    };
-    const result = await new Promise((resolve, reject) => {
-        const context = vm.createContext({
-            document: {
-                readyState: 'complete',
-                querySelector: selector => selector === '.mpage__chapters' ? section : null,
-                elementFromPoint: () => heading,
-                addEventListener: (type, callback) => listeners.set(type, callback),
-                removeEventListener: type => listeners.delete(type),
-            },
-            innerWidth: 240, innerHeight: 800,
-            setTimeout: (callback, ms) => {
-                if (ms === 200) ticks++;
-                return setTimeout(callback, ms >= 2000 ? ms : 0);
-            },
-            clearTimeout,
-            siteApi: () => async () => api,
-            known,
-            pass: payload => resolve(JSON.parse(payload)),
-            touch: points => {
-                taps.push(points);
-                assert.equal(points.length, 2);
-                listeners.get('click')?.({ isTrusted: true, target: heading });
-            },
-        });
-        try { vm.runInContext(`(${script})(siteApi, known, 'abc', '/title/abc-', 1000, touch, pass)`, context); }
-        catch (error) { reject(error); }
-    });
-    return { result, requests, taps };
+const {test} = require('node:test');
+const source = fs.readFileSync(`${__dirname}/../src/en/comix/assets/chapter_list.js`, 'utf8');
+async function read({total=43,known=[],failPage,wrongTitle=false,missingActivity=false,ambiguousActivity=false,maxPages=1000}={}) {
+  let now=1000;
+  const requests=[],delays=[],progress=[];
+  const context=vm.createContext({
+    Date:{now:()=>now},
+    document:{readyState:'complete',querySelector(selector){
+      assert.equal(selector,'script#initial-data','pagination must not depend on layout');
+      return {textContent:JSON.stringify({queries:{detail:{title:'Test'}}})};
+    },addEventListener(){throw Error('No native input available');}},
+    setTimeout(callback,delay){delays.push(delay);now+=delay;queueMicrotask(callback);},
+    http:{async get(url,{params}){
+      assert.equal(context.activityAt,now);
+      requests.push(params.page);
+      if(params.page===failPage)throw {response:{status:502}};
+      const first=(params.page-1)*20;
+      const items=Array.from({length:Math.max(0,Math.min(20,total-first))},(_,i)=>({id:first+i+1,number:first+i+1,url:`/title/${wrongTitle?'wrong':'abc'}-name/${first+i+1}-chapter-1`}));
+      return {data:{items,meta:{lastPage:Math.max(1,Math.ceil(total/20)),total}}};
+    }},known,maxPages,missingActivity,ambiguousActivity,progress:()=>progress.push(now),
+  });
+  vm.runInContext(`
+    var activityAt=0;
+    function renamedCallback(){activityAt=Date.now()}
+    function anotherCallback(){activityAt=Date.now()}
+    const mapper=a=>a;
+    const client={get:async(a,b)=>(await http.get(a,b)).data};
+    const methods={async chapters(a,b={}){return function(a){return{items:a.items.map(mapper),meta:a.meta}}(await client.get('/manga/'+a+'/chapters',{params:b}))}};
+    const siteApi=select=>async()=>select([
+      {owner:client,key:'get',value:client.get},{owner:methods,key:'chapters',value:methods.chapters},
+      ...(!missingActivity?[{value:renamedCallback}]:[]),...(ambiguousActivity?[{value:anotherCallback}]:[]),
+    ],value=>typeof value==='function'&&String(value).endsWith('.data'));
+  `,context);
+  const result=await new Promise(resolve=>{context.pass=p=>resolve(JSON.parse(p));vm.runInContext(`(${source})(siteApi,known,'abc','/title/abc-',maxPages,pass,progress)`,context);});
+  return {result,requests,delays,progress};
 }
-
-test('fetches every page when pager buttons have no visible area', { timeout: 1000 }, async () => {
-    const { result, requests, taps } = await read();
-    assert.equal(result.complete, true);
-    assert.deepEqual(result.chapters.map(chapter => chapter.id), [1, 2, 3]);
-    assert.deepEqual(requests, [1, 2]);
-    assert.equal(taps.length, 2);
+test('fetches all pages without layout or native input',async()=>{
+  const {result,requests,delays,progress}=await read();
+  assert.equal(result.complete,true);assert.equal(result.chapters.length,43);assert.deepEqual(requests,[1,2,3]);
+  assert.equal(delays.length,3);assert.ok(delays.every(ms=>ms>=2500&&ms<=5000));assert.equal(progress.length,3);
+  assert.equal(result.queries.detail.title,'Test');
 });
-
-test('fetches a single page with neither pagination nor an active sort button', { timeout: 1000 }, async () => {
-    const { result, requests } = await read({ pager: 'absent', total: 1 });
-    assert.equal(result.complete, true);
-    assert.equal(result.chapters.length, 1);
-    assert.deepEqual(requests, [1]);
-});
-
-test('waits for chapter content instead of treating the pager shell as ready', { timeout: 1000 }, async () => {
-    assert.equal((await read({ rowsAfter: 3 })).result.complete, true);
-});
-
-test('waits for the heading to have a usable layout', { timeout: 1000 }, async () => {
-    assert.equal((await read({ drawAfter: 3 })).result.complete, true);
-});
-
-test('still stops when a stored chapter is reached', { timeout: 1000 }, async () => {
-    const { result, requests } = await read({ known: [1] });
-    assert.equal(result.complete, true);
-    assert.deepEqual(requests, [1]);
-});
-
-test('returns an empty chapter list without needing controls', { timeout: 1000 }, async () => {
-    const { result } = await read({ pager: 'absent', total: 0 });
-    assert.equal(result.complete, true);
-    assert.deepEqual(result.chapters, []);
-});
+test('single and empty lists need no controls',async()=>{for(const total of [0,1]){const {result,requests}=await read({total});assert.equal(result.complete,true);assert.equal(result.chapters.length,total);assert.deepEqual(requests,[1]);}});
+test('stops at a stored chapter',async()=>{const {result,requests}=await read({known:[1]});assert.equal(result.complete,true);assert.deepEqual(requests,[1]);});
+test('keeps fetched entries and reports an incomplete list on failure',async()=>{const {result,requests}=await read({failPage:2});assert.equal(result.complete,false);assert.equal(result.chapters.length,20);assert.deepEqual(requests,[1,2]);assert.match(result.error,/HTTP 502/);});
+test('rejects another title response',async()=>{const {result}=await read({wrongTitle:true});assert.equal(result.complete,false);assert.equal(result.chapters.length,0);assert.match(result.error,/shape/);});
+test('does not guess a missing or ambiguous activity callback',async()=>{for(const options of [{missingActivity:true},{ambiguousActivity:true}]){const {result,requests}=await read(options);assert.equal(result.complete,false);assert.deepEqual(requests,[]);assert.match(result.error,/chapters API/);}});
+test('does not mark a capped list complete',async()=>{const {result}=await read({maxPages:1});assert.equal(result.complete,false);assert.match(result.error,/20 of 43/);});

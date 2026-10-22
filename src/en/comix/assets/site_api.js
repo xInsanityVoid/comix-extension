@@ -27,8 +27,12 @@
         const directory = entry.slice(0, entry.lastIndexOf("/") + 1);
         const members = [];
         for (const url of new Set(scripts.filter((url) => url.startsWith(directory)))) {
-            for (const value of Object.values(await import(url))) {
+            const module = await import(url);
+            for (const [exportKey, value] of Object.entries(module)) {
                 const exported = unwrap(value);
+                if (typeof exported === "function") {
+                    members.push({ owner: module, key: exportKey, value: exported });
+                }
                 if (exported && typeof exported === "object") {
                     for (const [key, value] of Object.entries(exported)) {
                         const member = unwrap(value);

@@ -7,7 +7,7 @@ const { test } = require('node:test');
 const source = fs.readFileSync(`${__dirname}/../src/en/comix/assets/site_api.js`, 'utf8');
 const url = 'https://comix.to/assets/build/test/dist/main-test.js';
 
-function harness({ resources = [url], importError = false } = {}) {
+function harness({ resources = [url], importError = false, selector = '(members, isGet) => members.find(member => isGet(member.value))' } = {}) {
     let now = 0;
     const context = vm.createContext({
         performance: { getEntriesByType: () => resources.map(name => ({ name })) },
@@ -15,12 +15,13 @@ function harness({ resources = [url], importError = false } = {}) {
         setTimeout: (callback, ms) => { now += ms; callback(); },
     });
     vm.runInContext('globalThis.window = globalThis; globalThis.nativeProxy = Proxy;', context);
-    const script = new vm.Script(`globalThis.findApi = (${source})((members, isGet) => members.find(member => isGet(member.value)));`, {
+    const script = new vm.Script(`globalThis.findApi = (${source})(${selector});`, {
         importModuleDynamically: async () => {
             if (importError) throw new Error('chunk unavailable');
-            const module = new vm.SyntheticModule(['api', 'nested'], function () {
+            const module = new vm.SyntheticModule(['api', 'nested', 'callback'], function () {
                 this.setExport('api', context.api);
                 this.setExport('nested', context.nested);
+                this.setExport('callback', context.callback);
             }, { context });
             await module.link(() => {});
             await module.evaluate();
@@ -61,6 +62,15 @@ test('supports the previous plain-object exports', async () => {
     const ctx = harness();
     vm.runInContext('globalThis.api = raw;', ctx);
     assert.equal((await ctx.findApi()).owner, ctx.raw);
+    assert.equal(ctx.Proxy, ctx.nativeProxy);
+});
+
+test('exposes direct function exports used by pagination', async () => {
+    const ctx = harness({ selector: "members => members.find(member => member.key === 'callback')" });
+    vm.runInContext('var activityAt = 0; globalThis.callback = function renamed(){activityAt=Date.now()};', ctx);
+    const member = await ctx.findApi();
+    assert.equal(member.value, ctx.callback);
+    assert.equal(member.owner.callback, ctx.callback);
     assert.equal(ctx.Proxy, ctx.nativeProxy);
 });
 

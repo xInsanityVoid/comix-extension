@@ -1,10 +1,5 @@
-// Chapter list through the site's own chapters method, newest uploads first, up to a page with a
-// known chapter; pages past a failure are left out. Each call follows a tap in the chapter section.
-(siteApi, knownIds, mangaId, chapterPath, maxPages, touch, pass) => {
-    const INPUT_TIMEOUT_MS = 2000;
-    const SECTION_TIMEOUT_MS = 60000;
-    const MAX_TAPS = 3;
-    const MAX_SWIPES = 15;
+// Chapter lists through the site's JavaScript pagination API, without native touch events.
+(siteApi, knownIds, mangaId, chapterPath, maxPages, pass, progress = () => {}) => {
     const known = new Set(knownIds);
     const chapters = [];
     const isChapter = (item) => item &&
@@ -23,11 +18,17 @@
             source.includes("{params:") &&
             !/\.items\.map\([\w$]+=>/.test(source);
     };
+    // The site's exported activity callback records the timestamp used by its pagination client.
+    // Resolve its source shape, since export names change with each site build.
+    const isActivityCallback = (value) => typeof value === "function" &&
+        /^function(?: [\w$]+)?\(\)\{[\w$]+=Date\.now\(\);?\}$/.test(String(value));
     // The walk reads the raw pages the helper returns to the site's own code
     const findChaptersApi = siteApi((members, isGet) => {
         const method = members.map((member) => member.value).find(isChapterMethod);
         const target = members.find((member) => isGet(member.value));
-        if (!method || !target) return null;
+        const callbacks = [...new Set(members.map((member) => member.value).filter(isActivityCallback))];
+        if (!method || !target || callbacks.length !== 1) return null;
+        const activity = callbacks[0];
         const records = [];
         const original = target.value;
         const isChapterList = (url) => /^\/manga\/[^/]+\/chapters$/.test(String(url));
@@ -42,7 +43,7 @@
                 throw error;
             }
         };
-        return { method, records };
+        return { method, records, activity };
     });
     // The detail lives in the same document, so the caller reads the manga from this one load
     const queries = () => {
@@ -51,99 +52,11 @@
     };
     const finish = (complete, error) => pass(JSON.stringify({ chapters, complete, error, queries: queries() }));
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    const between = (from, to) => from + Math.random() * (to - from);
-    const section = () => document.querySelector(".mpage__chapters");
-    // The site tracks trusted input on document, not which pagination control was tapped.
-    const tapTarget = () => section()?.querySelector(".mpage__sec-title");
-
-    // Resolves with the trusted event once the native input has reached the page
-    const afterInput = (type, send) => new Promise((resolve, reject) => {
-        const timer = setTimeout(() => {
-            document.removeEventListener(type, done, true);
-            reject(new Error(`The WebView didn't receive the ${type === "click" ? "tap" : "swipe"}`));
-        }, INPUT_TIMEOUT_MS);
-        function done(event) {
-            if (!event.isTrusted) return;
-            document.removeEventListener(type, done, true);
-            clearTimeout(timer);
-            setTimeout(() => resolve(event));
-        }
-        document.addEventListener(type, done, true);
-        send();
-    });
-
-    // Waits for the chapter section to draw
-    const waitForSection = async () => {
-        const deadline = Date.now() + SECTION_TIMEOUT_MS;
-        while (Date.now() < deadline) {
-            const rect = tapTarget()?.getBoundingClientRect();
-            if (rect && rect.width > 0 && rect.height > 0 &&
-                section().querySelector(".mchap-row__primary, .uempty")) return;
-            await sleep(200);
-        }
-        throw new Error("The chapter list didn't load");
-    };
-
-    // The site's first-visit ad: a fixed link over the whole page that takes the first tap
-    const isAdOverlay = (element) => element && element.tagName === "A" &&
-        getComputedStyle(element).position === "fixed" &&
-        element.getBoundingClientRect().width >= document.documentElement.clientWidth &&
-        element.getBoundingClientRect().height >= document.documentElement.clientHeight;
-
-    // Swipes until the target is on screen
-    const scrollTo = async (target) => {
-        let lastTop = null;
-        for (let i = 0; i < MAX_SWIPES; i++) {
-            const rect = target.getBoundingClientRect();
-            if (rect.top > innerHeight * 0.15 && rect.bottom < innerHeight * 0.85) return;
-            // The page's end keeps it out of the middle band
-            if (rect.top === lastTop && rect.top >= 0 && rect.bottom <= innerHeight) return;
-            lastTop = rect.top;
-            const x = innerWidth * between(0.3, 0.7);
-            const down = rect.top > innerHeight / 2;
-            const y = innerHeight * (down ? between(0.6, 0.75) : between(0.25, 0.4));
-            const distance = Math.min(Math.abs(rect.top - innerHeight / 2), innerHeight * between(0.3, 0.38)) * (down ? 1 : -1);
-            await afterInput("touchend", () => touch([x, y, x + innerWidth * between(-0.03, 0.03), y - distance]));
-            await sleep(between(250, 450));
-        }
-        throw new Error("Couldn't scroll to the chapter list");
-    };
-
-    // Taps the chapter section
-    const tapSection = async () => {
-        const stop = (event) => {
-            if (!event.isTrusted) return;
-            event.stopPropagation();
-            event.preventDefault();
-        };
-        for (let attempt = 0; attempt < MAX_TAPS; attempt++) {
-            const target = tapTarget();
-            if (!target) throw new Error("The chapter list has nothing to tap");
-            await scrollTo(target);
-            const rect = target.getBoundingClientRect();
-            const x = rect.left + rect.width * between(0.3, 0.7);
-            const y = rect.top + rect.height * between(0.3, 0.7);
-            const under = document.elementFromPoint(x, y);
-            if (!target.contains(under) && !isAdOverlay(under)) {
-                await sleep(between(400, 700));
-                continue;
-            }
-            section().addEventListener("click", stop, true);
-            try {
-                const click = await afterInput("click", () => touch([x, y]));
-                if (target.contains(click.target)) return;
-            } catch {
-                // A tap that stops a moving scroll gets no click
-            } finally {
-                section().removeEventListener("click", stop, true);
-            }
-            await sleep(between(400, 700));
-        }
-        throw new Error("Couldn't tap the chapter list");
-    };
-
     const readPage = async (api, page) => {
-        await tapSection();
+        // Keep pacing in JavaScript too: not every host intercepts WebView requests.
+        await sleep(2500 + Math.random() * 2500);
+        progress();
+        api.activity();
         const before = api.records.length;
         try {
             await api.method(mangaId, { page, limit: 20, order: { created_at: "desc" } });
@@ -175,7 +88,6 @@
     const walk = async () => {
         const api = await findChaptersApi();
         if (!api) return finish(false, "Could not find the site's chapters API");
-        await waitForSection();
         const ids = new Set();
         let meta;
         let removed = false;
