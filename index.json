@@ -1,0 +1,37 @@
+{
+  "name": "Comix Independent Fix",
+  "badgeLabel": "COMIX",
+  "signingKey": "f3d9ad42724b8269e1f0b78339fafa150da8c436b811e17225ad9759260b7264",
+  "contact": {
+    "website": "https://github.com/xInsanityVoid/comix-extension"
+  },
+  "extensionList": {
+    "extensions": [
+      {
+        "name": "Comix",
+        "packageName": "eu.kanade.tachiyomi.extension.en.comix",
+        "resources": {
+          "apkUrl": "https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.55/tachiyomi-en.comix-v1.6.55.apk",
+          "iconUrl": "https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/icon/comix.png",
+          "jarUrl": "https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.55/tachiyomi-en.comix-v1.6.55.jar"
+        },
+        "extensionLib": "1.6",
+        "versionCode": "106055",
+        "versionName": "1.6.55",
+        "contentWarning": "CONTENT_WARNING_MIXED",
+        "sources": [
+          {
+            "id": "7537715367149829912",
+            "name": "Comix",
+            "language": "en",
+            "homeUrl": "https://comix.to",
+            "mirrorUrls": [
+              "https://comix.to",
+              "https://comix.ws"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
