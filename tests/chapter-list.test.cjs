@@ -45,6 +45,11 @@ test('fetches all pages without layout or native input',async()=>{
 });
 test('single and empty lists need no controls',async()=>{for(const total of [0,1]){const {result,requests}=await read({total});assert.equal(result.complete,true);assert.equal(result.chapters.length,total);assert.deepEqual(requests,[1]);}});
 test('stops at a stored chapter',async()=>{const {result,requests}=await read({known:[1]});assert.equal(result.complete,true);assert.deepEqual(requests,[1]);});
+test('35 new entries need two pages even when known chapters arrive oldest first',async()=>{
+  const known=Array.from({length:276},(_,i)=>311-i);
+  const {result,requests}=await read({total:311,known});
+  assert.equal(result.complete,true);assert.deepEqual(requests,[1,2]);assert.equal(result.chapters.length,40);
+});
 test('keeps fetched entries and reports an incomplete list on failure',async()=>{const {result,requests}=await read({failPage:2});assert.equal(result.complete,false);assert.equal(result.chapters.length,20);assert.deepEqual(requests,[1,2]);assert.match(result.error,/HTTP 502/);});
 test('rejects another title response',async()=>{const {result}=await read({wrongTitle:true});assert.equal(result.complete,false);assert.equal(result.chapters.length,0);assert.match(result.error,/shape/);});
 test('does not guess a missing or ambiguous activity callback',async()=>{for(const options of [{missingActivity:true},{ambiguousActivity:true}]){const {result,requests}=await read(options);assert.equal(result.complete,false);assert.deepEqual(requests,[]);assert.match(result.error,/chapters API/);}});

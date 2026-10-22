@@ -16,10 +16,6 @@ const val CHAPTER_ID_MEMO = "chapterId"
 const val CHAPTER_VOTES_MEMO = "votes"
 const val CHAPTER_OFFICIAL_MEMO = "official"
 const val CHAPTER_GROUP_ID_MEMO = "groupId"
-const val CHAPTER_LIST_DEDUPLICATED_MEMO = "chapterListDeduplicated"
-const val CHAPTER_LIST_BLACKLIST_MEMO = "chapterListBlacklist"
-const val CHAPTER_LIST_COMPLETE_MEMO = "chapterListComplete"
-const val CHAPTER_LIST_FETCHED_AT_MEMO = "chapterListFetchedAt"
 
 @Serializable
 class Term(

@@ -237,7 +237,7 @@ index 40f16b52..8ba79899 100644
 +    };
  }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..dbf40820 100644
+index 523b26a1..921a2dcb 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -245,14 +245,44 @@ index 523b26a1..dbf40820 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 57
++    versionCode = 58
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
+diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/ChapterListMemo.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/ChapterListMemo.kt
+new file mode 100644
+index 00000000..1e7f1bde
+--- /dev/null
++++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/ChapterListMemo.kt
+@@ -0,0 +1,15 @@
++package eu.kanade.tachiyomi.extension.en.comix
++
++import eu.kanade.tachiyomi.source.model.SChapter
++import kotlinx.serialization.json.JsonObject
++
++const val CHAPTER_LIST_DEDUPLICATED_MEMO = "chapterListDeduplicated"
++const val CHAPTER_LIST_BLACKLIST_MEMO = "chapterListBlacklist"
++const val CHAPTER_LIST_COMPLETE_MEMO = "chapterListComplete"
++const val CHAPTER_LIST_FETCHED_AT_MEMO = "chapterListFetchedAt"
++
++// Readers can pass oldest-first lists; the refresh state is stored on the newest selected chapter.
++internal fun List<SChapter>.chapterListMemo(): JsonObject? = asSequence()
++    .filter { CHAPTER_LIST_DEDUPLICATED_MEMO in it.memo }
++    .maxByOrNull { it.chapter_number }
++    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..6eb76f05 100644
+index b9bc9c66..c294627b 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
+@@ -430,7 +430,7 @@ abstract class Comix :
+         val scanlatorBlacklist = preferences.scanlatorBlacklist()
+         val blacklistSignature = scanlatorBlacklist.sorted().joinToString(",")
+         // List settings live on the newest chapter; browse and search results replace a non-library entry's memo
+-        val listMemo = chapters.firstOrNull()?.memo?.takeIf { CHAPTER_LIST_DEDUPLICATED_MEMO in it } ?: manga.memo
++        val listMemo = chapters.chapterListMemo() ?: manga.memo
+         val fetchUntilKnown = fetchChapters &&
+             preferences.fetchChaptersUntilKnown() &&
+             listMemo[CHAPTER_LIST_DEDUPLICATED_MEMO]?.booleanOrNull == deduplicateChapters &&
 @@ -570,10 +570,10 @@ abstract class Comix :
          knownIds: List<Int>,
      ): ChapterList {
@@ -312,6 +342,30 @@ index b9bc9c66..6eb76f05 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
+@@ -976,7 +970,7 @@ abstract class Comix :
+ 
+         private const val DEFAULT_CONTENT_RATING = "suggestive"
+         private const val WEBVIEW_TIMEOUT_SECONDS = 120L
+-        private const val DATA_REQUEST_WAIT_SECONDS = 30L
++        private const val DATA_REQUEST_WAIT_SECONDS = 60L
+         private val RECENT_QUERIES_TTL_NANOS = 120.seconds.inWholeNanoseconds
+         private const val SCRIPT_RETRY_INTERVAL_MS = 100L
+         private const val MAX_CHAPTER_PAGES = 1000
+diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
+index 2e3126a7..4dca0aed 100644
+--- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
++++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
+@@ -16,10 +16,6 @@ const val CHAPTER_ID_MEMO = "chapterId"
+ const val CHAPTER_VOTES_MEMO = "votes"
+ const val CHAPTER_OFFICIAL_MEMO = "official"
+ const val CHAPTER_GROUP_ID_MEMO = "groupId"
+-const val CHAPTER_LIST_DEDUPLICATED_MEMO = "chapterListDeduplicated"
+-const val CHAPTER_LIST_BLACKLIST_MEMO = "chapterListBlacklist"
+-const val CHAPTER_LIST_COMPLETE_MEMO = "chapterListComplete"
+-const val CHAPTER_LIST_FETCHED_AT_MEMO = "chapterListFetchedAt"
+ 
+ @Serializable
+ class Term(
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Swipe.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Swipe.kt
 deleted file mode 100644
 index 95fd9c58..00000000

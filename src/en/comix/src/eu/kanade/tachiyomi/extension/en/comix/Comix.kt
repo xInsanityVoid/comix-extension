@@ -430,7 +430,7 @@ abstract class Comix :
         val scanlatorBlacklist = preferences.scanlatorBlacklist()
         val blacklistSignature = scanlatorBlacklist.sorted().joinToString(",")
         // List settings live on the newest chapter; browse and search results replace a non-library entry's memo
-        val listMemo = chapters.firstOrNull()?.memo?.takeIf { CHAPTER_LIST_DEDUPLICATED_MEMO in it } ?: manga.memo
+        val listMemo = chapters.chapterListMemo() ?: manga.memo
         val fetchUntilKnown = fetchChapters &&
             preferences.fetchChaptersUntilKnown() &&
             listMemo[CHAPTER_LIST_DEDUPLICATED_MEMO]?.booleanOrNull == deduplicateChapters &&
@@ -970,7 +970,7 @@ abstract class Comix :
 
         private const val DEFAULT_CONTENT_RATING = "suggestive"
         private const val WEBVIEW_TIMEOUT_SECONDS = 120L
-        private const val DATA_REQUEST_WAIT_SECONDS = 30L
+        private const val DATA_REQUEST_WAIT_SECONDS = 60L
         private val RECENT_QUERIES_TTL_NANOS = 120.seconds.inWholeNanoseconds
         private const val SCRIPT_RETRY_INTERVAL_MS = 100L
         private const val MAX_CHAPTER_PAGES = 1000
