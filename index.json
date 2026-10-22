@@ -11,13 +11,13 @@
         "name": "Comix",
         "packageName": "eu.kanade.tachiyomi.extension.en.comix",
         "resources": {
-          "apkUrl": "https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.56/tachiyomi-en.comix-v1.6.56.apk",
+          "apkUrl": "https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.57/tachiyomi-en.comix-v1.6.57.apk",
           "iconUrl": "https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/icon/comix.png",
-          "jarUrl": "https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.56/tachiyomi-en.comix-v1.6.56.jar"
+          "jarUrl": "https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.57/tachiyomi-en.comix-v1.6.57.jar"
         },
         "extensionLib": "1.6",
-        "versionCode": "106056",
-        "versionName": "1.6.56",
+        "versionCode": "106057",
+        "versionName": "1.6.57",
         "contentWarning": "CONTENT_WARNING_MIXED",
         "sources": [
           {
