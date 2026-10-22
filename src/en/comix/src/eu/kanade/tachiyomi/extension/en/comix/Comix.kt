@@ -567,12 +567,47 @@ abstract class Comix :
         knownIds: List<Int>,
     ): ChapterList {
         val mangaId = manga.url.removePrefix("/").substringBefore('-')
-        val payload = runInWebView(getMangaUrl(manga), { it.isChapterListRequest() }) { passPayloadName, _, progressName ->
+        val resume = readChapterListResume(mangaId)
+        val payload = runInWebView(
+            url = getMangaUrl(manga),
+            isDataRequest = { it.isChapterListRequest() },
+            onProgress = { saveChapterListResume(mangaId, it) },
+        ) { passPayloadName, _, progressName ->
             "(${asset("chapter_list.js")})(${asset("site_api.js")}, " +
                 "${knownIds.joinToString(",", "[", "]")}, ${JSONObject.quote(mangaId)}, ${JSONObject.quote("/title/$mangaId-")}, " +
-                "$MAX_CHAPTER_PAGES, window.$passPayloadName, () => window.$progressName.post(\"\"));"
+                "$MAX_CHAPTER_PAGES, window.$passPayloadName, state => window.$progressName.post(state || \"\"), $resume);"
         }
         return payload.parseAs<ChapterList>()
+    }
+
+    private fun readChapterListResume(mangaId: String): JsonObject? = try {
+        synchronized(preferences) {
+            val state = preferences.getString(CHAPTER_LIST_RESUME_PREFIX + mangaId, null)
+                ?.takeIf { it.toByteArray().size <= MAX_CHAPTER_LIST_RESUME_BYTES }
+                ?: return@synchronized null
+            val resume = state.parseAs<JsonObject>()
+            saveChapterListResume(mangaId, state)
+            resume
+        }
+    } catch (_: Exception) {
+        null
+    }
+
+    private fun saveChapterListResume(mangaId: String, state: String) {
+        if (state.isEmpty() || state.toByteArray().size > MAX_CHAPTER_LIST_RESUME_BYTES) return
+        try {
+            synchronized(preferences) {
+                val previous = preferences.getString(CHAPTER_LIST_RESUME_ORDER, "").orEmpty().split(',')
+                val order = (listOf(mangaId) + previous).filter(String::isNotEmpty).distinct()
+                preferences.edit().apply {
+                    order.drop(MAX_CHAPTER_LIST_RESUMES).forEach { remove(CHAPTER_LIST_RESUME_PREFIX + it) }
+                    putString(CHAPTER_LIST_RESUME_PREFIX + mangaId, state)
+                    putString(CHAPTER_LIST_RESUME_ORDER, order.take(MAX_CHAPTER_LIST_RESUMES).joinToString(","))
+                }.apply()
+            }
+        } catch (_: Exception) {
+            // Resume caching is optional; storage failures must not fail the chapter fetch.
+        }
     }
 
     private fun selectChapters(
@@ -681,6 +716,7 @@ abstract class Comix :
         url: String,
         isDataRequest: ((HttpUrl) -> Boolean)? = null,
         buildScript: ((passPayloadName: String) -> String)? = null,
+        onProgress: (String) -> Unit = {},
         pageScript: (passPayloadName: String, rejectName: String, progressName: String) -> String = { _, _, _ -> "" },
     ): String {
         val waitSeconds = if (isDataRequest != null) DATA_REQUEST_WAIT_SECONDS else WEBVIEW_TIMEOUT_SECONDS
@@ -727,6 +763,7 @@ abstract class Comix :
             // Some hosts do not intercept WebView traffic; paging progress keeps long walks alive too.
             jsBridge(progressName) {
                 timeoutDeadline.set(System.nanoTime() + waitSeconds.seconds.inWholeNanoseconds)
+                onProgress(it)
             }
             val siteOrigin = url.toHttpUrl().run { "$scheme://$host" }
             // Refuse the site's first-tap ad window
@@ -971,6 +1008,10 @@ abstract class Comix :
         private val RECENT_QUERIES_TTL_NANOS = 120.seconds.inWholeNanoseconds
         private const val SCRIPT_RETRY_INTERVAL_MS = 100L
         private const val MAX_CHAPTER_PAGES = 1000
+        private const val CHAPTER_LIST_RESUME_PREFIX = "chapterListResume_"
+        private const val CHAPTER_LIST_RESUME_ORDER = "chapterListResumeOrder"
+        private const val MAX_CHAPTER_LIST_RESUMES = 8
+        private const val MAX_CHAPTER_LIST_RESUME_BYTES = 1024 * 1024
         private val chapterListPacer = RequestPacer(minGapMs = 2500, maxGapMs = 5000)
         private const val OFFICIAL_GROUP_ID = 10702
         private const val TAG_ID_CACHE_SIZE = 50

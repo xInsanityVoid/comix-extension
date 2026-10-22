@@ -1,5 +1,5 @@
 // Chapter lists through the site's JavaScript pagination API, without native touch events.
-(siteApi, knownIds, mangaId, chapterPath, maxPages, pass, progress = () => {}) => {
+(siteApi, knownIds, mangaId, chapterPath, maxPages, pass, progress = () => {}, resume = null) => {
     const known = new Set(knownIds);
     const chapters = [];
     const isChapter = (item) => item &&
@@ -35,10 +35,10 @@
             const params = config && config.params;
             try {
                 const result = await original.call(target.owner, url, config);
-                if (isChapterList(url)) records.push({ params, result });
+                if (isChapterList(url)) records.push({ url, params, result });
                 return result;
             } catch (error) {
-                if (isChapterList(url)) records.push({ params, error });
+                if (isChapterList(url)) records.push({ url, params, error });
                 throw error;
             }
         };
@@ -51,9 +51,11 @@
     };
     const finish = (complete, error) => pass(JSON.stringify({ chapters, complete, error, queries: queries() }));
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    let requested = false;
     const readPage = async (api, page) => {
         // Keep pacing in JavaScript too: not every host intercepts WebView requests.
-        await sleep(2500 + Math.random() * 2500);
+        if (requested) await sleep(2500 + Math.random() * 2500);
+        requested = true;
         progress();
         api.activity();
         const before = api.records.length;
@@ -65,7 +67,8 @@
         // The method's return has key names that change every build; the raw page the helper hands
         // it does not. The records can also hold the site's own requests, so ours is matched by params
         const record = api.records.slice(before).find(
-            (record) => record.params && record.params.page === page && record.params.order &&
+            (record) => record.url === `/manga/${mangaId}/chapters` &&
+                record.params && record.params.page === page && record.params.limit === 20 && record.params.order &&
                 record.params.order.created_at === "desc",
         );
         if (!record) throw new Error(`Chapter page ${page} didn't come back`);
@@ -96,11 +99,41 @@
             if (meta && result.meta.total < meta.total) removed = true;
             meta = result.meta;
         };
-        for (let page = 1; ; page++) {
+        const first = await readPage(api, 1);
+        add(first);
+        if (first.items.some((item) => known.has(item.id))) return finish(true);
+
+        // A reader can cancel the request before its full walk completes. Recheck page one before
+        // resuming: a changed head or total invalidates the old page offsets and requires a restart.
+        const now = Date.now();
+        const canResume = known.size === 0 && resume && resume.mangaId === mangaId &&
+            Number.isFinite(resume.savedAt) && now >= resume.savedAt && now - resume.savedAt < 300000 &&
+            resume.total === meta.total && resume.lastPage === meta.lastPage &&
+            Number.isInteger(resume.nextPage) && resume.nextPage >= 2 && resume.nextPage <= meta.lastPage + 1 &&
+            Array.isArray(resume.chapters) && resume.chapters.every(isChapter) &&
+            resume.chapters.length === Math.min((resume.nextPage - 1) * 20, meta.total) &&
+            new Set(resume.chapters.map((item) => item.id)).size === resume.chapters.length &&
+            first.items.every((item, index) => resume.chapters[index]?.id === item.id);
+        let nextPage = 2;
+        if (canResume) {
+            chapters.push(...resume.chapters.slice(first.items.length));
+            chapters.forEach((item) => ids.add(item.id));
+            nextPage = resume.nextPage;
+        }
+        let savedAt = canResume ? resume.savedAt : now;
+        const save = (nextPage) => {
+            if (known.size === 0) progress(JSON.stringify({
+                mangaId, savedAt, total: meta.total, lastPage: meta.lastPage, nextPage, chapters,
+            }));
+        };
+        save(nextPage);
+        for (let page = nextPage; page <= Math.min(meta.lastPage, maxPages); page++) {
             const result = await readPage(api, page);
             add(result);
             if (result.items.some((item) => known.has(item.id))) return finish(true);
-            if (page >= Math.min(meta.lastPage, maxPages)) break;
+            // Only new progress refreshes the expiry; repeatedly reusing a complete list does not.
+            savedAt = Date.now();
+            save(page + 1);
         }
         // Chapters uploaded during the walk, from the top of the list
         for (let page = 1; ids.size < meta.total && page <= Math.min(meta.lastPage, maxPages); page++) {

@@ -1,0 +1,445 @@
+{
+  "date": "2026-10-22",
+  "scope": "Live COMIX in desktop Playwright WebKit and Chromium, not an iOS device. Images/fonts/media blocked. Native-host request pacing is not simulated. Each engine keeps one browser context through interruption and recovery.",
+  "baseline": {
+    "version": 61,
+    "engine": "webkit",
+    "elapsedMs": 60337,
+    "entries": 314,
+    "complete": true,
+    "extensionChapterApiCalls": 16
+  },
+  "results": [
+    {
+      "engine": "webkit",
+      "version": 62,
+      "title": "The Shepherd Wizard",
+      "url": "https://comix.to/title/vwk5z",
+      "baselineEntries": 314,
+      "stages": [
+        {
+          "stage": "interrupted-full-fetch",
+          "elapsedMs": 56833,
+          "requests": [
+            {
+              "ms": 1213,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 1349,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 6243,
+              "page": 2,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 9259,
+              "page": 3,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 13320,
+              "page": 4,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 17575,
+              "page": 5,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 20839,
+              "page": 6,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 24319,
+              "page": 7,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 29134,
+              "page": 8,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 34088,
+              "page": 9,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 36995,
+              "page": 10,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 41228,
+              "page": 11,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 45316,
+              "page": 12,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 50118,
+              "page": 13,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 53492,
+              "page": 14,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 56802,
+              "page": 15,
+              "limit": 20,
+              "status": 200
+            }
+          ],
+          "entries": 300,
+          "complete": false,
+          "resumeNextPage": 16
+        },
+        {
+          "stage": "resumed-full-fetch",
+          "elapsedMs": 3856,
+          "requests": [
+            {
+              "ms": 444,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 523,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 3779,
+              "page": 16,
+              "limit": 20,
+              "status": 200
+            }
+          ],
+          "entries": 314,
+          "complete": true,
+          "error": "Got 314 of 314 chapters",
+          "resumeNextPage": 17,
+          "all314EntriesMatched": true
+        },
+        {
+          "stage": "recover-lost-completed-response",
+          "elapsedMs": 507,
+          "requests": [
+            {
+              "ms": 447,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            }
+          ],
+          "entries": 314,
+          "complete": true,
+          "error": "Got 314 of 314 chapters",
+          "resumeNextPage": 17,
+          "all314EntriesMatched": true
+        },
+        {
+          "stage": "normal-known-chapter-refresh",
+          "elapsedMs": 595,
+          "requests": [
+            {
+              "ms": 579,
+              "page": 1,
+              "limit": 20,
+              "order": "created_at",
+              "status": 200
+            }
+          ],
+          "entries": 20,
+          "complete": true,
+          "allNewEntriesFound": true
+        },
+        {
+          "stage": "35-new-uploads",
+          "elapsedMs": 3845,
+          "requests": [
+            {
+              "ms": 409,
+              "page": 1,
+              "limit": 20,
+              "order": "created_at",
+              "status": 200
+            },
+            {
+              "ms": 494,
+              "page": 1,
+              "limit": 20,
+              "order": "number",
+              "status": 200
+            },
+            {
+              "ms": 3830,
+              "page": 2,
+              "limit": 20,
+              "order": "created_at",
+              "status": 200
+            }
+          ],
+          "entries": 40,
+          "complete": true,
+          "allNewEntriesFound": true
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "version": 62,
+      "title": "The Shepherd Wizard",
+      "url": "https://comix.to/title/vwk5z",
+      "baselineEntries": 314,
+      "stages": [
+        {
+          "stage": "interrupted-full-fetch",
+          "elapsedMs": 52566,
+          "requests": [
+            {
+              "ms": 616,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 619,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 3289,
+              "page": 2,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 8188,
+              "page": 3,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 10847,
+              "page": 4,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 13525,
+              "page": 5,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 17105,
+              "page": 6,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 21251,
+              "page": 7,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 25605,
+              "page": 8,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 29127,
+              "page": 9,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 32690,
+              "page": 10,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 37178,
+              "page": 11,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 40263,
+              "page": 12,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 43705,
+              "page": 13,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 47803,
+              "page": 14,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 52513,
+              "page": 15,
+              "limit": 20,
+              "status": 200
+            }
+          ],
+          "entries": 300,
+          "complete": false,
+          "resumeNextPage": 16
+        },
+        {
+          "stage": "resumed-full-fetch",
+          "elapsedMs": 3398,
+          "requests": [
+            {
+              "ms": 544,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 555,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 3310,
+              "page": 16,
+              "limit": 20,
+              "status": 200
+            }
+          ],
+          "entries": 314,
+          "complete": true,
+          "error": "Got 314 of 314 chapters",
+          "resumeNextPage": 17,
+          "all314EntriesMatched": true
+        },
+        {
+          "stage": "recover-lost-completed-response",
+          "elapsedMs": 599,
+          "requests": [
+            {
+              "ms": 518,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            },
+            {
+              "ms": 538,
+              "page": 1,
+              "limit": 20,
+              "status": 200
+            }
+          ],
+          "entries": 314,
+          "complete": true,
+          "error": "Got 314 of 314 chapters",
+          "resumeNextPage": 17,
+          "all314EntriesMatched": true
+        },
+        {
+          "stage": "normal-known-chapter-refresh",
+          "elapsedMs": 644,
+          "requests": [
+            {
+              "ms": 607,
+              "page": 1,
+              "limit": 20,
+              "order": "number",
+              "status": 200
+            },
+            {
+              "ms": 619,
+              "page": 1,
+              "limit": 20,
+              "order": "created_at",
+              "status": 200
+            }
+          ],
+          "entries": 20,
+          "complete": true,
+          "allNewEntriesFound": true
+        },
+        {
+          "stage": "35-new-uploads",
+          "elapsedMs": 3553,
+          "requests": [
+            {
+              "ms": 508,
+              "page": 1,
+              "limit": 20,
+              "order": "number",
+              "status": 200
+            },
+            {
+              "ms": 528,
+              "page": 1,
+              "limit": 20,
+              "order": "created_at",
+              "status": 200
+            },
+            {
+              "ms": 3536,
+              "page": 2,
+              "limit": 20,
+              "order": "created_at",
+              "status": 200
+            }
+          ],
+          "entries": 40,
+          "complete": true,
+          "allNewEntriesFound": true
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Requests include the site's own initial page ordered by chapter number where observed; extension requests are ordered by creation date.",
+    "The original recovery recordings did not label request ordering. Warm checks were repeated with order recorded after a test assertion incorrectly counted the site's own request as an extension request.",
+    "Interrupted runs stop after 300 entries without returning a completed list; resumed and lost-response results match all 314 baseline IDs.",
+    "Cache preference wiring is covered by Kotlin host-stub tests; actual Tachimanga persistence and cancellation are not exercised by browser tests."
+  ]
+}

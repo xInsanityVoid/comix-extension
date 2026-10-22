@@ -1,5 +1,5 @@
 diff --git a/src/en/comix/assets/chapter_list.js b/src/en/comix/assets/chapter_list.js
-index d7dad967..4fd6a618 100644
+index d7dad967..3677f4cf 100644
 --- a/src/en/comix/assets/chapter_list.js
 +++ b/src/en/comix/assets/chapter_list.js
 @@ -1,10 +1,5 @@
@@ -11,7 +11,7 @@ index d7dad967..4fd6a618 100644
 -    const MAX_TAPS = 3;
 -    const MAX_SWIPES = 15;
 +// Chapter lists through the site's JavaScript pagination API, without native touch events.
-+(siteApi, knownIds, mangaId, chapterPath, maxPages, pass, progress = () => {}) => {
++(siteApi, knownIds, mangaId, chapterPath, maxPages, pass, progress = () => {}, resume = null) => {
      const known = new Set(knownIds);
      const chapters = [];
      const isChapter = (item) => item &&
@@ -46,7 +46,16 @@ index d7dad967..4fd6a618 100644
          const records = [];
          const original = target.value;
          const isChapterList = (url) => /^\/manga\/[^/]+\/chapters$/.test(String(url));
-@@ -42,7 +42,7 @@
+@@ -35,14 +35,14 @@
+             const params = config && config.params;
+             try {
+                 const result = await original.call(target.owner, url, config);
+-                if (isChapterList(url)) records.push({ params, result });
++                if (isChapterList(url)) records.push({ url, params, result });
+                 return result;
+             } catch (error) {
+-                if (isChapterList(url)) records.push({ params, error });
++                if (isChapterList(url)) records.push({ url, params, error });
                  throw error;
              }
          };
@@ -55,7 +64,7 @@ index d7dad967..4fd6a618 100644
      });
      // The detail lives in the same document, so the caller reads the manga from this one load
      const queries = () => {
-@@ -51,107 +51,11 @@
+@@ -51,107 +51,13 @@
      };
      const finish = (complete, error) => pass(JSON.stringify({ chapters, complete, error, queries: queries() }));
      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -158,16 +167,28 @@ index d7dad967..4fd6a618 100644
 -        throw new Error("Couldn't tap the chapter list");
 -    };
 -
++    let requested = false;
      const readPage = async (api, page) => {
 -        await tapSection();
 +        // Keep pacing in JavaScript too: not every host intercepts WebView requests.
-+        await sleep(2500 + Math.random() * 2500);
++        if (requested) await sleep(2500 + Math.random() * 2500);
++        requested = true;
 +        progress();
 +        api.activity();
          const before = api.records.length;
          try {
              await api.method(mangaId, { page, limit: 20, order: { created_at: "desc" } });
-@@ -183,7 +87,6 @@
+@@ -161,7 +67,8 @@
+         // The method's return has key names that change every build; the raw page the helper hands
+         // it does not. The records can also hold the site's own requests, so ours is matched by params
+         const record = api.records.slice(before).find(
+-            (record) => record.params && record.params.page === page && record.params.order &&
++            (record) => record.url === `/manga/${mangaId}/chapters` &&
++                record.params && record.params.page === page && record.params.limit === 20 && record.params.order &&
+                 record.params.order.created_at === "desc",
+         );
+         if (!record) throw new Error(`Chapter page ${page} didn't come back`);
+@@ -183,7 +90,6 @@
      const walk = async () => {
          const api = await findChaptersApi();
          if (!api) return finish(false, "Could not find the site's chapters API");
@@ -175,7 +196,51 @@ index d7dad967..4fd6a618 100644
          const ids = new Set();
          let meta;
          let removed = false;
-@@ -212,6 +115,7 @@
+@@ -193,11 +99,41 @@
+             if (meta && result.meta.total < meta.total) removed = true;
+             meta = result.meta;
+         };
+-        for (let page = 1; ; page++) {
++        const first = await readPage(api, 1);
++        add(first);
++        if (first.items.some((item) => known.has(item.id))) return finish(true);
++
++        // A reader can cancel the request before its full walk completes. Recheck page one before
++        // resuming: a changed head or total invalidates the old page offsets and requires a restart.
++        const now = Date.now();
++        const canResume = known.size === 0 && resume && resume.mangaId === mangaId &&
++            Number.isFinite(resume.savedAt) && now >= resume.savedAt && now - resume.savedAt < 300000 &&
++            resume.total === meta.total && resume.lastPage === meta.lastPage &&
++            Number.isInteger(resume.nextPage) && resume.nextPage >= 2 && resume.nextPage <= meta.lastPage + 1 &&
++            Array.isArray(resume.chapters) && resume.chapters.every(isChapter) &&
++            resume.chapters.length === Math.min((resume.nextPage - 1) * 20, meta.total) &&
++            new Set(resume.chapters.map((item) => item.id)).size === resume.chapters.length &&
++            first.items.every((item, index) => resume.chapters[index]?.id === item.id);
++        let nextPage = 2;
++        if (canResume) {
++            chapters.push(...resume.chapters.slice(first.items.length));
++            chapters.forEach((item) => ids.add(item.id));
++            nextPage = resume.nextPage;
++        }
++        let savedAt = canResume ? resume.savedAt : now;
++        const save = (nextPage) => {
++            if (known.size === 0) progress(JSON.stringify({
++                mangaId, savedAt, total: meta.total, lastPage: meta.lastPage, nextPage, chapters,
++            }));
++        };
++        save(nextPage);
++        for (let page = nextPage; page <= Math.min(meta.lastPage, maxPages); page++) {
+             const result = await readPage(api, page);
+             add(result);
+             if (result.items.some((item) => known.has(item.id))) return finish(true);
+-            if (page >= Math.min(meta.lastPage, maxPages)) break;
++            // Only new progress refreshes the expiry; repeatedly reusing a complete list does not.
++            savedAt = Date.now();
++            save(page + 1);
+         }
+         // Chapters uploaded during the walk, from the top of the list
+         for (let page = 1; ids.size < meta.total && page <= Math.min(meta.lastPage, maxPages); page++) {
+@@ -212,6 +148,7 @@
      };
  
      const start = () => walk().catch((e) => finish(false, e && e.message || String(e)));
@@ -483,7 +548,7 @@ index 40f16b52..07770202 100644
 +    };
  }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..2d65d176 100644
+index 523b26a1..8ca2fecc 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -491,7 +556,7 @@ index 523b26a1..2d65d176 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 61
++    versionCode = 62
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
@@ -518,7 +583,7 @@ index 00000000..3f1d204a
 +    .maxByOrNull { it.chapter_number }
 +    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..b5206fc2 100644
+index b9bc9c66..0a93733c 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 @@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
@@ -606,24 +671,64 @@ index b9bc9c66..b5206fc2 100644
              !fetchDetails -> null
              walked != null -> walked.mangaDetail()
              else -> getQueries().mangaDetail()
-@@ -570,10 +567,10 @@ abstract class Comix :
+@@ -570,14 +567,49 @@ abstract class Comix :
          knownIds: List<Int>,
      ): ChapterList {
          val mangaId = manga.url.removePrefix("/").substringBefore('-')
 -        val payload = runInWebView(getMangaUrl(manga), { it.isChapterListRequest() }) { passPayloadName, _, touchName ->
-+        val payload = runInWebView(getMangaUrl(manga), { it.isChapterListRequest() }) { passPayloadName, _, progressName ->
++        val resume = readChapterListResume(mangaId)
++        val payload = runInWebView(
++            url = getMangaUrl(manga),
++            isDataRequest = { it.isChapterListRequest() },
++            onProgress = { saveChapterListResume(mangaId, it) },
++        ) { passPayloadName, _, progressName ->
              "(${asset("chapter_list.js")})(${asset("site_api.js")}, " +
                  "${knownIds.joinToString(",", "[", "]")}, ${JSONObject.quote(mangaId)}, ${JSONObject.quote("/title/$mangaId-")}, " +
 -                "$MAX_CHAPTER_PAGES, window.$touchName, window.$passPayloadName);"
-+                "$MAX_CHAPTER_PAGES, window.$passPayloadName, () => window.$progressName.post(\"\"));"
++                "$MAX_CHAPTER_PAGES, window.$passPayloadName, state => window.$progressName.post(state || \"\"), $resume);"
          }
          return payload.parseAs<ChapterList>()
      }
-@@ -684,13 +681,12 @@ abstract class Comix :
+ 
++    private fun readChapterListResume(mangaId: String): JsonObject? = try {
++        synchronized(preferences) {
++            val state = preferences.getString(CHAPTER_LIST_RESUME_PREFIX + mangaId, null)
++                ?.takeIf { it.toByteArray().size <= MAX_CHAPTER_LIST_RESUME_BYTES }
++                ?: return@synchronized null
++            val resume = state.parseAs<JsonObject>()
++            saveChapterListResume(mangaId, state)
++            resume
++        }
++    } catch (_: Exception) {
++        null
++    }
++
++    private fun saveChapterListResume(mangaId: String, state: String) {
++        if (state.isEmpty() || state.toByteArray().size > MAX_CHAPTER_LIST_RESUME_BYTES) return
++        try {
++            synchronized(preferences) {
++                val previous = preferences.getString(CHAPTER_LIST_RESUME_ORDER, "").orEmpty().split(',')
++                val order = (listOf(mangaId) + previous).filter(String::isNotEmpty).distinct()
++                preferences.edit().apply {
++                    order.drop(MAX_CHAPTER_LIST_RESUMES).forEach { remove(CHAPTER_LIST_RESUME_PREFIX + it) }
++                    putString(CHAPTER_LIST_RESUME_PREFIX + mangaId, state)
++                    putString(CHAPTER_LIST_RESUME_ORDER, order.take(MAX_CHAPTER_LIST_RESUMES).joinToString(","))
++                }.apply()
++            }
++        } catch (_: Exception) {
++            // Resume caching is optional; storage failures must not fail the chapter fetch.
++        }
++    }
++
+     private fun selectChapters(
+         allChapters: List<SChapter>,
+         shouldDeduplicate: Boolean,
+@@ -684,13 +716,13 @@ abstract class Comix :
          url: String,
          isDataRequest: ((HttpUrl) -> Boolean)? = null,
          buildScript: ((passPayloadName: String) -> String)? = null,
 -        pageScript: (passPayloadName: String, rejectName: String, touchName: String) -> String = { _, _, _ -> "" },
++        onProgress: (String) -> Unit = {},
 +        pageScript: (passPayloadName: String, rejectName: String, progressName: String) -> String = { _, _, _ -> "" },
      ): String {
          val waitSeconds = if (isDataRequest != null) DATA_REQUEST_WAIT_SECONDS else WEBVIEW_TIMEOUT_SECONDS
@@ -635,7 +740,7 @@ index b9bc9c66..b5206fc2 100644
          return runWebView(timeout = Duration.INFINITE) {
              userAgent = headers["User-Agent"].orEmpty()
              blockImages = true
-@@ -728,15 +724,11 @@ abstract class Comix :
+@@ -728,15 +760,12 @@ abstract class Comix :
  
              jsBridge(bridgeName) { resolve(it) }
              jsBridge(errorBridgeName) { reject(Exception(it)) }
@@ -650,12 +755,13 @@ index b9bc9c66..b5206fc2 100644
 +            // Some hosts do not intercept WebView traffic; paging progress keeps long walks alive too.
 +            jsBridge(progressName) {
 +                timeoutDeadline.set(System.nanoTime() + waitSeconds.seconds.inWholeNanoseconds)
++                onProgress(it)
              }
 +            val siteOrigin = url.toHttpUrl().run { "$scheme://$host" }
              // Refuse the site's first-tap ad window
              withNativeWebView { it.settings.setSupportMultipleWindows(true) }
  
-@@ -768,8 +760,7 @@ abstract class Comix :
+@@ -768,8 +797,7 @@ abstract class Comix :
                  try { localStorage.setItem("__pu1", "[" + Date.now() + "]"); } catch (e) {}
                  window.$passPayloadName = payload => window.$bridgeName.post(payload);
                  window.$rejectName = message => window.$errorBridgeName.post(message);
@@ -665,7 +771,7 @@ index b9bc9c66..b5206fc2 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
-@@ -976,7 +967,7 @@ abstract class Comix :
+@@ -976,10 +1004,14 @@ abstract class Comix :
  
          private const val DEFAULT_CONTENT_RATING = "suggestive"
          private const val WEBVIEW_TIMEOUT_SECONDS = 120L
@@ -674,6 +780,13 @@ index b9bc9c66..b5206fc2 100644
          private val RECENT_QUERIES_TTL_NANOS = 120.seconds.inWholeNanoseconds
          private const val SCRIPT_RETRY_INTERVAL_MS = 100L
          private const val MAX_CHAPTER_PAGES = 1000
++        private const val CHAPTER_LIST_RESUME_PREFIX = "chapterListResume_"
++        private const val CHAPTER_LIST_RESUME_ORDER = "chapterListResumeOrder"
++        private const val MAX_CHAPTER_LIST_RESUMES = 8
++        private const val MAX_CHAPTER_LIST_RESUME_BYTES = 1024 * 1024
+         private val chapterListPacer = RequestPacer(minGapMs = 2500, maxGapMs = 5000)
+         private const val OFFICIAL_GROUP_ID = 10702
+         private const val TAG_ID_CACHE_SIZE = 50
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
 index 2e3126a7..4dca0aed 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt

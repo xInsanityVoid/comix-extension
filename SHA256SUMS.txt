@@ -1,2 +1,2 @@
-b881d04bc697f2422a517252a76849839ce2c1cacf2a9bf5aff325073284a4c0  tachiyomi-en.comix-v1.6.61.apk
-7a29c89dd9f2207e6e0efb90afb6a8a6510ebe5b2a315716f50f4b615383d488  tachiyomi-en.comix-v1.6.61.jar
+876b2d5e5c15fd3fe06d0054767c11fc0f84b8a5d84a4b187fa4589c82c7d03e  tachiyomi-en.comix-v1.6.62.apk
+88def3d69add9a79602777edd08bb2153a8730feee027972c86901d4a3905f50  tachiyomi-en.comix-v1.6.62.jar

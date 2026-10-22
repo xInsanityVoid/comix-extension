@@ -24,14 +24,39 @@ val generateRefreshHarness = tasks.register("generateRefreshHarness") {
     }
 }
 
+val generatedResume = layout.buildDirectory.file("generated/resume/ResumeHarness.kt")
+val generateResumeHarness = tasks.register("generateResumeHarness") {
+    inputs.file(productionSource)
+    outputs.file(generatedResume)
+    doLast {
+        val source = productionSource.readText()
+        val start = source.indexOf("    private fun readChapterListResume(")
+        val end = source.indexOf("    private fun selectChapters(", start)
+        check(start >= 0 && end > start)
+        val constants = source.lineSequence().filter {
+            it.contains("private const val CHAPTER_LIST_RESUME") || it.contains("private const val MAX_CHAPTER_LIST_RESUME")
+        }.joinToString("\n")
+        generatedResume.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText("""
+                package eu.kanade.tachiyomi.extension.en.comix
+                import kotlinx.serialization.json.*
+                class ResumeHarness(val preferences: ResumePreferences = ResumePreferences()) {
+                    fun read(id: String) = readChapterListResume(id)
+                    fun save(id: String, state: String) = saveChapterListResume(id, state)
+            """.trimIndent() + "\n" + source.substring(start, end) + "companion object {\n" + constants + "\n}\n}\n")
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(21)
     sourceSets.main {
-        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh")))
-        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt")
+        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh"), layout.buildDirectory.dir("generated/resume")))
+        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt", "**/ResumePreferences.kt", "**/ResumeHarness.kt")
     }
 }
-tasks.named("compileKotlin") { dependsOn(generateRefreshHarness) }
+tasks.named("compileKotlin") { dependsOn(generateRefreshHarness, generateResumeHarness) }
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     testImplementation("junit:junit:4.13.2")
