@@ -53,6 +53,8 @@
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     const between = (from, to) => from + Math.random() * (to - from);
     const section = () => document.querySelector(".mpage__chapters");
+    // The site tracks trusted input on document, not which pagination control was tapped.
+    const tapTarget = () => section()?.querySelector(".mpage__sec-title");
 
     // Resolves with the trusted event once the native input has reached the page
     const afterInput = (type, send) => new Promise((resolve, reject) => {
@@ -74,22 +76,12 @@
     const waitForSection = async () => {
         const deadline = Date.now() + SECTION_TIMEOUT_MS;
         while (Date.now() < deadline) {
-            if (section() && section().querySelector(".npager, .mchap-row__primary, .uempty")) return;
+            const rect = tapTarget()?.getBoundingClientRect();
+            if (rect && rect.width > 0 && rect.height > 0 &&
+                section().querySelector(".mchap-row__primary, .uempty")) return;
             await sleep(200);
         }
         throw new Error("The chapter list didn't load");
-    };
-
-    // The pager's last fully shown button, else the active sort button; narrow screens cut the pager off
-    const tapTarget = () => {
-        const pager = section().querySelector(".npager");
-        if (!pager) return section().querySelector(".useg__btn.is-on");
-        const box = pager.getBoundingClientRect();
-        const shown = [...pager.querySelectorAll("button")].filter((button) => {
-            const rect = button.getBoundingClientRect();
-            return rect.width > 0 && rect.left >= Math.max(box.left, 0) && rect.right <= Math.min(box.right, innerWidth);
-        });
-        return shown[shown.length - 1];
     };
 
     // The site's first-visit ad: a fixed link over the whole page that takes the first tap

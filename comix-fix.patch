@@ -1,3 +1,44 @@
+diff --git a/src/en/comix/assets/chapter_list.js b/src/en/comix/assets/chapter_list.js
+index d7dad967..f60ac6a6 100644
+--- a/src/en/comix/assets/chapter_list.js
++++ b/src/en/comix/assets/chapter_list.js
+@@ -53,6 +53,8 @@
+     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+     const between = (from, to) => from + Math.random() * (to - from);
+     const section = () => document.querySelector(".mpage__chapters");
++    // The site tracks trusted input on document, not which pagination control was tapped.
++    const tapTarget = () => section()?.querySelector(".mpage__sec-title");
+ 
+     // Resolves with the trusted event once the native input has reached the page
+     const afterInput = (type, send) => new Promise((resolve, reject) => {
+@@ -74,24 +76,14 @@
+     const waitForSection = async () => {
+         const deadline = Date.now() + SECTION_TIMEOUT_MS;
+         while (Date.now() < deadline) {
+-            if (section() && section().querySelector(".npager, .mchap-row__primary, .uempty")) return;
++            const rect = tapTarget()?.getBoundingClientRect();
++            if (rect && rect.width > 0 && rect.height > 0 &&
++                section().querySelector(".mchap-row__primary, .uempty")) return;
+             await sleep(200);
+         }
+         throw new Error("The chapter list didn't load");
+     };
+ 
+-    // The pager's last fully shown button, else the active sort button; narrow screens cut the pager off
+-    const tapTarget = () => {
+-        const pager = section().querySelector(".npager");
+-        if (!pager) return section().querySelector(".useg__btn.is-on");
+-        const box = pager.getBoundingClientRect();
+-        const shown = [...pager.querySelectorAll("button")].filter((button) => {
+-            const rect = button.getBoundingClientRect();
+-            return rect.width > 0 && rect.left >= Math.max(box.left, 0) && rect.right <= Math.min(box.right, innerWidth);
+-        });
+-        return shown[shown.length - 1];
+-    };
+-
+     // The site's first-visit ad: a fixed link over the whole page that takes the first tap
+     const isAdOverlay = (element) => element && element.tagName === "A" &&
+         getComputedStyle(element).position === "fixed" &&
 diff --git a/src/en/comix/assets/site_api.js b/src/en/comix/assets/site_api.js
 index 40f16b52..3bd5f3e0 100644
 --- a/src/en/comix/assets/site_api.js
@@ -68,7 +109,7 @@ index 40f16b52..3bd5f3e0 100644
 +    };
  }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..f433d5a0 100644
+index 523b26a1..44f87001 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -76,7 +117,7 @@ index 523b26a1..f433d5a0 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 55
++    versionCode = 56
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
