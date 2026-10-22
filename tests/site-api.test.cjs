@@ -53,11 +53,10 @@ function harness({ resources = [main], modules, setup = '', texts = {}, failedIm
     return { ctx: context, imports, fetches };
 }
 
-test('recovers an existing hidden API and preserves interception without replacing Proxy', async () => {
+test('recovers an existing hidden API and preserves interception and restores Proxy', async () => {
     const {ctx} = harness({ texts: { [main]: getter } });
     assert.equal(vm.runInContext('Object.keys(api).length', ctx), 0);
     assert.match(String(ctx.api.renamed), /\[native code\]/);
-    assert.equal(vm.runInContext('Proxy', ctx), ctx.nativeProxy);
     const member = await ctx.findApi();
     assert.equal(member.owner, ctx.api);
     assert.equal(member.key, 'renamed');
@@ -166,4 +165,39 @@ test('times out without touching browser globals if no entry script appears', as
     assert.deepEqual(imports, []);
     assert.deepEqual(fetches, []);
     assert.equal(vm.runInContext('Proxy', ctx), ctx.nativeProxy);
+});
+
+
+test('captures a private obfuscated request helper that is not exported', async () => {
+    const {ctx, fetches} = harness({modules:()=>({})});
+    vm.runInContext(`
+        const decode=n=>({7:'request',8:'get',9:'data'})[n];
+        const client={request:async({method,url,...config})=>{
+            if(method!=='get')throw Error('wrong HTTP method');
+            return http.get(url,config);
+        }};
+        globalThis.privateApi=mask({"Qx":async(N,R)=>(await client[decode(7)]({...R,"method":decode(8),"url":N}))[decode(9)]});
+    `,ctx);
+    const member=await ctx.findApi();
+    assert.equal(member.key,'Qx');
+    assert.equal((await member.value('/chapters/16')).url,'/chapters/16');
+    member.owner[member.key]=async()=> 'intercepted';
+    assert.equal(await ctx.privateApi.Qx(),'intercepted');
+    assert.deepEqual(fetches,[]);
+    assert.equal(vm.runInContext('Proxy',ctx),ctx.nativeProxy);
+});
+
+test('reads quoted asynchronous method names from already-loaded API source', async () => {
+    const definition='const methods={async"Qx"(N,R={}){return {"items":N,"meta":R}}};';
+    const {ctx}=harness({setup:definition+'globalThis.api=mask(methods);',texts:{[main]:definition},selector:"members=>members.find(m=>m.key==='Qx')"});
+    const member=await ctx.findApi();
+    assert.equal((await member.value(16)).items,16);
+    assert.match(String(member.value),/^async"Qx"/);
+});
+
+test('does not overwrite another script replacement of Proxy', async () => {
+    const {ctx}=harness({setup:'globalThis.api=raw;'});
+    vm.runInContext('globalThis.replacement=function Replacement(){};window.Proxy=replacement;',ctx);
+    assert.ok(await ctx.findApi());
+    assert.equal(vm.runInContext('Proxy',ctx),ctx.replacement);
 });

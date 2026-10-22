@@ -10,18 +10,17 @@
     // The site's method: two arguments with an object default for the second, items mapped through
     // a named mapper, the params forwarded to the GET helper
     const isChapterMethod = (value) => {
-        const source = typeof value === "function" && String(value);
+        const source = typeof value === "function" && String(value).replace(/^async["']([\w$]+)["']/, "async $1");
         return !!source &&
             /^(?:async [\w$]+ ?|async ?|[\w$]+ ?)?\([\w$]+,[\w$]+=\{\}\)(?:=>|\{)/.test(source) &&
-            source.includes(".items.map(") &&
-            source.includes(".meta") &&
-            source.includes("{params:") &&
-            !/\.items\.map\([\w$]+=>/.test(source);
+            ((source.includes(".items.map(") && source.includes(".meta") &&
+                source.includes("{params:") && !/\.items\.map\([\w$]+=>/.test(source)) ||
+                /\{"items":[\w$]+,"meta":[\w$]+\}=[\w$]+/.test(source));
     };
     // The site's exported activity callback records the timestamp used by its pagination client.
     // Resolve its source shape, since export names change with each site build.
     const isActivityCallback = (value) => typeof value === "function" &&
-        /^function(?: [\w$]+)?\(\)\{[\w$]+=Date\.now\(\);?\}$/.test(String(value));
+        /^function(?: [\w$]+)?\(\)\{[\w$]+=Date(?:\.now|\[[\w$]+\(\d+\)\])\(\);?\}$/.test(String(value));
     // The walk reads the raw pages the helper returns to the site's own code
     const findChaptersApi = siteApi((members, isGet) => {
         const method = members.map((member) => member.value).find(isChapterMethod);

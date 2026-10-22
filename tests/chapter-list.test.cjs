@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const {test} = require('node:test');
 const source = fs.readFileSync(`${__dirname}/../src/en/comix/assets/chapter_list.js`, 'utf8');
-async function read({total=43,known=[],failPage,wrongTitle=false,missingActivity=false,ambiguousActivity=false,maxPages=1000}={}) {
+async function read({obfuscated=false,total=43,known=[],failPage,wrongTitle=false,missingActivity=false,ambiguousActivity=false,maxPages=1000}={}) {
   let now=1000;
   const requests=[],delays=[],progress=[];
   const context=vm.createContext({
@@ -20,7 +20,7 @@ async function read({total=43,known=[],failPage,wrongTitle=false,missingActivity
       const first=(params.page-1)*20;
       const items=Array.from({length:Math.max(0,Math.min(20,total-first))},(_,i)=>({id:first+i+1,number:first+i+1,url:`/title/${wrongTitle?'wrong':'abc'}-name/${first+i+1}-chapter-1`}));
       return {data:{items,meta:{lastPage:Math.max(1,Math.ceil(total/20)),total}}};
-    }},known,maxPages,missingActivity,ambiguousActivity,progress:()=>progress.push(now),
+    }},known,maxPages,missingActivity,ambiguousActivity,progress:()=>progress.push(now),obfuscated,
   });
   vm.runInContext(`
     var activityAt=0;
@@ -29,9 +29,12 @@ async function read({total=43,known=[],failPage,wrongTitle=false,missingActivity
     const mapper=a=>a;
     const client={get:async(a,b)=>(await http.get(a,b)).data};
     const methods={async chapters(a,b={}){return function(a){return{items:a.items.map(mapper),meta:a.meta}}(await client.get('/manga/'+a+'/chapters',{params:b}))}};
+    const decode=n=>({1:'now',2:'map',3:'params'})[n];
+    const hiddenMethods={async"Qx"(N,R={}){const config={};config[decode(3)]=R;return function(N){const {"items":I,"meta":M}=N;return {"x":I[decode(2)](mapper),"y":M}}(await client.get('/manga/'+N+'/chapters',config))}};
+    function hiddenCallback(){activityAt=Date[decode(1)]()}
     const siteApi=select=>async()=>select([
-      {owner:client,key:'get',value:client.get},{owner:methods,key:'chapters',value:methods.chapters},
-      ...(!missingActivity?[{value:renamedCallback}]:[]),...(ambiguousActivity?[{value:anotherCallback}]:[]),
+      {owner:client,key:'get',value:client.get},{owner:methods,key:'chapters',value:obfuscated?hiddenMethods.Qx:methods.chapters},
+      ...(!missingActivity?[{value:obfuscated?hiddenCallback:renamedCallback}]:[]),...(ambiguousActivity?[{value:anotherCallback}]:[]),
     ],value=>typeof value==='function'&&String(value).endsWith('.data'));
   `,context);
   const result=await new Promise(resolve=>{context.pass=p=>resolve(JSON.parse(p));vm.runInContext(`(${source})(siteApi,known,'abc','/title/abc-',maxPages,pass,progress)`,context);});
@@ -54,3 +57,9 @@ test('keeps fetched entries and reports an incomplete list on failure',async()=>
 test('rejects another title response',async()=>{const {result}=await read({wrongTitle:true});assert.equal(result.complete,false);assert.equal(result.chapters.length,0);assert.match(result.error,/shape/);});
 test('does not guess a missing or ambiguous activity callback',async()=>{for(const options of [{missingActivity:true},{ambiguousActivity:true}]){const {result,requests}=await read(options);assert.equal(result.complete,false);assert.deepEqual(requests,[]);assert.match(result.error,/chapters API/);}});
 test('does not mark a capped list complete',async()=>{const {result}=await read({maxPages:1});assert.equal(result.complete,false);assert.match(result.error,/20 of 43/);});
+
+
+test('obfuscated method names, item mapping and activity callback still paginate',async()=>{
+  const {result,requests}=await read({obfuscated:true});
+  assert.equal(result.complete,true);assert.equal(result.chapters.length,43);assert.deepEqual(requests,[1,2,3]);
+});

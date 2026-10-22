@@ -6,15 +6,31 @@
 // finds nothing behind them. For those, a second pass recovers the member keys and sources
 // from the chunk text and probes each exported object for them; a probed function reports
 // the recovered source as its own, so the shape checks still see the function's text.
-(select) => async () => {
+(select) => {
+    // The current API core keeps its request helper private. Capture hidden clients when
+    // they are created, before exports are inspected, and restore Proxy after discovery.
+    const clients = new Set();
+    const originalProxy = window.Proxy;
+    const trackingProxy = new originalProxy(originalProxy, {
+        construct(constructor, args) {
+            const proxy = Reflect.construct(constructor, args);
+            if (args[1] && typeof args[1].ownKeys === "function") clients.add(args[0]);
+            return proxy;
+        },
+    });
+    window.Proxy = trackingProxy;
     const FIND_TIMEOUT_MS = 10000;
     const MAX_SOURCE = 6000;
     const KEYWORDS = new Set([
         "if", "for", "while", "switch", "catch", "return", "function", "else", "do", "new", "typeof",
     ]);
-    const isGet = (value) => typeof value === "function" &&
-        String(value).includes(".get(") &&
-        String(value).endsWith(".data");
+    const isGet = (value) => {
+        const source = typeof value === "function" && String(value);
+        if (!source) return false;
+        if (source.includes(".get(") && source.endsWith(".data")) return true;
+        // The obfuscated API uses request({...config, method: decodedGet, url}) instead of get().
+        return /^async\([\w$]+,[\w$]+\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.[\w$]+,"method":[\w$]+\(\d+\),"url":[\w$]+\}\)\)\[[\w$]+\(\d+\)\]$/.test(source);
+    };
     const namespaces = new Map();
     const memberCache = new Map();
     const texts = new Map();
@@ -116,13 +132,13 @@
             seen.add(key + "@" + sourceStart);
             defs.push({ key, source });
         };
-        for (const match of text.matchAll(/([A-Za-z_$][\w$]*)\s*:\s*(async\s*(?:\([^)]*\)|[\w$]+)\s*=>|\([^)]*\)\s*=>|[\w$]+\s*=>)/g)) {
+        for (const match of text.matchAll(/["']?([A-Za-z_$][\w$]*)["']?\s*:\s*(async\s*(?:\([^)]*\)|[\w$]+)\s*=>|\([^)]*\)\s*=>|[\w$]+\s*=>)/g)) {
             add(match[1], match.index + match[0].length - match[2].length, match.index + match[0].length);
         }
-        for (const match of text.matchAll(/\basync\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g)) {
+        for (const match of text.matchAll(/\basync(?:\s+|(?=["']))["']?([A-Za-z_$][\w$]*)["']?\s*\([^)]*\)\s*\{/g)) {
             add(match[1], match.index, match.index + match[0].length - 1);
         }
-        for (const match of text.matchAll(/(?:^|[,{;])\s*([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g)) {
+        for (const match of text.matchAll(/(?:^|[,{;])\s*["']?([A-Za-z_$][\w$]*)["']?\s*\([^)]*\)\s*\{/g)) {
             add(match[1], match.index + match[0].indexOf(match[1]), match.index + match[0].length - 1);
         }
         return defs;
@@ -204,6 +220,7 @@
             }
             members.push(...memberCache.get(url));
         }
+        for (const client of clients) members.push(...enumerate({ client }));
         // The activity callback and API client can be exported by different chunks.
         const found = select(members, isGet);
         if (found) return found;
@@ -221,11 +238,17 @@
         }
         return null;
     };
-    // The site's chunks keep loading after the page's load event
-    const deadline = Date.now() + FIND_TIMEOUT_MS;
-    for (;;) {
-        const api = await find();
-        if (api || Date.now() >= deadline) return api;
-        await new Promise((resolve) => setTimeout(resolve, 250));
-    }
+    return async () => {
+        try {
+            // The site's chunks keep loading after the page's load event.
+            const deadline = Date.now() + FIND_TIMEOUT_MS;
+            for (;;) {
+                const api = await find();
+                if (api || Date.now() >= deadline) return api;
+                await new Promise((resolve) => setTimeout(resolve, 250));
+            }
+        } finally {
+            if (window.Proxy === trackingProxy) window.Proxy = originalProxy;
+        }
+    };
 }

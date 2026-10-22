@@ -1,9 +1,7 @@
 (siteApi, chapterId, pass, reject) => {
     const findChapter = siteApi((members, isGet) => {
-        const route = members.map((member) => member.value).find((value) => typeof value === "function" &&
-            /^\(?[\w$]+\)?=>`\/chapters\/\$\{[\w$]+\}`$/.test(String(value)));
         const get = members.map((member) => member.value).find(isGet);
-        return route && get ? (id, params) => get(route(id), { params }) : null;
+        return get ? (id, params) => get(`/chapters/${id}`, { params }) : null;
     });
     const isPages = (value) => value &&
         Array.isArray(value.items) &&

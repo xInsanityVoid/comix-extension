@@ -1,5 +1,5 @@
 diff --git a/src/en/comix/assets/chapter_list.js b/src/en/comix/assets/chapter_list.js
-index d7dad967..bc099c1b 100644
+index d7dad967..4e59f323 100644
 --- a/src/en/comix/assets/chapter_list.js
 +++ b/src/en/comix/assets/chapter_list.js
 @@ -1,10 +1,5 @@
@@ -15,14 +15,26 @@ index d7dad967..bc099c1b 100644
      const known = new Set(knownIds);
      const chapters = [];
      const isChapter = (item) => item &&
-@@ -23,11 +18,17 @@
-             source.includes("{params:") &&
-             !/\.items\.map\([\w$]+=>/.test(source);
+@@ -15,19 +10,24 @@
+     // The site's method: two arguments with an object default for the second, items mapped through
+     // a named mapper, the params forwarded to the GET helper
+     const isChapterMethod = (value) => {
+-        const source = typeof value === "function" && String(value);
++        const source = typeof value === "function" && String(value).replace(/^async["']([\w$]+)["']/, "async $1");
+         return !!source &&
+             /^(?:async [\w$]+ ?|async ?|[\w$]+ ?)?\([\w$]+,[\w$]+=\{\}\)(?:=>|\{)/.test(source) &&
+-            source.includes(".items.map(") &&
+-            source.includes(".meta") &&
+-            source.includes("{params:") &&
+-            !/\.items\.map\([\w$]+=>/.test(source);
++            ((source.includes(".items.map(") && source.includes(".meta") &&
++                source.includes("{params:") && !/\.items\.map\([\w$]+=>/.test(source)) ||
++                /\{"items":[\w$]+,"meta":[\w$]+\}=[\w$]+/.test(source));
      };
 +    // The site's exported activity callback records the timestamp used by its pagination client.
 +    // Resolve its source shape, since export names change with each site build.
 +    const isActivityCallback = (value) => typeof value === "function" &&
-+        /^function(?: [\w$]+)?\(\)\{[\w$]+=Date\.now\(\);?\}$/.test(String(value));
++        /^function(?: [\w$]+)?\(\)\{[\w$]+=Date(?:\.now|\[[\w$]+\(\d+\)\])\(\);?\}$/.test(String(value));
      // The walk reads the raw pages the helper returns to the site's own code
      const findChaptersApi = siteApi((members, isGet) => {
          const method = members.map((member) => member.value).find(isChapterMethod);
@@ -34,7 +46,7 @@ index d7dad967..bc099c1b 100644
          const records = [];
          const original = target.value;
          const isChapterList = (url) => /^\/manga\/[^/]+\/chapters$/.test(String(url));
-@@ -42,7 +43,7 @@
+@@ -42,7 +42,7 @@
                  throw error;
              }
          };
@@ -43,7 +55,7 @@ index d7dad967..bc099c1b 100644
      });
      // The detail lives in the same document, so the caller reads the manga from this one load
      const queries = () => {
-@@ -51,107 +52,11 @@
+@@ -51,107 +51,11 @@
      };
      const finish = (complete, error) => pass(JSON.stringify({ chapters, complete, error, queries: queries() }));
      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -155,7 +167,7 @@ index d7dad967..bc099c1b 100644
          const before = api.records.length;
          try {
              await api.method(mangaId, { page, limit: 20, order: { created_at: "desc" } });
-@@ -183,7 +88,6 @@
+@@ -183,7 +87,6 @@
      const walk = async () => {
          const api = await findChaptersApi();
          if (!api) return finish(false, "Could not find the site's chapters API");
@@ -163,28 +175,63 @@ index d7dad967..bc099c1b 100644
          const ids = new Set();
          let meta;
          let removed = false;
+diff --git a/src/en/comix/assets/chapter_pages.js b/src/en/comix/assets/chapter_pages.js
+index b8c2346c..2100c5e8 100644
+--- a/src/en/comix/assets/chapter_pages.js
++++ b/src/en/comix/assets/chapter_pages.js
+@@ -1,9 +1,7 @@
+ (siteApi, chapterId, pass, reject) => {
+     const findChapter = siteApi((members, isGet) => {
+-        const route = members.map((member) => member.value).find((value) => typeof value === "function" &&
+-            /^\(?[\w$]+\)?=>`\/chapters\/\$\{[\w$]+\}`$/.test(String(value)));
+         const get = members.map((member) => member.value).find(isGet);
+-        return route && get ? (id, params) => get(route(id), { params }) : null;
++        return get ? (id, params) => get(`/chapters/${id}`, { params }) : null;
+     });
+     const isPages = (value) => value &&
+         Array.isArray(value.items) &&
 diff --git a/src/en/comix/assets/site_api.js b/src/en/comix/assets/site_api.js
-index 40f16b52..3f2a797c 100644
+index 40f16b52..07770202 100644
 --- a/src/en/comix/assets/site_api.js
 +++ b/src/en/comix/assets/site_api.js
-@@ -1,32 +1,221 @@
+@@ -1,42 +1,254 @@
  // The site's own API client, from the chunks next to the running entry. Every build re-mangles
  // names, so members are resolved by source shape; the selector receives the exported members
  // found so far, each with the object holding it, and returns what it needs.
+-(select) => async () => {
 +//
 +// The site also wraps its API objects in proxies that report no keys, so enumeration alone
 +// finds nothing behind them. For those, a second pass recovers the member keys and sources
 +// from the chunk text and probes each exported object for them; a probed function reports
 +// the recovered source as its own, so the shape checks still see the function's text.
- (select) => async () => {
++(select) => {
++    // The current API core keeps its request helper private. Capture hidden clients when
++    // they are created, before exports are inspected, and restore Proxy after discovery.
++    const clients = new Set();
++    const originalProxy = window.Proxy;
++    const trackingProxy = new originalProxy(originalProxy, {
++        construct(constructor, args) {
++            const proxy = Reflect.construct(constructor, args);
++            if (args[1] && typeof args[1].ownKeys === "function") clients.add(args[0]);
++            return proxy;
++        },
++    });
++    window.Proxy = trackingProxy;
      const FIND_TIMEOUT_MS = 10000;
+-    const isGet = (value) => typeof value === "function" &&
+-        String(value).includes(".get(") &&
+-        String(value).endsWith(".data");
 +    const MAX_SOURCE = 6000;
 +    const KEYWORDS = new Set([
 +        "if", "for", "while", "switch", "catch", "return", "function", "else", "do", "new", "typeof",
 +    ]);
-     const isGet = (value) => typeof value === "function" &&
-         String(value).includes(".get(") &&
-         String(value).endsWith(".data");
++    const isGet = (value) => {
++        const source = typeof value === "function" && String(value);
++        if (!source) return false;
++        if (source.includes(".get(") && source.endsWith(".data")) return true;
++        // The obfuscated API uses request({...config, method: decodedGet, url}) instead of get().
++        return /^async\([\w$]+,[\w$]+\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.[\w$]+,"method":[\w$]+\(\d+\),"url":[\w$]+\}\)\)\[[\w$]+\(\d+\)\]$/.test(source);
++    };
 +    const namespaces = new Map();
 +    const memberCache = new Map();
 +    const texts = new Map();
@@ -286,13 +333,13 @@ index 40f16b52..3f2a797c 100644
 +            seen.add(key + "@" + sourceStart);
 +            defs.push({ key, source });
 +        };
-+        for (const match of text.matchAll(/([A-Za-z_$][\w$]*)\s*:\s*(async\s*(?:\([^)]*\)|[\w$]+)\s*=>|\([^)]*\)\s*=>|[\w$]+\s*=>)/g)) {
++        for (const match of text.matchAll(/["']?([A-Za-z_$][\w$]*)["']?\s*:\s*(async\s*(?:\([^)]*\)|[\w$]+)\s*=>|\([^)]*\)\s*=>|[\w$]+\s*=>)/g)) {
 +            add(match[1], match.index + match[0].length - match[2].length, match.index + match[0].length);
 +        }
-+        for (const match of text.matchAll(/\basync\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g)) {
++        for (const match of text.matchAll(/\basync(?:\s+|(?=["']))["']?([A-Za-z_$][\w$]*)["']?\s*\([^)]*\)\s*\{/g)) {
 +            add(match[1], match.index, match.index + match[0].length - 1);
 +        }
-+        for (const match of text.matchAll(/(?:^|[,{;])\s*([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g)) {
++        for (const match of text.matchAll(/(?:^|[,{;])\s*["']?([A-Za-z_$][\w$]*)["']?\s*\([^)]*\)\s*\{/g)) {
 +            add(match[1], match.index + match[0].indexOf(match[1]), match.index + match[0].length - 1);
 +        }
 +        return defs;
@@ -383,9 +430,10 @@ index 40f16b52..3f2a797c 100644
                  }
 +                namespaces.set(url, exported);
 +                memberCache.set(url, enumerate(exported));
-+            }
+             }
 +            members.push(...memberCache.get(url));
 +        }
++        for (const client of clients) members.push(...enumerate({ client }));
 +        // The activity callback and API client can be exported by different chunks.
 +        const found = select(members, isGet);
 +        if (found) return found;
@@ -396,13 +444,36 @@ index 40f16b52..3f2a797c 100644
 +                const hidden = [];
 +                await probeHidden(url, namespaces.get(url), hidden);
 +                hiddenCache.set(url, hidden);
-             }
++            }
 +            members.push(...hiddenCache.get(url));
              const found = select(members, isGet);
              if (found) return found;
          }
+         return null;
+     };
+-    // The site's chunks keep loading after the page's load event
+-    const deadline = Date.now() + FIND_TIMEOUT_MS;
+-    for (;;) {
+-        const api = await find();
+-        if (api || Date.now() >= deadline) return api;
+-        await new Promise((resolve) => setTimeout(resolve, 250));
+-    }
++    return async () => {
++        try {
++            // The site's chunks keep loading after the page's load event.
++            const deadline = Date.now() + FIND_TIMEOUT_MS;
++            for (;;) {
++                const api = await find();
++                if (api || Date.now() >= deadline) return api;
++                await new Promise((resolve) => setTimeout(resolve, 250));
++            }
++        } finally {
++            if (window.Proxy === trackingProxy) window.Proxy = originalProxy;
++        }
++    };
+ }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..5ad9529b 100644
+index 523b26a1..6f9c2958 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -410,7 +481,7 @@ index 523b26a1..5ad9529b 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 59
++    versionCode = 60
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
@@ -436,10 +507,18 @@ index 00000000..1e7f1bde
 +    .maxByOrNull { it.chapter_number }
 +    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..c294627b 100644
+index b9bc9c66..55c63e58 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-@@ -430,7 +430,7 @@ abstract class Comix :
+@@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
+ import keiyoushi.utils.firstInstanceOrNull
+ import keiyoushi.utils.getPreferencesLazy
+ import keiyoushi.utils.int
+-import keiyoushi.utils.long
+ import keiyoushi.utils.parseAs
+ import keiyoushi.utils.runWebView
+ import keiyoushi.utils.string
+@@ -430,7 +429,7 @@ abstract class Comix :
          val scanlatorBlacklist = preferences.scanlatorBlacklist()
          val blacklistSignature = scanlatorBlacklist.sorted().joinToString(",")
          // List settings live on the newest chapter; browse and search results replace a non-library entry's memo
@@ -448,7 +527,67 @@ index b9bc9c66..c294627b 100644
          val fetchUntilKnown = fetchChapters &&
              preferences.fetchChaptersUntilKnown() &&
              listMemo[CHAPTER_LIST_DEDUPLICATED_MEMO]?.booleanOrNull == deduplicateChapters &&
-@@ -570,10 +570,10 @@ abstract class Comix :
+@@ -438,16 +437,8 @@ abstract class Comix :
+             listMemo[CHAPTER_LIST_COMPLETE_MEMO]?.booleanOrNull != false
+         val knownIds = if (fetchUntilKnown) chapters.mapNotNull { it.chapterId() } else emptyList()
+ 
+-        // Only the unchanged-list skip needs the detail before the walk; otherwise the walk's own page carries it
+-        val detailBeforeChapters = if (fetchUntilKnown) getQueries().mangaDetail() else null
+-        // Skip the chapter list when the site's last chapter upload is older than the last full read of it
+-        val unchanged = fetchUntilKnown && run {
+-            val fetchedAt = listMemo[CHAPTER_LIST_FETCHED_AT_MEMO]?.long ?: return@run false
+-            val uploadedBy = detailBeforeChapters?.chapterUpdatedAtFormatted?.let { parseRelativeDate(it, latest = true) } ?: 0L
+-            uploadedBy in 1..fetchedAt
+-        }
+         var walkedQueries: JsonObject? = null
+-        val updatedChapters = if (fetchChapters && !unchanged) {
++        val updatedChapters = if (fetchChapters) {
+             // Site dates are relative ("2w ago"), so keep the date a chapter was first stored with
+             val knownDates = chapters.mapNotNull { chapter ->
+                 chapter.chapterId()?.let { it to chapter.date_upload }?.takeIf { it.second > 0 }
+@@ -455,19 +446,19 @@ abstract class Comix :
+             val mangaSlug = manga.url.removePrefix("/")
+             val fetchStartedAt = System.currentTimeMillis()
+             val chapterList = getWebViewChapterList(manga, knownIds)
++            // A failed refresh must not be reported as an unchanged list or overwrite saved chapters.
++            if (!chapterList.complete) {
++                throw Exception(chapterList.error ?: "Chapter list is incomplete")
++            }
+             // The chapter page carried the detail too, so the manga comes from this same navigation
+             walkedQueries = chapterList.queries?.also {
+                 cachedQueries = it
+                 rememberQueries(getMangaUrl(manga), it)
+             }
+-            if (!chapterList.complete && chapters.isEmpty()) {
+-                throw Exception(chapterList.error ?: "Chapter list is incomplete")
+-            }
+             val fetched = chapterList.chapters.map { it.toSChapter(mangaSlug) }.onEach { chapter ->
+                 chapter.chapterId()?.let(knownDates::get)?.let { chapter.date_upload = it }
+             }
+-            // An incomplete list keeps the stored chapters, and the next refresh walks the whole list again
+-            val candidates = if (fetchUntilKnown || !chapterList.complete) fetched + chapters else fetched
++            val candidates = if (fetchUntilKnown) fetched + chapters else fetched
+             selectChapters(candidates, deduplicateChapters, scanlatorBlacklist).also { selected ->
+                 selected.firstOrNull()?.apply {
+                     memo = buildJsonObject {
+@@ -475,7 +466,7 @@ abstract class Comix :
+                         put(CHAPTER_LIST_DEDUPLICATED_MEMO, deduplicateChapters)
+                         put(CHAPTER_LIST_BLACKLIST_MEMO, blacklistSignature)
+                         put(CHAPTER_LIST_COMPLETE_MEMO, chapterList.complete)
+-                        if (chapterList.complete) put(CHAPTER_LIST_FETCHED_AT_MEMO, fetchStartedAt)
++                        put(CHAPTER_LIST_FETCHED_AT_MEMO, fetchStartedAt)
+                     }
+                 }
+             }
+@@ -484,7 +475,6 @@ abstract class Comix :
+         }
+         val walked = walkedQueries
+         val detail = when {
+-            detailBeforeChapters != null -> detailBeforeChapters
+             !fetchDetails -> null
+             walked != null -> walked.mangaDetail()
+             else -> getQueries().mangaDetail()
+@@ -570,10 +560,10 @@ abstract class Comix :
          knownIds: List<Int>,
      ): ChapterList {
          val mangaId = manga.url.removePrefix("/").substringBefore('-')
@@ -461,7 +600,7 @@ index b9bc9c66..c294627b 100644
          }
          return payload.parseAs<ChapterList>()
      }
-@@ -684,13 +684,12 @@ abstract class Comix :
+@@ -684,13 +674,12 @@ abstract class Comix :
          url: String,
          isDataRequest: ((HttpUrl) -> Boolean)? = null,
          buildScript: ((passPayloadName: String) -> String)? = null,
@@ -477,7 +616,7 @@ index b9bc9c66..c294627b 100644
          return runWebView(timeout = Duration.INFINITE) {
              userAgent = headers["User-Agent"].orEmpty()
              blockImages = true
-@@ -728,15 +727,11 @@ abstract class Comix :
+@@ -728,15 +717,11 @@ abstract class Comix :
  
              jsBridge(bridgeName) { resolve(it) }
              jsBridge(errorBridgeName) { reject(Exception(it)) }
@@ -497,7 +636,7 @@ index b9bc9c66..c294627b 100644
              // Refuse the site's first-tap ad window
              withNativeWebView { it.settings.setSupportMultipleWindows(true) }
  
-@@ -768,8 +763,7 @@ abstract class Comix :
+@@ -768,8 +753,7 @@ abstract class Comix :
                  try { localStorage.setItem("__pu1", "[" + Date.now() + "]"); } catch (e) {}
                  window.$passPayloadName = payload => window.$bridgeName.post(payload);
                  window.$rejectName = message => window.$errorBridgeName.post(message);
@@ -507,7 +646,7 @@ index b9bc9c66..c294627b 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
-@@ -976,7 +970,7 @@ abstract class Comix :
+@@ -976,7 +960,7 @@ abstract class Comix :
  
          private const val DEFAULT_CONTENT_RATING = "suggestive"
          private const val WEBVIEW_TIMEOUT_SECONDS = 120L

@@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
 import keiyoushi.utils.firstInstanceOrNull
 import keiyoushi.utils.getPreferencesLazy
 import keiyoushi.utils.int
-import keiyoushi.utils.long
 import keiyoushi.utils.parseAs
 import keiyoushi.utils.runWebView
 import keiyoushi.utils.string
@@ -438,16 +437,8 @@ abstract class Comix :
             listMemo[CHAPTER_LIST_COMPLETE_MEMO]?.booleanOrNull != false
         val knownIds = if (fetchUntilKnown) chapters.mapNotNull { it.chapterId() } else emptyList()
 
-        // Only the unchanged-list skip needs the detail before the walk; otherwise the walk's own page carries it
-        val detailBeforeChapters = if (fetchUntilKnown) getQueries().mangaDetail() else null
-        // Skip the chapter list when the site's last chapter upload is older than the last full read of it
-        val unchanged = fetchUntilKnown && run {
-            val fetchedAt = listMemo[CHAPTER_LIST_FETCHED_AT_MEMO]?.long ?: return@run false
-            val uploadedBy = detailBeforeChapters?.chapterUpdatedAtFormatted?.let { parseRelativeDate(it, latest = true) } ?: 0L
-            uploadedBy in 1..fetchedAt
-        }
         var walkedQueries: JsonObject? = null
-        val updatedChapters = if (fetchChapters && !unchanged) {
+        val updatedChapters = if (fetchChapters) {
             // Site dates are relative ("2w ago"), so keep the date a chapter was first stored with
             val knownDates = chapters.mapNotNull { chapter ->
                 chapter.chapterId()?.let { it to chapter.date_upload }?.takeIf { it.second > 0 }
@@ -455,19 +446,19 @@ abstract class Comix :
             val mangaSlug = manga.url.removePrefix("/")
             val fetchStartedAt = System.currentTimeMillis()
             val chapterList = getWebViewChapterList(manga, knownIds)
+            // A failed refresh must not be reported as an unchanged list or overwrite saved chapters.
+            if (!chapterList.complete) {
+                throw Exception(chapterList.error ?: "Chapter list is incomplete")
+            }
             // The chapter page carried the detail too, so the manga comes from this same navigation
             walkedQueries = chapterList.queries?.also {
                 cachedQueries = it
                 rememberQueries(getMangaUrl(manga), it)
             }
-            if (!chapterList.complete && chapters.isEmpty()) {
-                throw Exception(chapterList.error ?: "Chapter list is incomplete")
-            }
             val fetched = chapterList.chapters.map { it.toSChapter(mangaSlug) }.onEach { chapter ->
                 chapter.chapterId()?.let(knownDates::get)?.let { chapter.date_upload = it }
             }
-            // An incomplete list keeps the stored chapters, and the next refresh walks the whole list again
-            val candidates = if (fetchUntilKnown || !chapterList.complete) fetched + chapters else fetched
+            val candidates = if (fetchUntilKnown) fetched + chapters else fetched
             selectChapters(candidates, deduplicateChapters, scanlatorBlacklist).also { selected ->
                 selected.firstOrNull()?.apply {
                     memo = buildJsonObject {
@@ -475,7 +466,7 @@ abstract class Comix :
                         put(CHAPTER_LIST_DEDUPLICATED_MEMO, deduplicateChapters)
                         put(CHAPTER_LIST_BLACKLIST_MEMO, blacklistSignature)
                         put(CHAPTER_LIST_COMPLETE_MEMO, chapterList.complete)
-                        if (chapterList.complete) put(CHAPTER_LIST_FETCHED_AT_MEMO, fetchStartedAt)
+                        put(CHAPTER_LIST_FETCHED_AT_MEMO, fetchStartedAt)
                     }
                 }
             }
@@ -484,7 +475,6 @@ abstract class Comix :
         }
         val walked = walkedQueries
         val detail = when {
-            detailBeforeChapters != null -> detailBeforeChapters
             !fetchDetails -> null
             walked != null -> walked.mangaDetail()
             else -> getQueries().mangaDetail()
