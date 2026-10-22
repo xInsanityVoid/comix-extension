@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-22",
+  "scope": "Live site in desktop Playwright WebKit and Chromium, not an iOS device. JavaScript assets are injected at document start as in the extension. Network images/fonts/media are blocked.",
+  "slowFrame": {
+    "scenario": "Bacteriomancer, stored chapters through 15; a controlled same-origin iframe delays window load by 40 seconds while the real site API is ready.",
+    "results": [
+      {
+        "engine": "webkit",
+        "version": 60,
+        "elapsedMs": 45516,
+        "slowResourceRequested": true,
+        "loadFinished": true,
+        "complete": true,
+        "allChapter16Found": true
+      },
+      {
+        "engine": "webkit",
+        "version": 61,
+        "elapsedMs": 3970,
+        "slowResourceRequested": true,
+        "loadFinished": false,
+        "complete": true,
+        "allChapter16Found": true
+      },
+      {
+        "engine": "chromium",
+        "version": 61,
+        "elapsedMs": 4987,
+        "slowResourceRequested": true,
+        "loadFinished": false,
+        "complete": true,
+        "allChapter16Found": true
+      }
+    ]
+  },
+  "filteredRefresh": {
+    "scenario": "God-Level Assassin, simulated library retains 12 Manhuaga entries. Other scanlators are filtered out. The new build also receives the newest raw upload checkpoint from a previously completed full fetch.",
+    "results": [
+      {
+        "engine": "webkit",
+        "version": 60,
+        "elapsedMs": 48667,
+        "storedEntries": 12,
+        "returnedEntries": 240,
+        "complete": true,
+        "requests": 12
+      },
+      {
+        "engine": "webkit",
+        "version": 61,
+        "elapsedMs": 3825,
+        "storedEntries": 12,
+        "returnedEntries": 20,
+        "complete": true,
+        "requests": 1
+      },
+      {
+        "engine": "chromium",
+        "version": 61,
+        "elapsedMs": 4675,
+        "storedEntries": 12,
+        "returnedEntries": 20,
+        "complete": true,
+        "requests": 1
+      }
+    ]
+  },
+  "newUploads": {
+    "scenario": "The same filtered library has a checkpoint 35 raw uploads behind. Both engines must retrieve every one of the 35 new entries before stopping.",
+    "results": [
+      {
+        "engine": "webkit",
+        "elapsedMs": 9067,
+        "entries": 40,
+        "complete": true,
+        "all35NewFound": true,
+        "requestCount": 2
+      },
+      {
+        "engine": "chromium",
+        "elapsedMs": 7574,
+        "entries": 40,
+        "complete": true,
+        "all35NewFound": true,
+        "requestCount": 2
+      }
+    ]
+  }
+}

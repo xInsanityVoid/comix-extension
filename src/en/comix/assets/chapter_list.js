@@ -115,6 +115,7 @@
     };
 
     const start = () => walk().catch((e) => finish(false, e && e.message || String(e)));
-    if (document.readyState === "complete") start();
-    else window.addEventListener("load", start, { once: true });
+    // Images, ads and other subresources can hold up load long after the API is ready.
+    if (document.readyState !== "loading") start();
+    else document.addEventListener("DOMContentLoaded", start, { once: true });
 }

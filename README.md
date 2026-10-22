@@ -1,16 +1,16 @@
 # COMIX extension fix
 
-Independent build of [Keiyoushi's COMIX extension](https://github.com/keiyoushi/extensions-source/tree/ff521c17bb3e503c01e658e8fac00b60a95829f3/src/en/comix), version **1.6.60**, build **106060**.
+Independent build of [Keiyoushi's COMIX extension](https://github.com/keiyoushi/extensions-source/tree/ff521c17bb3e503c01e658e8fac00b60a95829f3/src/en/comix), version **1.6.61**, build **106061**.
 
-Fixes chapter discovery after COMIX moved its request helper into a private, obfuscated API core. Also prevents failed refreshes from being reported as an unchanged chapter list.
+Speeds up chapter refreshes by starting at document readiness and remembering uploads hidden by chapter deduplication or scanlator filters. Includes the previous API-discovery and missing-chapter fixes.
 
 ## Install or update
 
-Refresh your reader's existing extension repository and update COMIX to **1.6.60**, then refresh the affected title.
+Refresh your reader's existing extension repository and update COMIX to **1.6.61**, then refresh the affected title.
 
-- [Release and checksums](https://github.com/xInsanityVoid/comix-extension/releases/tag/v1.6.60)
-- [Android APK](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.60/tachiyomi-en.comix-v1.6.60.apk)
-- [Extension JAR](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.60/tachiyomi-en.comix-v1.6.60.jar)
+- [Release and checksums](https://github.com/xInsanityVoid/comix-extension/releases/tag/v1.6.61)
+- [Android APK](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.61/tachiyomi-en.comix-v1.6.61.apk)
+- [Extension JAR](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.61/tachiyomi-en.comix-v1.6.61.jar)
 
 Repository URL:
 
@@ -18,31 +18,30 @@ Repository URL:
 https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/index.pb
 ```
 
-[Repository descriptor](https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/repo.json). The repository uses upstream's protobuf format and requires extension API 1.6. Both the APK and repository index advertise build **106060**.
+[Repository descriptor](https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/repo.json). The repository uses upstream's protobuf format and requires extension API 1.6. Both the APK and repository index advertise build **106061**.
 
 The package, source ID and signing key are unchanged from our previous builds. Updates from this repository do not require uninstalling. On Android, switching from the official Keiyoushi-signed APK requires uninstalling only that extension first; keep the reader and library.
 
-## Changes in 1.6.60
+## Changes in 1.6.61
 
-The current site build hides the request helper from module exports and uses quoted method names and indirect property lookups. Export probing alone could no longer find the API. Discovery now captures hidden clients when the page creates them, recognizes the new request and chapter method shapes, and retains the upstream fallback for exported objects and alternate script locations. The temporary Proxy constructor observer is restored after discovery, including failure paths. No mangled method names or numeric string-table positions are hardcoded.
+Chapter checks start at DOMContentLoaded instead of waiting for the full window load event. Unrelated slow frames and other subresources no longer delay an otherwise ready API. Discovery still waits for the site's JavaScript client when needed.
 
-Chapter pages use the site's discovered request helper with the established chapter endpoint. The site still performs request signing and decoding. Native touch events and visible chapter controls are not required.
+A successful refresh now saves the ID of the newest raw upload alongside the selected chapter's existing refresh metadata. Previously, an upload hidden by deduplication or a scanlator blacklist was absent from the stored chapter IDs. Later refreshes could repeatedly scan many pages to find a retained chapter. With **Faster chapter list fetching** enabled, the saved raw-upload ID lets the next check stop at already-inspected uploads, even when those uploads are hidden from the displayed list.
 
-The Kotlin refresh path previously swallowed incomplete results for existing libraries. An API-discovery failure could therefore appear as no new chapters found. All incomplete chapter refreshes now throw before caching, mapping or modifying saved chapters. Existing library entries remain untouched on failure.
+Every requested refresh still checks the live chapter API. The checkpoint advances only after a complete response. Changed deduplication/blacklist settings, an incomplete prior list, or disabling faster fetching still require a full scan. Existing saved chapters and upload dates are preserved. Failed refreshes remain errors rather than being reported as no new chapters.
 
-Every requested chapter refresh consults the chapter API. The shortcut based on a relative last-upload date has been removed. Known-ID early stopping remains available with **Faster chapter list fetching** enabled, and stored upload dates are preserved. Chapter-order-independent metadata lookup, sequential pacing, progress signals and the 60-second inactivity timeout are retained.
+The first refresh after upgrading may still need to scan several pages to establish the checkpoint. Initial imports and full refreshes remain paced in 20-entry batches: larger pages and aggressively shortened delays failed live tests. This release retains the working request pacing and does not change reader-imposed timeouts or Tachimanga's global-update exclusion settings.
 
-Initial imports and full refreshes remain paced by COMIX. This build does not change timeouts imposed by a reader.
+Private API discovery, upstream export probing, native-free requests and the previous chapter-16 fix are retained.
 
 ## Validation
 
-- Reproduced 1.6.59 failing discovery for The Unlimited Bacteriomancer while the site's page advertised chapter 16.
-- WebKit and Chromium: the fixed full fetch returns all 133 scanlation entries, including chapter 16 from Vortex Scans, Lagoon Scans and Genz Toons.
-- Both engines: a simulated library containing chapters through 15 finds all three chapter-16 entries in one chapter API request.
-- Both engines: chapter 16 returns 99 image-page entries.
-- Both engines: 35 simulated new entries on a larger title are found in two chapter requests.
-- 24 JavaScript regression tests passed, including private clients, quoted method names, indirect activity callbacks and existing discovery/pagination behavior.
-- 11 Kotlin tests passed. Six compile the actual production refresh method with lightweight host dependencies; the old 1.6.59 fails four of these regression checks.
+- Controlled slow-frame test on the live Bacteriomancer page: 1.6.60 took 45.5 seconds; 1.6.61 finished in 4.0 seconds on WebKit and 5.0 seconds on Chromium, before the frame completed. All three chapter-16 uploads were found. These are controlled browser measurements, not device timing guarantees.
+- Full Bacteriomancer fetch with early startup returned all 133 scanlation entries in both engines.
+- Filtered-library replay and benchmark results are included in tests/performance-results.json.
+- A saved checkpoint 35 uploads behind still retrieves all 35 new entries across two pages in both engines.
+- 25 JavaScript regression tests passed, including startup without the full load event and existing discovery/pagination behavior.
+- 14 Kotlin tests passed. Nine compile the actual production refresh method with lightweight host dependencies, including hidden-upload checkpoints, settings changes and failure preservation.
 - Release formatting, assembly and lint passed (0 lint errors; 2 existing generated-manifest warnings).
 - APK signature and build number verified; packaged APK/JAR JavaScript matches the tested source.
 

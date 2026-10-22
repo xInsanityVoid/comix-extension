@@ -3,15 +3,19 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const {test} = require('node:test');
 const source = fs.readFileSync(`${__dirname}/../src/en/comix/assets/chapter_list.js`, 'utf8');
-async function read({obfuscated=false,total=43,known=[],failPage,wrongTitle=false,missingActivity=false,ambiguousActivity=false,maxPages=1000}={}) {
+async function read({readyState='complete',obfuscated=false,total=43,known=[],failPage,wrongTitle=false,missingActivity=false,ambiguousActivity=false,maxPages=1000}={}) {
   let now=1000;
-  const requests=[],delays=[],progress=[];
+  const requests=[],delays=[],progress=[],events=[];
   const context=vm.createContext({
     Date:{now:()=>now},
-    document:{readyState:'complete',querySelector(selector){
+    document:{readyState,querySelector(selector){
       assert.equal(selector,'script#initial-data','pagination must not depend on layout');
       return {textContent:JSON.stringify({queries:{detail:{title:'Test'}}})};
-    },addEventListener(){throw Error('No native input available');}},
+    },addEventListener(event,callback,options){
+      assert.equal(event,'DOMContentLoaded');assert.equal(options.once,true);
+      events.push(event);queueMicrotask(callback);
+    }},
+    window:{addEventListener(){throw Error('Do not wait for the full page load');}},
     setTimeout(callback,delay){delays.push(delay);now+=delay;queueMicrotask(callback);},
     http:{async get(url,{params}){
       assert.equal(context.activityAt,now);
@@ -38,7 +42,7 @@ async function read({obfuscated=false,total=43,known=[],failPage,wrongTitle=fals
     ],value=>typeof value==='function'&&String(value).endsWith('.data'));
   `,context);
   const result=await new Promise(resolve=>{context.pass=p=>resolve(JSON.parse(p));vm.runInContext(`(${source})(siteApi,known,'abc','/title/abc-',maxPages,pass,progress)`,context);});
-  return {result,requests,delays,progress};
+  return {result,requests,delays,progress,events};
 }
 test('fetches all pages without layout or native input',async()=>{
   const {result,requests,delays,progress}=await read();
@@ -62,4 +66,12 @@ test('does not mark a capped list complete',async()=>{const {result}=await read(
 test('obfuscated method names, item mapping and activity callback still paginate',async()=>{
   const {result,requests}=await read({obfuscated:true});
   assert.equal(result.complete,true);assert.equal(result.chapters.length,43);assert.deepEqual(requests,[1,2,3]);
+});
+
+test('starts on DOM readiness while images and other load resources remain pending',async()=>{
+  for(const readyState of ['loading','interactive']){
+    const {result,events,requests}=await read({readyState,known:[1]});
+    assert.equal(result.complete,true);assert.deepEqual(requests,[1]);
+    assert.deepEqual(events,readyState==='loading'?['DOMContentLoaded']:[]);
+  }
 });

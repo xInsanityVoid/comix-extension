@@ -104,4 +104,57 @@ class RefreshTest {
         assertEquals(0, host.chapterRequests)
         assertEquals(1, host.detailNavigations)
     }
+
+    @Test fun `remembers newest raw upload even when selection hides it`() {
+        val kept = stored()
+        val host = RefreshHarness().apply {
+            nextChapterList = ChapterList(listOf(Chapter(14f, id = 900), Chapter(15f)), true)
+            selectionResult = listOf(kept)
+        }
+        val first = runSuspend { host.fetchMangaUpdate(manga, listOf(kept), false, true) }
+        assertEquals(900, first.chapters.single().memo[CHAPTER_LIST_LATEST_ID_MEMO]?.int)
+        assertEquals(listOf(15), first.chapters.map { it.id })
+
+        runSuspend { host.fetchMangaUpdate(manga, first.chapters, false, true) }
+        assertEquals(listOf(15, 900), host.requestedKnownIds)
+        assertEquals(2, host.chapterRequests)
+    }
+
+    @Test fun `latest raw upload checkpoint is ignored when full fetching is required`() {
+        for (reason in listOf("disabled", "deduplication", "blacklist", "incomplete")) {
+            val chapter = stored().apply {
+                memo = buildJsonObject {
+                    stored().memo.forEach { (key, value) -> put(key, value) }
+                    put(CHAPTER_LIST_LATEST_ID_MEMO, 900)
+                    if (reason == "incomplete") put(CHAPTER_LIST_COMPLETE_MEMO, false)
+                }
+            }
+            val host = RefreshHarness().apply {
+                preferences.faster = reason != "disabled"
+                preferences.deduplicate = reason == "deduplication"
+                if (reason == "blacklist") preferences.blacklist = setOf("hidden group")
+                nextChapterList = ChapterList(listOf(Chapter(16f)), true)
+            }
+            runSuspend { host.fetchMangaUpdate(manga, listOf(chapter), false, true) }
+            assertTrue(reason, host.requestedKnownIds.isEmpty())
+        }
+    }
+
+    @Test fun `failed refresh cannot advance a saved raw upload checkpoint`() {
+        val chapter = stored().apply {
+            memo = buildJsonObject {
+                stored().memo.forEach { (key, value) -> put(key, value) }
+                put(CHAPTER_LIST_LATEST_ID_MEMO, 900)
+            }
+        }
+        val originalMemo = chapter.memo
+        val host = RefreshHarness().apply {
+            nextChapterList = ChapterList(listOf(Chapter(16f, id = 1000)), false, "HTTP 503")
+        }
+        assertThrows(Exception::class.java) {
+            runSuspend { host.fetchMangaUpdate(manga, listOf(chapter), false, true) }
+        }
+        assertSame(originalMemo, chapter.memo)
+        assertEquals(900, chapter.memo[CHAPTER_LIST_LATEST_ID_MEMO]?.int)
+    }
 }

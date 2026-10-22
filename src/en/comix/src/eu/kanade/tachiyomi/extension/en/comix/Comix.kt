@@ -435,7 +435,13 @@ abstract class Comix :
             listMemo[CHAPTER_LIST_DEDUPLICATED_MEMO]?.booleanOrNull == deduplicateChapters &&
             listMemo[CHAPTER_LIST_BLACKLIST_MEMO]?.string == blacklistSignature &&
             listMemo[CHAPTER_LIST_COMPLETE_MEMO]?.booleanOrNull != false
-        val knownIds = if (fetchUntilKnown) chapters.mapNotNull { it.chapterId() } else emptyList()
+        val knownIds = if (fetchUntilKnown) {
+            // The newest upload may be hidden by deduplication or a scanlator filter.
+            // Keep its ID too, so unchanged lists do not walk through those uploads again.
+            chapters.mapNotNull { it.chapterId() } + listOfNotNull(listMemo[CHAPTER_LIST_LATEST_ID_MEMO]?.int)
+        } else {
+            emptyList()
+        }
 
         var walkedQueries: JsonObject? = null
         val updatedChapters = if (fetchChapters) {
@@ -467,6 +473,7 @@ abstract class Comix :
                         put(CHAPTER_LIST_BLACKLIST_MEMO, blacklistSignature)
                         put(CHAPTER_LIST_COMPLETE_MEMO, chapterList.complete)
                         put(CHAPTER_LIST_FETCHED_AT_MEMO, fetchStartedAt)
+                        chapterList.chapters.firstOrNull()?.id?.let { put(CHAPTER_LIST_LATEST_ID_MEMO, it) }
                     }
                 }
             }

@@ -1,5 +1,5 @@
 diff --git a/src/en/comix/assets/chapter_list.js b/src/en/comix/assets/chapter_list.js
-index d7dad967..4e59f323 100644
+index d7dad967..4fd6a618 100644
 --- a/src/en/comix/assets/chapter_list.js
 +++ b/src/en/comix/assets/chapter_list.js
 @@ -1,10 +1,5 @@
@@ -175,6 +175,16 @@ index d7dad967..4e59f323 100644
          const ids = new Set();
          let meta;
          let removed = false;
+@@ -212,6 +115,7 @@
+     };
+ 
+     const start = () => walk().catch((e) => finish(false, e && e.message || String(e)));
+-    if (document.readyState === "complete") start();
+-    else window.addEventListener("load", start, { once: true });
++    // Images, ads and other subresources can hold up load long after the API is ready.
++    if (document.readyState !== "loading") start();
++    else document.addEventListener("DOMContentLoaded", start, { once: true });
+ }
 diff --git a/src/en/comix/assets/chapter_pages.js b/src/en/comix/assets/chapter_pages.js
 index b8c2346c..2100c5e8 100644
 --- a/src/en/comix/assets/chapter_pages.js
@@ -473,7 +483,7 @@ index 40f16b52..07770202 100644
 +    };
  }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..6f9c2958 100644
+index 523b26a1..2d65d176 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -481,16 +491,16 @@ index 523b26a1..6f9c2958 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 60
++    versionCode = 61
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/ChapterListMemo.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/ChapterListMemo.kt
 new file mode 100644
-index 00000000..1e7f1bde
+index 00000000..3f1d204a
 --- /dev/null
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/ChapterListMemo.kt
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +package eu.kanade.tachiyomi.extension.en.comix
 +
 +import eu.kanade.tachiyomi.source.model.SChapter
@@ -500,6 +510,7 @@ index 00000000..1e7f1bde
 +const val CHAPTER_LIST_BLACKLIST_MEMO = "chapterListBlacklist"
 +const val CHAPTER_LIST_COMPLETE_MEMO = "chapterListComplete"
 +const val CHAPTER_LIST_FETCHED_AT_MEMO = "chapterListFetchedAt"
++const val CHAPTER_LIST_LATEST_ID_MEMO = "chapterListLatestId"
 +
 +// Readers can pass oldest-first lists; the refresh state is stored on the newest selected chapter.
 +internal fun List<SChapter>.chapterListMemo(): JsonObject? = asSequence()
@@ -507,7 +518,7 @@ index 00000000..1e7f1bde
 +    .maxByOrNull { it.chapter_number }
 +    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..55c63e58 100644
+index b9bc9c66..b5206fc2 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 @@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
@@ -518,7 +529,7 @@ index b9bc9c66..55c63e58 100644
  import keiyoushi.utils.parseAs
  import keiyoushi.utils.runWebView
  import keiyoushi.utils.string
-@@ -430,7 +429,7 @@ abstract class Comix :
+@@ -430,24 +429,22 @@ abstract class Comix :
          val scanlatorBlacklist = preferences.scanlatorBlacklist()
          val blacklistSignature = scanlatorBlacklist.sorted().joinToString(",")
          // List settings live on the newest chapter; browse and search results replace a non-library entry's memo
@@ -527,10 +538,10 @@ index b9bc9c66..55c63e58 100644
          val fetchUntilKnown = fetchChapters &&
              preferences.fetchChaptersUntilKnown() &&
              listMemo[CHAPTER_LIST_DEDUPLICATED_MEMO]?.booleanOrNull == deduplicateChapters &&
-@@ -438,16 +437,8 @@ abstract class Comix :
+             listMemo[CHAPTER_LIST_BLACKLIST_MEMO]?.string == blacklistSignature &&
              listMemo[CHAPTER_LIST_COMPLETE_MEMO]?.booleanOrNull != false
-         val knownIds = if (fetchUntilKnown) chapters.mapNotNull { it.chapterId() } else emptyList()
- 
+-        val knownIds = if (fetchUntilKnown) chapters.mapNotNull { it.chapterId() } else emptyList()
+-
 -        // Only the unchanged-list skip needs the detail before the walk; otherwise the walk's own page carries it
 -        val detailBeforeChapters = if (fetchUntilKnown) getQueries().mangaDetail() else null
 -        // Skip the chapter list when the site's last chapter upload is older than the last full read of it
@@ -538,14 +549,21 @@ index b9bc9c66..55c63e58 100644
 -            val fetchedAt = listMemo[CHAPTER_LIST_FETCHED_AT_MEMO]?.long ?: return@run false
 -            val uploadedBy = detailBeforeChapters?.chapterUpdatedAtFormatted?.let { parseRelativeDate(it, latest = true) } ?: 0L
 -            uploadedBy in 1..fetchedAt
--        }
++        val knownIds = if (fetchUntilKnown) {
++            // The newest upload may be hidden by deduplication or a scanlator filter.
++            // Keep its ID too, so unchanged lists do not walk through those uploads again.
++            chapters.mapNotNull { it.chapterId() } + listOfNotNull(listMemo[CHAPTER_LIST_LATEST_ID_MEMO]?.int)
++        } else {
++            emptyList()
+         }
++
          var walkedQueries: JsonObject? = null
 -        val updatedChapters = if (fetchChapters && !unchanged) {
 +        val updatedChapters = if (fetchChapters) {
              // Site dates are relative ("2w ago"), so keep the date a chapter was first stored with
              val knownDates = chapters.mapNotNull { chapter ->
                  chapter.chapterId()?.let { it to chapter.date_upload }?.takeIf { it.second > 0 }
-@@ -455,19 +446,19 @@ abstract class Comix :
+@@ -455,19 +452,19 @@ abstract class Comix :
              val mangaSlug = manga.url.removePrefix("/")
              val fetchStartedAt = System.currentTimeMillis()
              val chapterList = getWebViewChapterList(manga, knownIds)
@@ -570,16 +588,17 @@ index b9bc9c66..55c63e58 100644
              selectChapters(candidates, deduplicateChapters, scanlatorBlacklist).also { selected ->
                  selected.firstOrNull()?.apply {
                      memo = buildJsonObject {
-@@ -475,7 +466,7 @@ abstract class Comix :
+@@ -475,7 +472,8 @@ abstract class Comix :
                          put(CHAPTER_LIST_DEDUPLICATED_MEMO, deduplicateChapters)
                          put(CHAPTER_LIST_BLACKLIST_MEMO, blacklistSignature)
                          put(CHAPTER_LIST_COMPLETE_MEMO, chapterList.complete)
 -                        if (chapterList.complete) put(CHAPTER_LIST_FETCHED_AT_MEMO, fetchStartedAt)
 +                        put(CHAPTER_LIST_FETCHED_AT_MEMO, fetchStartedAt)
++                        chapterList.chapters.firstOrNull()?.id?.let { put(CHAPTER_LIST_LATEST_ID_MEMO, it) }
                      }
                  }
              }
-@@ -484,7 +475,6 @@ abstract class Comix :
+@@ -484,7 +482,6 @@ abstract class Comix :
          }
          val walked = walkedQueries
          val detail = when {
@@ -587,7 +606,7 @@ index b9bc9c66..55c63e58 100644
              !fetchDetails -> null
              walked != null -> walked.mangaDetail()
              else -> getQueries().mangaDetail()
-@@ -570,10 +560,10 @@ abstract class Comix :
+@@ -570,10 +567,10 @@ abstract class Comix :
          knownIds: List<Int>,
      ): ChapterList {
          val mangaId = manga.url.removePrefix("/").substringBefore('-')
@@ -600,7 +619,7 @@ index b9bc9c66..55c63e58 100644
          }
          return payload.parseAs<ChapterList>()
      }
-@@ -684,13 +674,12 @@ abstract class Comix :
+@@ -684,13 +681,12 @@ abstract class Comix :
          url: String,
          isDataRequest: ((HttpUrl) -> Boolean)? = null,
          buildScript: ((passPayloadName: String) -> String)? = null,
@@ -616,7 +635,7 @@ index b9bc9c66..55c63e58 100644
          return runWebView(timeout = Duration.INFINITE) {
              userAgent = headers["User-Agent"].orEmpty()
              blockImages = true
-@@ -728,15 +717,11 @@ abstract class Comix :
+@@ -728,15 +724,11 @@ abstract class Comix :
  
              jsBridge(bridgeName) { resolve(it) }
              jsBridge(errorBridgeName) { reject(Exception(it)) }
@@ -636,7 +655,7 @@ index b9bc9c66..55c63e58 100644
              // Refuse the site's first-tap ad window
              withNativeWebView { it.settings.setSupportMultipleWindows(true) }
  
-@@ -768,8 +753,7 @@ abstract class Comix :
+@@ -768,8 +760,7 @@ abstract class Comix :
                  try { localStorage.setItem("__pu1", "[" + Date.now() + "]"); } catch (e) {}
                  window.$passPayloadName = payload => window.$bridgeName.post(payload);
                  window.$rejectName = message => window.$errorBridgeName.post(message);
@@ -646,7 +665,7 @@ index b9bc9c66..55c63e58 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
-@@ -976,7 +960,7 @@ abstract class Comix :
+@@ -976,7 +967,7 @@ abstract class Comix :
  
          private const val DEFAULT_CONTENT_RATING = "suggestive"
          private const val WEBVIEW_TIMEOUT_SECONDS = 120L

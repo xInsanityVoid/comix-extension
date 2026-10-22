@@ -7,6 +7,7 @@ const val CHAPTER_LIST_DEDUPLICATED_MEMO = "chapterListDeduplicated"
 const val CHAPTER_LIST_BLACKLIST_MEMO = "chapterListBlacklist"
 const val CHAPTER_LIST_COMPLETE_MEMO = "chapterListComplete"
 const val CHAPTER_LIST_FETCHED_AT_MEMO = "chapterListFetchedAt"
+const val CHAPTER_LIST_LATEST_ID_MEMO = "chapterListLatestId"
 
 // Readers can pass oldest-first lists; the refresh state is stored on the newest selected chapter.
 internal fun List<SChapter>.chapterListMemo(): JsonObject? = asSequence()

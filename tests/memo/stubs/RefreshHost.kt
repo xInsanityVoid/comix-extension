@@ -8,10 +8,12 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
+import kotlinx.serialization.json.int
 
 val JsonElement.booleanOrNull get() = jsonPrimitive.booleanOrNull
 val JsonElement.string get() = jsonPrimitive.content
 val JsonElement.long get() = jsonPrimitive.long
+val JsonElement.int get() = jsonPrimitive.int
 
 class RefreshPreferences {
     var faster = true
@@ -51,6 +53,7 @@ abstract class RefreshHost {
     var detailNavigations = 0
     var cachedQueryWrites = 0
     var selectionCalls = 0
+    var selectionResult: List<SChapter>? = null
     var detailParses = 0
     val detailQueries = JsonObject(emptyMap())
     val parsedManga = SManga("/parsed-detail")
@@ -93,6 +96,6 @@ abstract class RefreshHost {
         scanlatorBlacklist: Set<String>,
     ): List<SChapter> {
         selectionCalls++
-        return candidates
+        return selectionResult ?: candidates
     }
 }
