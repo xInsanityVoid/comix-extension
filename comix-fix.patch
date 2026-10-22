@@ -1,0 +1,82 @@
+diff --git a/src/en/comix/assets/site_api.js b/src/en/comix/assets/site_api.js
+index 40f16b52..3bd5f3e0 100644
+--- a/src/en/comix/assets/site_api.js
++++ b/src/en/comix/assets/site_api.js
+@@ -1,7 +1,19 @@
+ // The site's own API client, from the chunks next to the running entry. Every build re-mangles
+ // names, so members are resolved by source shape; the selector receives the exported members
+ // found so far, each with the object holding it, and returns what it needs.
+-(select) => async () => {
++(select) => {
++    // Runs at document start: the site's API proxies hide keys and bind methods on access.
++    const targets = new WeakMap();
++    const originalProxy = window.Proxy;
++    const trackingProxy = new originalProxy(originalProxy, {
++        construct(constructor, args) {
++            const proxy = Reflect.construct(constructor, args);
++            targets.set(proxy, args[0]);
++            return proxy;
++        },
++    });
++    window.Proxy = trackingProxy;
++    const unwrap = (value) => targets.get(value) || value;
+     const FIND_TIMEOUT_MS = 10000;
+     const isGet = (value) => typeof value === "function" &&
+         String(value).includes(".get(") &&
+@@ -15,13 +27,15 @@
+         const directory = entry.slice(0, entry.lastIndexOf("/") + 1);
+         const members = [];
+         for (const url of new Set(scripts.filter((url) => url.startsWith(directory)))) {
+-            for (const [, exported] of Object.entries(await import(url))) {
++            for (const value of Object.values(await import(url))) {
++                const exported = unwrap(value);
+                 if (exported && typeof exported === "object") {
+-                    for (const [key, member] of Object.entries(exported)) {
++                    for (const [key, value] of Object.entries(exported)) {
++                        const member = unwrap(value);
+                         members.push({ owner: exported, key, value: member });
+                         if (member && typeof member === "object") {
+                             for (const [nestedKey, nested] of Object.entries(member)) {
+-                                members.push({ owner: member, key: nestedKey, value: nested });
++                                members.push({ owner: member, key: nestedKey, value: unwrap(nested) });
+                             }
+                         }
+                     }
+@@ -32,11 +46,17 @@
+         }
+         return null;
+     };
+-    // The site's chunks keep loading after the page's load event
+-    const deadline = Date.now() + FIND_TIMEOUT_MS;
+-    for (;;) {
+-        const api = await find();
+-        if (api || Date.now() >= deadline) return api;
+-        await new Promise((resolve) => setTimeout(resolve, 250));
+-    }
++    return async () => {
++        try {
++            // The site's chunks keep loading after the page's load event
++            const deadline = Date.now() + FIND_TIMEOUT_MS;
++            for (;;) {
++                const api = await find();
++                if (api || Date.now() >= deadline) return api;
++                await new Promise((resolve) => setTimeout(resolve, 250));
++            }
++        } finally {
++            if (window.Proxy === trackingProxy) window.Proxy = originalProxy;
++        }
++    };
+ }
+diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
+index 523b26a1..f433d5a0 100644
+--- a/src/en/comix/build.gradle.kts
++++ b/src/en/comix/build.gradle.kts
+@@ -6,7 +6,7 @@ plugins {
+ 
+ keiyoushi {
+     name = "Comix"
+-    versionCode = 54
++    versionCode = 55
+     contentWarning = ContentWarning.MIXED
+     libVersion = "1.6"
+ 
