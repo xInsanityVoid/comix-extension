@@ -145,3 +145,123 @@ test('stored-chapter checks ignore full-fetch cache and do not replace it',async
   assert.deepEqual(fetched.requests,[1,2]);
   assert.deepEqual(fetched.checkpoints,[]);
 });
+
+// These are the current site methods, with their shared pagination mapper and
+// character-code params key. Keep both: their signatures alone are ambiguous.
+const currentMangaMethod='async"r4"(F,Y={}){const JK=Y1,R=ll.gV.r4(F);Se(R,Y[JK(807)]);const u={};return u[hj]=Y,function(p){return nl(p,$m)}(await tj.O3(R,u))}';
+const currentGroupMethod='async"r4"(F,Y={}){const XK=Y1,R=ll.DP.r4(F);Se(R,Y[XK(807)]);const u={};return u[XK(1664)]=Y,function(p){return nl(p,wm)}(await tj.O3(R,u))}';
+
+async function readCurrent({kinds=['group','manga'],duplicates=false,endpoint='/manga/abc/chapters',paramsExpression,lockGet=false,missingHelper=false}={}) {
+  const requests=[],registrations=[],mapped=[];
+  const context=vm.createContext({
+    Date:{now:()=>1000},
+    document:{readyState:'complete',querySelector:()=>null},
+    setTimeout:callback=>queueMicrotask(callback),
+    kinds,duplicates,endpoint,lockGet,requests,registrations,mapped,
+    network:async config=>{
+      requests.push({url:config.url,method:config.method,page:config.params.page});
+      assert.equal(context.activityAt,1000,'a probe must not reach the real request helper');
+      return {data:{items:[{id:1,number:16,url:'/title/abc-name/1-chapter-16'}],meta:{lastPage:1,total:1}}};
+    },
+  });
+  const mangaMethod=paramsExpression
+    ? `async chapters(a,b={}){return function(a){return{items:a.items.map(mapper),meta:a.meta}}(await tj.O3('/manga/'+a+'/chapters',{params:${paramsExpression}}))}`
+    : currentMangaMethod.replace('tj.O3',missingHelper?'tj.Q9':'tj.O3');
+  vm.runInContext(`
+    var activityAt=0;
+    function renamedCallback(){activityAt=Date.now()}
+    const Y1=n=>({807:'page',1664:'params',1104:'request'})[n];
+    const hj=String.fromCharCode(112,97,114,97,109,115);
+    const lj=String.fromCharCode(109,101,116,104,111,100);
+    const mj=String.fromCharCode(103,101,116);
+    const nj=String.fromCharCode(100,97,116,97);
+    const oj={request:network};
+    const tj={"O3":async(p,F)=>(await oj[Y1(1104)]({...F,[lj]:mj,"url":p}))[nj]};
+    const originalGet=tj.O3;
+    tj.Q9=originalGet;
+    if(lockGet)Object.defineProperty(tj,'O3',{writable:false});
+    const ll={gV:{r4:id=>endpoint},DP:{r4:id=>'/groups/'+id+'/chapters'}};
+    function Se(url,page){registrations.push({url,page})}
+    const $m=item=>item,wm=item=>item,mapper=item=>item;
+    function nl(page,mapper){mapped.push(page.items.length);return {zP:page.items.map(mapper),bf:page.meta}}
+    const group={${currentGroupMethod}};
+    const manga={${mangaMethod}};
+    const anotherManga={${mangaMethod}};
+    const methodKey=${JSON.stringify(paramsExpression?'chapters':'r4')};
+    const owners={group,manga,anotherManga};
+    const members=[{owner:tj,key:'O3',value:originalGet},{value:renamedCallback},...kinds.map(kind=>{
+      const owner=owners[kind],key=kind==='group'?'r4':methodKey;
+      return {owner,key,value:owner[key]};
+    })];
+    if(duplicates)for(const member of members.slice()){
+      if(!member.owner)continue;
+      const wrapped=function(...args){return member.value(...args)};
+      wrapped.toString=()=>String(member.value);
+      members.push({...member,value:wrapped});
+    }
+    const siteApi=select=>async()=>select(members,value=>String(value)===String(originalGet));
+  `,context);
+  const result=await new Promise(resolve=>{
+    context.pass=value=>resolve(JSON.parse(value));
+    vm.runInContext(`(${source})(siteApi,[],'abc','/title/abc-',1000,pass)`,context);
+  });
+  return {result,requests,registrations,mapped};
+}
+
+test('current shared-map methods choose manga chapters when the group candidate appears first',async()=>{
+  const {result,requests,registrations,mapped}=await readCurrent();
+  assert.equal(result.complete,true);
+  assert.equal(result.chapters[0].number,16);
+  assert.deepEqual(registrations.map(call=>call.url),['/groups/abc/chapters','/manga/abc/chapters','/manga/abc/chapters']);
+  assert.deepEqual(requests,[{url:'/manga/abc/chapters',method:'get',page:1}],'both selection probes must stop before network');
+  assert.deepEqual(mapped,[1],'probe responses must never enter the shared mapper');
+});
+
+test('duplicate wrappers for an owner and key do not create ambiguous chapter methods or duplicate requests',async()=>{
+  const {result,requests,registrations}=await readCurrent({duplicates:true});
+  assert.equal(result.complete,true);
+  assert.equal(requests.length,1);
+  assert.equal(registrations.length,3,'each unique owner/key should be probed exactly once');
+});
+
+test('missing and ambiguous manga endpoints fail closed without fetching a chapter page',async()=>{
+  for(const options of [{kinds:['group']},{endpoint:'/manga/wrong/chapters'},{kinds:['group','manga','anotherManga']}]){
+    const {result,requests,mapped}=await readCurrent(options);
+    assert.equal(result.complete,false,JSON.stringify(options));
+    assert.equal(result.chapters.length,0);
+    assert.match(result.error,/identify.*manga chapters API/);
+    assert.deepEqual(requests,[]);
+    assert.deepEqual(mapped,[]);
+  }
+});
+
+test('chapter probes reject copied, altered or filtered request parameters',async()=>{
+  for(const paramsExpression of [
+    '{...b}',
+    'Object.assign(b,{page:2})',
+    'Object.assign(b,{limit:100})',
+    'Object.assign(b,{order:{created_at:"asc"}})',
+    'Object.assign(b,{order:{created_at:"desc",number:"asc"}})',
+    'Object.assign(b,{scanlator_id:123})',
+  ]){
+    const {result,requests}=await readCurrent({kinds:['manga'],paramsExpression});
+    assert.equal(result.complete,false,paramsExpression);
+    assert.equal(result.chapters.length,0);
+    assert.match(result.error,/identify.*manga chapters API/);
+    assert.deepEqual(requests,[],paramsExpression);
+  }
+});
+
+test('a read-only GET target fails before any preflight can reach the network',async()=>{
+  const {result,requests}=await readCurrent({lockGet:true});
+  assert.equal(result.complete,false);
+  assert.match(result.error,/intercept.*chapter API/);
+  assert.deepEqual(requests,[]);
+});
+
+test('a current method whose GET helper was not discovered is never invoked',async()=>{
+  const {result,requests}=await readCurrent({kinds:['manga'],missingHelper:true});
+  assert.equal(result.complete,false);
+  assert.match(result.error,/chapters API/);
+  assert.deepEqual(requests,[]);
+});

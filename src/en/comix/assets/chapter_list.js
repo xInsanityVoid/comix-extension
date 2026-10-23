@@ -15,7 +15,9 @@
             /^(?:async [\w$]+ ?|async ?|[\w$]+ ?)?\([\w$]+,[\w$]+=\{\}\)(?:=>|\{)/.test(source) &&
             ((source.includes(".items.map(") && source.includes(".meta") &&
                 source.includes("{params:") && !/\.items\.map\([\w$]+=>/.test(source)) ||
-                /\{"items":[\w$]+,"meta":[\w$]+\}=[\w$]+/.test(source));
+                /\{"items":[\w$]+,"meta":[\w$]+\}=[\w$]+/.test(source) ||
+                // New builds share the list mapper instead of spelling out items/meta here.
+                /^async [\w$]+\(([\w$]+),([\w$]+)=\{\}\)\{const ([\w$]+)=[\w$]+,([\w$]+)=[\w$]+\.[\w$]+\.[\w$]+\(\1\);[\w$]+\(\4,\2\[\3\(\d+\)\]\);const ([\w$]+)=\{\};return \5\[(?:[\w$]+|\3\(\d+\))\]=\2,function\(([\w$]+)\)\{return [\w$]+\(\6,[\w$]+\)\}\(await ([\w$]+)\.([\w$]+)\(\4,\5\)\)\}$/.test(source));
     };
     // The site's exported activity callback records the timestamp used by its pagination client.
     // Resolve its source shape, since export names change with each site build.
@@ -23,26 +25,69 @@
         /^function(?: [\w$]+)?\(\)\{[\w$]+=Date(?:\.now|\[[\w$]+\(\d+\)\])\(\);?\}$/.test(String(value));
     // The walk reads the raw pages the helper returns to the site's own code
     const findChaptersApi = siteApi((members, isGet) => {
-        const method = members.map((member) => member.value).find(isChapterMethod);
-        const target = members.find((member) => isGet(member.value));
+        const uniqueMembers = (test) => members.filter((member) => test(member.value)).filter(
+            (member, index, matches) => matches.findIndex((other) => other.owner === member.owner && other.key === member.key) === index,
+        );
+        const targets = uniqueMembers(isGet);
+        const candidates = uniqueMembers(isChapterMethod).filter((member) => {
+            const sharedGet = String(member.value).match(/\(await [\w$]+\.([\w$]+)\([\w$]+,[\w$]+\)\)\}$/);
+            return !sharedGet || targets.some((target) => target.key === sharedGet[1]);
+        });
         const callbacks = [...new Set(members.map((member) => member.value).filter(isActivityCallback))];
-        if (!method || !target || callbacks.length !== 1) return null;
+        if (!candidates.length || !targets.length || callbacks.length !== 1) return null;
         const activity = callbacks[0];
         const records = [];
-        const original = target.value;
+        let probing = false;
+        let probeRecords = [];
         const isChapterList = (url) => /^\/manga\/[^/]+\/chapters$/.test(String(url));
-        target.owner[target.key] = async (url, config) => {
-            const params = config && config.params;
-            try {
-                const result = await original.call(target.owner, url, config);
-                if (isChapterList(url)) records.push({ url, params, result });
-                return result;
-            } catch (error) {
-                if (isChapterList(url)) records.push({ url, params, error });
-                throw error;
+        for (const target of targets) {
+            const original = target.value;
+            const intercepted = async (url, config) => {
+                const params = config && config.params;
+                // Identify the read method locally. Other site requests still use the original GET.
+                if (probing) {
+                    probeRecords.push({ url: String(url), params });
+                    throw new Error("Chapter method probe");
+                }
+                try {
+                    const result = await original.call(target.owner, url, config);
+                    if (isChapterList(url)) records.push({ url, params, result });
+                    return result;
+                } catch (error) {
+                    if (isChapterList(url)) records.push({ url, params, error });
+                    throw error;
+                }
+            };
+            if (!Reflect.set(target.owner, target.key, intercepted)) {
+                throw new Error("Could not intercept the site's chapter API");
             }
+        }
+        const selectMethod = async () => {
+            const matches = [];
+            for (const candidate of candidates) {
+                const params = { page: 1, limit: 20, order: { created_at: "desc" } };
+                const expectedParams = JSON.stringify(params);
+                probeRecords = [];
+                try {
+                    // These method shapes call GET before their first await. Only that synchronous
+                    // prefix is intercepted, so background requests cannot be mistaken for probes.
+                    let pending;
+                    probing = true;
+                    try { pending = candidate.value(mangaId, params); }
+                    finally { probing = false; }
+                    await pending;
+                } catch (e) {
+                    // The GET wrapper stops the probe before any network request or mapping.
+                } finally {
+                    probing = false;
+                }
+                if (probeRecords.length === 1 && probeRecords[0].url === `/manga/${mangaId}/chapters` &&
+                    probeRecords[0].params === params && JSON.stringify(params) === expectedParams) matches.push(candidate.value);
+            }
+            if (matches.length !== 1) throw new Error("Could not identify the site's manga chapters API");
+            return matches[0];
         };
-        return { method, records, activity };
+        return { selectMethod, records, activity };
     });
     // The detail lives in the same document, so the caller reads the manga from this one load
     const queries = () => {
@@ -90,6 +135,7 @@
     const walk = async () => {
         const api = await findChaptersApi();
         if (!api) return finish(false, "Could not find the site's chapters API");
+        api.method = await api.selectMethod();
         const ids = new Set();
         let meta;
         let removed = false;

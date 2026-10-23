@@ -29,7 +29,9 @@
         if (!source) return false;
         if (source.includes(".get(") && source.endsWith(".data")) return true;
         // The obfuscated API uses request({...config, method: decodedGet, url}) instead of get().
-        return /^async\([\w$]+,[\w$]+\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.[\w$]+,"method":[\w$]+\(\d+\),"url":[\w$]+\}\)\)\[[\w$]+\(\d+\)\]$/.test(source);
+        if (/^async\([\w$]+,[\w$]+\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.[\w$]+,"method":[\w$]+\(\d+\),"url":[\w$]+\}\)\)\[[\w$]+\(\d+\)\]$/.test(source)) return true;
+        // New builds lift method/get/data into character-code constants outside this function.
+        return /^async\(([\w$]+),([\w$]+)\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.\2,\[[\w$]+\]:[\w$]+,"url":\1\}\)\)\[[\w$]+\]$/.test(source);
     };
     const namespaces = new Map();
     const memberCache = new Map();

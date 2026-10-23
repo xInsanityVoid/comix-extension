@@ -1,5 +1,5 @@
 diff --git a/src/en/comix/assets/chapter_list.js b/src/en/comix/assets/chapter_list.js
-index d7dad967..3677f4cf 100644
+index d7dad967..d2e2e190 100644
 --- a/src/en/comix/assets/chapter_list.js
 +++ b/src/en/comix/assets/chapter_list.js
 @@ -1,10 +1,5 @@
@@ -15,7 +15,7 @@ index d7dad967..3677f4cf 100644
      const known = new Set(knownIds);
      const chapters = [];
      const isChapter = (item) => item &&
-@@ -15,19 +10,24 @@
+@@ -15,34 +10,84 @@
      // The site's method: two arguments with an object default for the second, items mapped through
      // a named mapper, the params forwarded to the GET helper
      const isChapterMethod = (value) => {
@@ -29,7 +29,9 @@ index d7dad967..3677f4cf 100644
 -            !/\.items\.map\([\w$]+=>/.test(source);
 +            ((source.includes(".items.map(") && source.includes(".meta") &&
 +                source.includes("{params:") && !/\.items\.map\([\w$]+=>/.test(source)) ||
-+                /\{"items":[\w$]+,"meta":[\w$]+\}=[\w$]+/.test(source));
++                /\{"items":[\w$]+,"meta":[\w$]+\}=[\w$]+/.test(source) ||
++                // New builds share the list mapper instead of spelling out items/meta here.
++                /^async [\w$]+\(([\w$]+),([\w$]+)=\{\}\)\{const ([\w$]+)=[\w$]+,([\w$]+)=[\w$]+\.[\w$]+\.[\w$]+\(\1\);[\w$]+\(\4,\2\[\3\(\d+\)\]\);const ([\w$]+)=\{\};return \5\[(?:[\w$]+|\3\(\d+\))\]=\2,function\(([\w$]+)\)\{return [\w$]+\(\6,[\w$]+\)\}\(await ([\w$]+)\.([\w$]+)\(\4,\5\)\)\}$/.test(source));
      };
 +    // The site's exported activity callback records the timestamp used by its pagination client.
 +    // Resolve its source shape, since export names change with each site build.
@@ -37,34 +39,87 @@ index d7dad967..3677f4cf 100644
 +        /^function(?: [\w$]+)?\(\)\{[\w$]+=Date(?:\.now|\[[\w$]+\(\d+\)\])\(\);?\}$/.test(String(value));
      // The walk reads the raw pages the helper returns to the site's own code
      const findChaptersApi = siteApi((members, isGet) => {
-         const method = members.map((member) => member.value).find(isChapterMethod);
-         const target = members.find((member) => isGet(member.value));
+-        const method = members.map((member) => member.value).find(isChapterMethod);
+-        const target = members.find((member) => isGet(member.value));
 -        if (!method || !target) return null;
++        const uniqueMembers = (test) => members.filter((member) => test(member.value)).filter(
++            (member, index, matches) => matches.findIndex((other) => other.owner === member.owner && other.key === member.key) === index,
++        );
++        const targets = uniqueMembers(isGet);
++        const candidates = uniqueMembers(isChapterMethod).filter((member) => {
++            const sharedGet = String(member.value).match(/\(await [\w$]+\.([\w$]+)\([\w$]+,[\w$]+\)\)\}$/);
++            return !sharedGet || targets.some((target) => target.key === sharedGet[1]);
++        });
 +        const callbacks = [...new Set(members.map((member) => member.value).filter(isActivityCallback))];
-+        if (!method || !target || callbacks.length !== 1) return null;
++        if (!candidates.length || !targets.length || callbacks.length !== 1) return null;
 +        const activity = callbacks[0];
          const records = [];
-         const original = target.value;
+-        const original = target.value;
++        let probing = false;
++        let probeRecords = [];
          const isChapterList = (url) => /^\/manga\/[^/]+\/chapters$/.test(String(url));
-@@ -35,14 +35,14 @@
-             const params = config && config.params;
-             try {
-                 const result = await original.call(target.owner, url, config);
+-        target.owner[target.key] = async (url, config) => {
+-            const params = config && config.params;
+-            try {
+-                const result = await original.call(target.owner, url, config);
 -                if (isChapterList(url)) records.push({ params, result });
-+                if (isChapterList(url)) records.push({ url, params, result });
-                 return result;
-             } catch (error) {
+-                return result;
+-            } catch (error) {
 -                if (isChapterList(url)) records.push({ params, error });
-+                if (isChapterList(url)) records.push({ url, params, error });
-                 throw error;
+-                throw error;
++        for (const target of targets) {
++            const original = target.value;
++            const intercepted = async (url, config) => {
++                const params = config && config.params;
++                // Identify the read method locally. Other site requests still use the original GET.
++                if (probing) {
++                    probeRecords.push({ url: String(url), params });
++                    throw new Error("Chapter method probe");
++                }
++                try {
++                    const result = await original.call(target.owner, url, config);
++                    if (isChapterList(url)) records.push({ url, params, result });
++                    return result;
++                } catch (error) {
++                    if (isChapterList(url)) records.push({ url, params, error });
++                    throw error;
++                }
++            };
++            if (!Reflect.set(target.owner, target.key, intercepted)) {
++                throw new Error("Could not intercept the site's chapter API");
++            }
++        }
++        const selectMethod = async () => {
++            const matches = [];
++            for (const candidate of candidates) {
++                const params = { page: 1, limit: 20, order: { created_at: "desc" } };
++                const expectedParams = JSON.stringify(params);
++                probeRecords = [];
++                try {
++                    // These method shapes call GET before their first await. Only that synchronous
++                    // prefix is intercepted, so background requests cannot be mistaken for probes.
++                    let pending;
++                    probing = true;
++                    try { pending = candidate.value(mangaId, params); }
++                    finally { probing = false; }
++                    await pending;
++                } catch (e) {
++                    // The GET wrapper stops the probe before any network request or mapping.
++                } finally {
++                    probing = false;
++                }
++                if (probeRecords.length === 1 && probeRecords[0].url === `/manga/${mangaId}/chapters` &&
++                    probeRecords[0].params === params && JSON.stringify(params) === expectedParams) matches.push(candidate.value);
              }
++            if (matches.length !== 1) throw new Error("Could not identify the site's manga chapters API");
++            return matches[0];
          };
 -        return { method, records };
-+        return { method, records, activity };
++        return { selectMethod, records, activity };
      });
      // The detail lives in the same document, so the caller reads the manga from this one load
      const queries = () => {
-@@ -51,107 +51,13 @@
+@@ -51,107 +96,13 @@
      };
      const finish = (complete, error) => pass(JSON.stringify({ chapters, complete, error, queries: queries() }));
      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -178,7 +233,7 @@ index d7dad967..3677f4cf 100644
          const before = api.records.length;
          try {
              await api.method(mangaId, { page, limit: 20, order: { created_at: "desc" } });
-@@ -161,7 +67,8 @@
+@@ -161,7 +112,8 @@
          // The method's return has key names that change every build; the raw page the helper hands
          // it does not. The records can also hold the site's own requests, so ours is matched by params
          const record = api.records.slice(before).find(
@@ -188,15 +243,16 @@ index d7dad967..3677f4cf 100644
                  record.params.order.created_at === "desc",
          );
          if (!record) throw new Error(`Chapter page ${page} didn't come back`);
-@@ -183,7 +90,6 @@
+@@ -183,7 +135,7 @@
      const walk = async () => {
          const api = await findChaptersApi();
          if (!api) return finish(false, "Could not find the site's chapters API");
 -        await waitForSection();
++        api.method = await api.selectMethod();
          const ids = new Set();
          let meta;
          let removed = false;
-@@ -193,11 +99,41 @@
+@@ -193,11 +145,41 @@
              if (meta && result.meta.total < meta.total) removed = true;
              meta = result.meta;
          };
@@ -240,7 +296,7 @@ index d7dad967..3677f4cf 100644
          }
          // Chapters uploaded during the walk, from the top of the list
          for (let page = 1; ids.size < meta.total && page <= Math.min(meta.lastPage, maxPages); page++) {
-@@ -212,6 +148,7 @@
+@@ -212,6 +194,7 @@
      };
  
      const start = () => walk().catch((e) => finish(false, e && e.message || String(e)));
@@ -266,10 +322,10 @@ index b8c2346c..2100c5e8 100644
      const isPages = (value) => value &&
          Array.isArray(value.items) &&
 diff --git a/src/en/comix/assets/site_api.js b/src/en/comix/assets/site_api.js
-index 40f16b52..07770202 100644
+index 40f16b52..f2eef4e2 100644
 --- a/src/en/comix/assets/site_api.js
 +++ b/src/en/comix/assets/site_api.js
-@@ -1,42 +1,254 @@
+@@ -1,42 +1,256 @@
  // The site's own API client, from the chunks next to the running entry. Every build re-mangles
  // names, so members are resolved by source shape; the selector receives the exported members
  // found so far, each with the object holding it, and returns what it needs.
@@ -305,7 +361,9 @@ index 40f16b52..07770202 100644
 +        if (!source) return false;
 +        if (source.includes(".get(") && source.endsWith(".data")) return true;
 +        // The obfuscated API uses request({...config, method: decodedGet, url}) instead of get().
-+        return /^async\([\w$]+,[\w$]+\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.[\w$]+,"method":[\w$]+\(\d+\),"url":[\w$]+\}\)\)\[[\w$]+\(\d+\)\]$/.test(source);
++        if (/^async\([\w$]+,[\w$]+\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.[\w$]+,"method":[\w$]+\(\d+\),"url":[\w$]+\}\)\)\[[\w$]+\(\d+\)\]$/.test(source)) return true;
++        // New builds lift method/get/data into character-code constants outside this function.
++        return /^async\(([\w$]+),([\w$]+)\)=>\(await [\w$]+\[[\w$]+\(\d+\)\]\(\{\.\.\.\2,\[[\w$]+\]:[\w$]+,"url":\1\}\)\)\[[\w$]+\]$/.test(source);
 +    };
 +    const namespaces = new Map();
 +    const memberCache = new Map();
@@ -548,7 +606,7 @@ index 40f16b52..07770202 100644
 +    };
  }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..8ca2fecc 100644
+index 523b26a1..cb9db1a4 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -556,7 +614,7 @@ index 523b26a1..8ca2fecc 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 62
++    versionCode = 63
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  

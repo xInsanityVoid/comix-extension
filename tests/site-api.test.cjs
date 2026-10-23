@@ -201,3 +201,52 @@ test('does not overwrite another script replacement of Proxy', async () => {
     assert.ok(await ctx.findApi());
     assert.equal(vm.runInContext('Proxy',ctx),ctx.replacement);
 });
+
+const characterCodeGetter = 'const currentClient={"O3":async(p,F)=>(await oj[Y1(1104)]({...F,[lj]:mj,"url":p}))[nj]};';
+const characterCodeSetup = `
+    const Y1=n=>({1104:'request'})[n];
+    const lj=String.fromCharCode(109,101,116,104,111,100);
+    const mj=String.fromCharCode(103,101,116);
+    const nj=String.fromCharCode(100,97,116,97);
+    globalThis.calls=[];
+    const oj={request:async config=>{calls.push(config);return {data:{url:config.url,params:config.params}};}};
+    ${characterCodeGetter}
+`;
+
+test('captures the current private GET helper with character-code method and data constants', async () => {
+    const {ctx,fetches}=harness({modules:()=>({})});
+    vm.runInContext(`${characterCodeSetup} globalThis.currentApi=mask(currentClient);`,ctx);
+    const member=await ctx.findApi();
+    assert.equal(member.key,'O3');
+    assert.equal(ctx.calls.length,0,'discovery must not invoke the request helper');
+    const params={page:1,limit:20,order:{created_at:'desc'}};
+    const response=await member.value('/manga/abc/chapters',{params});
+    assert.equal(response.url,'/manga/abc/chapters');
+    assert.equal(response.params,params);
+    assert.equal(ctx.calls[0].method,'get');
+    assert.deepEqual(fetches,[]);
+    assert.equal(vm.runInContext('Proxy',ctx),ctx.nativeProxy);
+});
+
+test('recovers the same character-code GET shape from an already-loaded hidden client', async () => {
+    const {ctx}=harness({
+        setup:`${characterCodeSetup} globalThis.api=mask(currentClient);`,
+        texts:{[main]:characterCodeGetter},
+    });
+    const member=await ctx.findApi();
+    assert.equal(member.key,'O3');
+    assert.equal(ctx.calls.length,0);
+    assert.equal((await member.value('/manga/abc/chapters',{params:{page:1}})).url,'/manga/abc/chapters');
+    member.owner[member.key]=async()=> 'intercepted';
+    assert.equal(await ctx.api.O3(),'intercepted');
+});
+
+test('rejects a character-code request shape that swaps the URL and configuration arguments', async () => {
+    const swapped=characterCodeGetter.replace('...F,[lj]:mj,"url":p','...p,[lj]:mj,"url":F');
+    const {ctx}=harness({
+        setup:`${characterCodeSetup.replace(characterCodeGetter,swapped)} globalThis.api=mask(currentClient);`,
+        texts:{[main]:swapped},
+    });
+    assert.equal(await ctx.findApi(),null);
+    assert.equal(ctx.calls.length,0);
+});
