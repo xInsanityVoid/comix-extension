@@ -365,7 +365,7 @@ abstract class Comix :
     }
 
     override suspend fun getMangaByUrl(url: HttpUrl): SManga? {
-        if (url.host.removePrefix("www.") != baseUrl.toHttpUrl().host.removePrefix("www.")) return null
+        if (!isComixHost(url.host, baseUrlHost)) return null
         if (url.pathSegments.size < 2 || url.pathSegments[0] != "title") return null
 
         val mangaSlug = url.pathSegments[1]
@@ -733,7 +733,7 @@ abstract class Comix :
                     ?: return@interceptRequest emptyResponse
                 if (UNUSED_SITE_PATHS.any(requestUrl.encodedPath::startsWith)) return@interceptRequest emptyResponse
                 // The solver's own request for this path reads the site's page
-                val isFrameLoad = request.requestHeaders["Accept"].orEmpty().contains("text/html")
+                val isFrameLoad = isHtmlRequest(request.requestHeaders)
                 if (requestUrl.encodedPath == WAF_CHALLENGE_PATH && isFrameLoad) {
                     if (!preferences.solveCaptchas()) {
                         reject(Exception("Open in WebView to solve the captcha, or turn on \"Solve captchas\" in extension settings"))
@@ -810,6 +810,16 @@ abstract class Comix :
         .joinToString("")
 
     private fun asset(name: String) = javaClass.getResource("/assets/$name")!!.readText()
+
+    private fun isComixHost(host: String, selectedHost: String): Boolean {
+        val normalizedHost = host.removePrefix("www.")
+        return normalizedHost == selectedHost.removePrefix("www.") ||
+            normalizedHost == "comix.to" || normalizedHost == "comix.ws"
+    }
+
+    private fun isHtmlRequest(headers: Map<String, String>?): Boolean = headers.orEmpty().any { (name, value) ->
+        name.equals("Accept", ignoreCase = true) && value.contains("text/html", ignoreCase = true)
+    }
 
     private fun HttpUrl.isChapterPagesRequest(): Boolean = pathSegments.size == 4 &&
         pathSegments[0] == "api" &&

@@ -1,16 +1,16 @@
 # COMIX extension fix
 
-Independent build of [Keiyoushi's COMIX extension](https://github.com/keiyoushi/extensions-source/tree/ff521c17bb3e503c01e658e8fac00b60a95829f3/src/en/comix), version **1.6.63**, build **106063**.
+Independent build of [Keiyoushi's COMIX extension](https://github.com/keiyoushi/extensions-source/tree/ff521c17bb3e503c01e658e8fac00b60a95829f3/src/en/comix), version **1.6.64**, build **106064**.
 
-Repairs chapter-list and chapter-image API discovery for COMIX's changed JavaScript. Includes the previous refresh-speed, timeout-recovery and missing-chapter fixes.
+Fixes cross-mirror title links and CAPTCHA request detection. Retains the previous chapter API, refresh-speed, timeout-recovery and missing-chapter fixes.
 
 ## Install or update
 
-Refresh your reader's existing extension repository and update COMIX to **1.6.63**. Keep **Faster chapter list fetching** enabled.
+Refresh your reader's existing extension repository and update COMIX to **1.6.64**. Keep **Faster chapter list fetching** enabled.
 
-- [Release and checksums](https://github.com/xInsanityVoid/comix-extension/releases/tag/v1.6.63)
-- [Android APK](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.63/tachiyomi-en.comix-v1.6.63.apk)
-- [Extension JAR](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.63/tachiyomi-en.comix-v1.6.63.jar)
+- [Release and checksums](https://github.com/xInsanityVoid/comix-extension/releases/tag/v1.6.64)
+- [Android APK](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.64/tachiyomi-en.comix-v1.6.64.apk)
+- [Extension JAR](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.64/tachiyomi-en.comix-v1.6.64.jar)
 
 Repository URL:
 
@@ -18,30 +18,29 @@ Repository URL:
 https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/index.pb
 ```
 
-[Repository descriptor](https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/repo.json). The repository uses upstream's protobuf format and requires extension API 1.6. The APK and index both advertise build **106063**.
+[Repository descriptor](https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/repo.json). The repository uses upstream's protobuf format and requires extension API 1.6. The APK and index both advertise build **106064**.
 
 The package, source ID and signing key are unchanged. Updating from our earlier builds does not require uninstalling. On Android, switching from the official Keiyoushi-signed APK requires uninstalling only that extension first; keep the reader and library.
 
-## Changes in 1.6.63
+## Changes in 1.6.64
 
-COMIX changed two parts of its generated JavaScript: the GET helper now refers to separate character-code constants, and chapter pagination uses a shared list mapper. Build 62's function-shape checks no longer recognized either function, producing the chapter API discovery error.
+Title links from either `comix.to` or `comix.ws`, including their `www` aliases, are accepted regardless of the currently selected mirror. Previously a link from the other mirror was rejected. The existing title parsing and selected-mirror routing are retained.
 
-Discovery recognizes both the earlier forms and the new forms without depending on their changing function names. Similar methods exist for manga and group chapter lists, so the extension verifies the exact manga endpoint and unchanged pagination parameters before selecting one. The verification intercepts the method's synchronous GET call locally; it does not send candidate requests. Duplicate references are ignored, and ambiguous endpoints or failed interception produce an error instead of guessing.
+CAPTCHA HTML request detection now accepts lowercase or mixed-case `Accept` headers and media types, and tolerates missing headers. JSON and `*/*` fetch requests still pass through so the solver cannot recursively replace its own request.
 
-The updated GET discovery is also used when loading a chapter's image list. The existing request pacing, chapter-16 fix, hidden-upload checkpoints and resumable full fetches are retained.
+Compared against official COMIX commit `70476a1a69459eb31176df6667ba376fd22b3daf`, including [PR #20265](https://github.com/keiyoushi/extensions-source/pull/20265) and [PR #20337](https://github.com/keiyoushi/extensions-source/pull/20337). Those changes move upstream toward reading the rendered site. This build retains its working API discovery. The extensionless-image problem described in open [PR #20348](https://github.com/keiyoushi/extensions-source/pull/20348) does not affect our API image-list path; live `/hi/...` image URLs were accepted. The official CAPTCHA solver is byte-for-byte identical to ours.
 
-Every refresh still contacts the live API. Large initial imports can still take around a minute or longer. If a full fetch times out, retry the title promptly: saved batches can be reused after checking the live first page. Recovery checkpoints expire five minutes after the last new batch and are bounded to eight titles / 1 MiB per title. Partial lists cannot overwrite a complete library list.
+Every refresh still contacts the live API. Large initial imports can take around a minute or longer. If a full fetch times out, retry the title promptly: saved batches can be reused after checking the live first page. Recovery checkpoints expire five minutes after the last new batch and are bounded to eight titles / 1 MiB per title. Partial lists cannot overwrite a complete library list.
 
-## Validation
+## Validation on October 24, 2026
 
-- Reproduced build 62's chapter API discovery failure against the current site JavaScript.
-- WebKit and Chromium each fetched all 133 Bacteriomancer entries, including all three chapter-16 uploads, and loaded that chapter's 99 image entries.
-- Both engines resumed a capped Shepherd Wizard fetch and returned all 314 entries, matching every baseline ID without fetching the saved second and third pages again.
-- All 40 JavaScript regressions pass, covering current/older API forms, manga/group method selection, duplicate references, rejected endpoint/parameter mismatches and failed interception. The 21 Kotlin metadata/refresh/cache tests also pass.
-- Release formatting, assembly and lint passed (0 errors; 2 existing generated-manifest warnings).
-- APK/JAR signatures, build number and packaged JavaScript verified.
+- Desktop WebKit checked both mirrors; Chromium also checked `comix.to`. Popular browsing and pagination, latest updates, relevance-ordered search, empty search, author lookup, chapter lists and page lists returned valid results. Search put The Shepherd Wizard first on both mirrors.
+- Checked short and slugged title URLs, title metadata and cover images. Bacteriomancer returned chapter 16; its latest tested upload had 87 image entries. The tested Shepherd Wizard chapter had 183 image entries. These are representative titles, not a scan of the entire catalog.
+- Downloaded and decoded sampled chapter images. One Bacteriomancer primary image host failed TLS; the existing site-provided alternate-host sequence returned valid images at the first, middle and last positions. No new image fallback was necessary.
+- Both mirrors still expose the same Cloudflare Turnstile challenge and verification endpoints. In a controlled WebKit iframe test, the existing solver loaded the widget but did **not** complete verification and returned its WebView instruction. Automatic Cloudflare completion is not established by these tests; manual verification may still be needed.
+- All 40 JavaScript and 27 Kotlin regression tests passed. Release formatting, assembly and lint passed (0 errors; 2 existing generated-manifest warnings). APK/JAR signatures, build number and packaged assets verified.
 
-Live results are in `tests/api-change-v63.json`; prior-release performance records are retained. These are desktop-browser tests with images/fonts/media and unrelated third-party resources blocked. They do not include native-host pacing or establish actual iPhone performance. An actual Tachimanga device was unavailable.
+The audit record is in `tests/site-audit-v64.json`. Prior-release performance and API-change records are retained. Browser tests block images/fonts/media and unrelated third-party resources during metadata fetches; image downloads are tested separately. They do not include native-host pacing or establish actual iPhone performance. An actual Tachimanga device was unavailable, so native WebView interception and challenge completion remain unverified on iOS.
 
 ## Rebuild
 
@@ -58,7 +57,7 @@ node --experimental-vm-modules --test tests/site-api.test.cjs tests/chapter-list
 /path/to/upstream/gradlew -p tests/memo test
 ```
 
-The Kotlin harnesses compile the production metadata helper and extract the unchanged production refresh/cache methods with host dependencies stubbed. Device integration is outside their coverage.
+The Kotlin harnesses compile the production metadata helper and extract the unchanged production refresh/cache methods and URL/header helpers with host dependencies stubbed. Device integration is outside their coverage.
 
 Signing certificate SHA-256: `f3d9ad42724b8269e1f0b78339fafa150da8c436b811e17225ad9759260b7264`. The private signing key is not published. Independently signed rebuilds have a different fingerprint.
 

@@ -606,7 +606,7 @@ index 40f16b52..f2eef4e2 100644
 +    };
  }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..cb9db1a4 100644
+index 523b26a1..920f1522 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -614,7 +614,7 @@ index 523b26a1..cb9db1a4 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 63
++    versionCode = 64
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
@@ -641,7 +641,7 @@ index 00000000..3f1d204a
 +    .maxByOrNull { it.chapter_number }
 +    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..0a93733c 100644
+index b9bc9c66..27278180 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 @@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
@@ -652,6 +652,15 @@ index b9bc9c66..0a93733c 100644
  import keiyoushi.utils.parseAs
  import keiyoushi.utils.runWebView
  import keiyoushi.utils.string
+@@ -366,7 +365,7 @@ abstract class Comix :
+     }
+ 
+     override suspend fun getMangaByUrl(url: HttpUrl): SManga? {
+-        if (url.host.removePrefix("www.") != baseUrl.toHttpUrl().host.removePrefix("www.")) return null
++        if (!isComixHost(url.host, baseUrlHost)) return null
+         if (url.pathSegments.size < 2 || url.pathSegments[0] != "title") return null
+ 
+         val mangaSlug = url.pathSegments[1]
 @@ -430,24 +429,22 @@ abstract class Comix :
          val scanlatorBlacklist = preferences.scanlatorBlacklist()
          val blacklistSignature = scanlatorBlacklist.sorted().joinToString(",")
@@ -798,6 +807,15 @@ index b9bc9c66..0a93733c 100644
          return runWebView(timeout = Duration.INFINITE) {
              userAgent = headers["User-Agent"].orEmpty()
              blockImages = true
+@@ -701,7 +733,7 @@ abstract class Comix :
+                     ?: return@interceptRequest emptyResponse
+                 if (UNUSED_SITE_PATHS.any(requestUrl.encodedPath::startsWith)) return@interceptRequest emptyResponse
+                 // The solver's own request for this path reads the site's page
+-                val isFrameLoad = request.requestHeaders["Accept"].orEmpty().contains("text/html")
++                val isFrameLoad = isHtmlRequest(request.requestHeaders)
+                 if (requestUrl.encodedPath == WAF_CHALLENGE_PATH && isFrameLoad) {
+                     if (!preferences.solveCaptchas()) {
+                         reject(Exception("Open in WebView to solve the captcha, or turn on \"Solve captchas\" in extension settings"))
 @@ -728,15 +760,12 @@ abstract class Comix :
  
              jsBridge(bridgeName) { resolve(it) }
@@ -829,7 +847,24 @@ index b9bc9c66..0a93733c 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
-@@ -976,10 +1004,14 @@ abstract class Comix :
+@@ -783,6 +811,16 @@ abstract class Comix :
+ 
+     private fun asset(name: String) = javaClass.getResource("/assets/$name")!!.readText()
+ 
++    private fun isComixHost(host: String, selectedHost: String): Boolean {
++        val normalizedHost = host.removePrefix("www.")
++        return normalizedHost == selectedHost.removePrefix("www.") ||
++            normalizedHost == "comix.to" || normalizedHost == "comix.ws"
++    }
++
++    private fun isHtmlRequest(headers: Map<String, String>?): Boolean = headers.orEmpty().any { (name, value) ->
++        name.equals("Accept", ignoreCase = true) && value.contains("text/html", ignoreCase = true)
++    }
++
+     private fun HttpUrl.isChapterPagesRequest(): Boolean = pathSegments.size == 4 &&
+         pathSegments[0] == "api" &&
+         pathSegments[1] == "v1" &&
+@@ -976,10 +1014,14 @@ abstract class Comix :
  
          private const val DEFAULT_CONTENT_RATING = "suggestive"
          private const val WEBVIEW_TIMEOUT_SECONDS = 120L

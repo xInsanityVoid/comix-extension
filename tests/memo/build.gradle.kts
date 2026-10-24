@@ -49,14 +49,35 @@ val generateResumeHarness = tasks.register("generateResumeHarness") {
     }
 }
 
+val generatedRouting = layout.buildDirectory.file("generated/routing/RoutingHarness.kt")
+val generateRoutingHarness = tasks.register("generateRoutingHarness") {
+    inputs.file(productionSource)
+    outputs.file(generatedRouting)
+    doLast {
+        val source = productionSource.readText()
+        val start = source.indexOf("    private fun isComixHost(")
+        val end = source.indexOf("    private fun HttpUrl.isChapterPagesRequest()", start)
+        check(start >= 0 && end > start) { "Could not locate the production URL/header helpers" }
+        generatedRouting.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText("""
+                package eu.kanade.tachiyomi.extension.en.comix
+                class RoutingHarness {
+                    fun acceptsHost(host: String, selectedHost: String) = isComixHost(host, selectedHost)
+                    fun acceptsHtml(headers: Map<String, String>?) = isHtmlRequest(headers)
+            """.trimIndent() + "\n" + source.substring(start, end) + "}\n")
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(21)
     sourceSets.main {
-        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh"), layout.buildDirectory.dir("generated/resume")))
-        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt", "**/ResumePreferences.kt", "**/ResumeHarness.kt")
+        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh"), layout.buildDirectory.dir("generated/resume"), layout.buildDirectory.dir("generated/routing")))
+        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt", "**/ResumePreferences.kt", "**/ResumeHarness.kt", "**/RoutingHarness.kt")
     }
 }
-tasks.named("compileKotlin") { dependsOn(generateRefreshHarness, generateResumeHarness) }
+tasks.named("compileKotlin") { dependsOn(generateRefreshHarness, generateResumeHarness, generateRoutingHarness) }
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     testImplementation("junit:junit:4.13.2")

@@ -1,0 +1,973 @@
+{
+  "date": "2026-10-24",
+  "version": "1.6.64",
+  "upstream": {
+    "commit": "70476a1a69459eb31176df6667ba376fd22b3daf",
+    "mergedPRs": [
+      20265,
+      20337
+    ],
+    "openPRChecked": 20348,
+    "captchaSolverIdentical": true
+  },
+  "fixes": [
+    "Accept either mirror and www aliases when resolving a title link",
+    "Case-insensitive, null-safe Accept header detection for CAPTCHA HTML requests"
+  ],
+  "scope": "Desktop browsers with image/font/media and unrelated domains blocked during metadata fetches. Direct image downloads tested separately. No actual iOS device. Representative titles, not all catalog entries. Existing API JavaScript unchanged.",
+  "browserRuns": [
+    {
+      "date": "2026-10-24",
+      "engine": "webkit",
+      "host": "comix.to",
+      "stages": [
+        {
+          "name": "popular",
+          "url": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 2269,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "popular-page2",
+          "url": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "status": 200,
+          "ms": 3523,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "latest",
+          "url": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 1870,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "search",
+          "url": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "status": 200,
+          "ms": 4277,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "empty-search",
+          "url": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "status": 200,
+          "ms": 779,
+          "count": 0,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "chapters-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "status": 200,
+          "ms": 1823,
+          "complete": true,
+          "count": 20,
+          "title": "The Unlimited Bacteriomancer",
+          "network": [
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/threads/lookup",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/threads/3716139/comments",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "status": 200,
+          "ms": 1231,
+          "count": 87,
+          "title": "The Unlimited Bacteriomancer \u00b7 Ch.16",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11546755",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-0080d-0",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "image-0080d-43",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "image-0080d-86",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "chapters-vwk5z",
+          "url": "https://comix.to/title/vwk5z",
+          "finalUrl": "https://comix.to/title/vwk5z",
+          "status": 200,
+          "ms": 4523,
+          "complete": true,
+          "count": 20,
+          "title": "The Shepherd Wizard",
+          "network": [
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-vwk5z",
+          "url": "https://comix.to/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "finalUrl": "https://comix.to/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "status": 200,
+          "ms": 598,
+          "count": 183,
+          "title": "The Shepherd Wizard \u00b7 Ch.41",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11533039",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-vwk5z-0",
+          "url": "https://c125.kkplayer.wtf/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4AiVMhaGDNl",
+          "status": 200,
+          "ms": 1148,
+          "length": 147280,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646483f020057454250"
+        },
+        {
+          "name": "image-vwk5z-91",
+          "url": "https://1xx.lifeinpixels.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4ArV8haGDNl",
+          "status": 200,
+          "ms": 151,
+          "length": 214068,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462c44030057454250"
+        },
+        {
+          "name": "image-vwk5z-182",
+          "url": "https://c125.kkplayer.wtf/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4EqVshaGDNl",
+          "status": 200,
+          "ms": 196,
+          "length": 91432,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462065010057454250"
+        },
+        {
+          "name": "tags",
+          "url": "https://comix.to/browse",
+          "finalUrl": "https://comix.to/browse",
+          "status": 200,
+          "ms": 547,
+          "count": 20,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/tags/search",
+              "status": 200
+            }
+          ],
+          "errors": []
+        }
+      ],
+      "firstSearchResult": {
+        "hid": "vwk5z",
+        "title": "The Shepherd Wizard"
+      }
+    },
+    {
+      "date": "2026-10-24",
+      "engine": "webkit",
+      "host": "comix.ws",
+      "stages": [
+        {
+          "name": "popular",
+          "url": "https://comix.ws/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 2628,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "popular-page2",
+          "url": "https://comix.ws/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "status": 200,
+          "ms": 2082,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "latest",
+          "url": "https://comix.ws/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 1888,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "search",
+          "url": "https://comix.ws/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "finalUrl": "https://comix.ws/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "status": 200,
+          "ms": 3523,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "empty-search",
+          "url": "https://comix.ws/browse?keyword=codexnonexistenttitle774328&page=1",
+          "finalUrl": "https://comix.ws/browse?keyword=codexnonexistenttitle774328&page=1",
+          "status": 200,
+          "ms": 481,
+          "count": 0,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "chapters-0080d",
+          "url": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer",
+          "finalUrl": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer",
+          "status": 200,
+          "ms": 480,
+          "complete": true,
+          "count": 20,
+          "title": "The Unlimited Bacteriomancer",
+          "network": [
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-0080d",
+          "url": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "finalUrl": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "status": 200,
+          "ms": 600,
+          "count": 87,
+          "title": "The Unlimited Bacteriomancer \u00b7 Ch.16",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11546755",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-0080d-0",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "image-0080d-43",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "image-0080d-86",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "chapters-vwk5z",
+          "url": "https://comix.ws/title/vwk5z",
+          "finalUrl": "https://comix.ws/title/vwk5z",
+          "status": 200,
+          "ms": 490,
+          "complete": true,
+          "count": 20,
+          "title": "The Shepherd Wizard",
+          "network": [
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-vwk5z",
+          "url": "https://comix.ws/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "finalUrl": "https://comix.ws/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "status": 200,
+          "ms": 860,
+          "count": 183,
+          "title": "The Shepherd Wizard \u00b7 Ch.41",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11533039",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-vwk5z-0",
+          "url": "https://1xx.sophiejournal.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4AiVMhaGDNl",
+          "status": 200,
+          "ms": 155,
+          "length": 147280,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646483f020057454250"
+        },
+        {
+          "name": "image-vwk5z-91",
+          "url": "https://c125.kkplayer.wtf/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4ArV8haGDNl",
+          "status": 200,
+          "ms": 933,
+          "length": 214068,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462c44030057454250"
+        },
+        {
+          "name": "image-vwk5z-182",
+          "url": "https://1xx.softfabricstore.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4EqVshaGDNl",
+          "status": 200,
+          "ms": 150,
+          "length": 91432,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462065010057454250"
+        },
+        {
+          "name": "tags",
+          "url": "https://comix.ws/browse",
+          "finalUrl": "https://comix.ws/browse",
+          "status": 200,
+          "ms": 471,
+          "count": 20,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/tags/search",
+              "status": 200
+            }
+          ],
+          "errors": []
+        }
+      ],
+      "firstSearchResult": {
+        "hid": "vwk5z",
+        "title": "The Shepherd Wizard"
+      }
+    },
+    {
+      "date": "2026-10-24",
+      "engine": "chromium",
+      "host": "comix.to",
+      "stages": [
+        {
+          "name": "popular",
+          "url": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 3751,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "popular-page2",
+          "url": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "status": 200,
+          "ms": 3769,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "latest",
+          "url": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 2009,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "search",
+          "url": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "status": 200,
+          "ms": 504,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "empty-search",
+          "url": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "status": 200,
+          "ms": 865,
+          "count": 0,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "chapters-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "status": 200,
+          "ms": 946,
+          "complete": true,
+          "count": 20,
+          "title": "The Unlimited Bacteriomancer",
+          "network": [
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "status": 200,
+          "ms": 877,
+          "count": 87,
+          "title": "The Unlimited Bacteriomancer \u00b7 Ch.16",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11546755",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-0080d-0",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "image-0080d-43",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "image-0080d-86",
+          "error": "Primary image host failed TLS: wrong version number; alternate hosts tested separately."
+        },
+        {
+          "name": "chapters-vwk5z",
+          "url": "https://comix.to/title/vwk5z",
+          "finalUrl": "https://comix.to/title/vwk5z",
+          "status": 200,
+          "ms": 523,
+          "complete": true,
+          "count": 20,
+          "title": "The Shepherd Wizard",
+          "network": [
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-vwk5z",
+          "url": "https://comix.to/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "finalUrl": "https://comix.to/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "status": 200,
+          "ms": 523,
+          "count": 183,
+          "title": "The Shepherd Wizard \u00b7 Ch.41",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11533039",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-vwk5z-0",
+          "url": "https://c125.kkplayer.wtf/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4AiVMhaGDNl",
+          "status": 200,
+          "ms": 1219,
+          "length": 147280,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646483f020057454250"
+        },
+        {
+          "name": "image-vwk5z-91",
+          "url": "https://1xx.lifeinpixels.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4ArV8haGDNl",
+          "status": 200,
+          "ms": 78,
+          "length": 214068,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462c44030057454250"
+        },
+        {
+          "name": "image-vwk5z-182",
+          "url": "https://c125.kkplayer.wtf/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4EqVshaGDNl",
+          "status": 200,
+          "ms": 193,
+          "length": 91432,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462065010057454250"
+        },
+        {
+          "name": "tags",
+          "url": "https://comix.to/browse",
+          "finalUrl": "https://comix.to/browse",
+          "status": 200,
+          "ms": 413,
+          "count": 20,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/tags/search",
+              "status": 200
+            }
+          ],
+          "errors": []
+        }
+      ],
+      "firstSearchResult": {
+        "hid": "vwk5z",
+        "title": "The Shepherd Wizard"
+      }
+    }
+  ],
+  "imageAndDetailChecks": [
+    {
+      "name": "cover-comix.to-0080d",
+      "url": "https://static.comix.to/caba/i/f/d8/6a9adf4bc5470@280.jpg",
+      "status": 200,
+      "bytes": 32659,
+      "format": "JPEG",
+      "size": [
+        280,
+        420
+      ],
+      "seconds": 0.25
+    },
+    {
+      "name": "cover-comix.to-vwk5z",
+      "url": "https://static.comix.to/8cc2/i/3/33/699c7feca5f96@280.jpg",
+      "status": 200,
+      "bytes": 43334,
+      "format": "JPEG",
+      "size": [
+        280,
+        420
+      ],
+      "seconds": 0.203
+    },
+    {
+      "name": "cover-comix.ws-0080d",
+      "url": "https://static.comix.ws/672c/i/f/d8/6a9adf4bc5470@280.jpg",
+      "status": 200,
+      "bytes": 32659,
+      "format": "JPEG",
+      "size": [
+        280,
+        420
+      ],
+      "seconds": 0.359
+    },
+    {
+      "name": "cover-comix.ws-vwk5z",
+      "url": "https://static.comix.ws/c0ef/i/3/33/699c7feca5f96@280.jpg",
+      "status": 200,
+      "bytes": 43334,
+      "format": "JPEG",
+      "size": [
+        280,
+        420
+      ],
+      "seconds": 0.219
+    },
+    {
+      "name": "bacteriomancer-image-0-attempt-0",
+      "url": "https://c131.kkplayer.wtf/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+      "error": "<urlopen error [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1147)>",
+      "seconds": 0.406
+    },
+    {
+      "name": "bacteriomancer-image-0-attempt-1",
+      "url": "https://c131.puremind27.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.516
+    },
+    {
+      "name": "bacteriomancer-image-0-attempt-2",
+      "url": "https://c131.clearglow16.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.172
+    },
+    {
+      "name": "bacteriomancer-image-0-attempt-3",
+      "url": "https://c131.purelife84.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.172
+    },
+    {
+      "name": "bacteriomancer-image-0-attempt-4",
+      "url": "https://c131.trueforce46.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.171
+    },
+    {
+      "name": "bacteriomancer-image-0-attempt-5",
+      "url": "https://c131.happymind76.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.172
+    },
+    {
+      "name": "bacteriomancer-image-0-attempt-6",
+      "url": "https://447.puremind27.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+      "status": 200,
+      "bytes": 369272,
+      "format": "WEBP",
+      "size": [
+        1600,
+        900
+      ],
+      "seconds": 0.469
+    },
+    {
+      "name": "bacteriomancer-image-43-attempt-0",
+      "url": "https://c131.kkplayer.wtf/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+      "error": "<urlopen error [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1147)>",
+      "seconds": 0.156
+    },
+    {
+      "name": "bacteriomancer-image-43-attempt-1",
+      "url": "https://c131.trueforce46.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.157
+    },
+    {
+      "name": "bacteriomancer-image-43-attempt-2",
+      "url": "https://c131.happymind76.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.156
+    },
+    {
+      "name": "bacteriomancer-image-43-attempt-3",
+      "url": "https://c131.puremind27.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.156
+    },
+    {
+      "name": "bacteriomancer-image-43-attempt-4",
+      "url": "https://c131.clearglow16.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.156
+    },
+    {
+      "name": "bacteriomancer-image-43-attempt-5",
+      "url": "https://c131.purelife84.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.141
+    },
+    {
+      "name": "bacteriomancer-image-43-attempt-6",
+      "url": "https://447.trueforce46.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+      "status": 200,
+      "bytes": 200072,
+      "format": "WEBP",
+      "size": [
+        800,
+        1594
+      ],
+      "seconds": 0.453
+    },
+    {
+      "name": "bacteriomancer-image-86-attempt-0",
+      "url": "https://c131.kkplayer.wtf/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+      "error": "<urlopen error [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1147)>",
+      "seconds": 0.156
+    },
+    {
+      "name": "bacteriomancer-image-86-attempt-1",
+      "url": "https://c131.clearglow16.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.157
+    },
+    {
+      "name": "bacteriomancer-image-86-attempt-2",
+      "url": "https://c131.purelife84.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.156
+    },
+    {
+      "name": "bacteriomancer-image-86-attempt-3",
+      "url": "https://c131.trueforce46.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.14
+    },
+    {
+      "name": "bacteriomancer-image-86-attempt-4",
+      "url": "https://c131.happymind76.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.157
+    },
+    {
+      "name": "bacteriomancer-image-86-attempt-5",
+      "url": "https://c131.puremind27.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "seconds": 0.156
+    },
+    {
+      "name": "bacteriomancer-image-86-attempt-6",
+      "url": "https://447.clearglow16.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+      "status": 200,
+      "bytes": 369272,
+      "format": "WEBP",
+      "size": [
+        1600,
+        900
+      ],
+      "seconds": 0.516
+    }
+  ],
+  "cloudflare": {
+    "protocol": "Both mirrors: /@waf/challenge, Turnstile v0 API, /@waf/verify with cf_turnstile_token, waf-captcha-solved message",
+    "scope": "Desktop WebKit, injected existing solver in a same-origin challenge iframe; no automated clicks or human challenge completion.",
+    "replacementDocuments": 1,
+    "solved": false,
+    "error": "Couldn't pass the site's Cloudflare check, open in WebView to pass it",
+    "providerLoaded": true,
+    "verificationPostObserved": false,
+    "limitations": "No automated clicks or human completion. Widget loading does not prove challenge completion. Native iOS interception untested."
+  },
+  "regressionTests": {
+    "javascript": 40,
+    "kotlin": 27
+  }
+}
