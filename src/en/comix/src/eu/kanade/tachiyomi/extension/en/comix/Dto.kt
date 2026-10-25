@@ -321,11 +321,23 @@ class ChapterPages(
     val items: List<PageDto>,
     private val alt: List<String>? = null,
     private val node: String? = null,
+    private val alt2: String? = null,
+    @SerialName("alt_node") private val altNode: String? = null,
 ) {
     // Alt hosts in the site reader's retry order
     fun altHosts(host: String, index: Int): List<String> {
-        if (alt.isNullOrEmpty()) return emptyList()
         val label = host.substringBefore('.')
+        if (altNode != null || alt2 != null) {
+            val domains = listOfNotNull(
+                host.substringAfter('.'),
+                alt?.takeIf { it.isNotEmpty() }?.let { it[index % it.size] },
+                alt2,
+            ).distinct()
+            return listOfNotNull(label, altNode).distinct()
+                .flatMap { node -> domains.map { "$node.$it" } }
+                .filter { it != host }
+        }
+        if (alt.isNullOrEmpty()) return emptyList()
         val start = index % alt.size
         val domains = alt.drop(start) + alt.take(start)
         val hosts = domains.map { "$label.$it" } + domains.map { "${node ?: label}.$it" }

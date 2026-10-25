@@ -606,7 +606,7 @@ index 40f16b52..f2eef4e2 100644
 +    };
  }
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..920f1522 100644
+index 523b26a1..78c9ec76 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -614,7 +614,7 @@ index 523b26a1..920f1522 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 64
++    versionCode = 65
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
@@ -641,7 +641,7 @@ index 00000000..3f1d204a
 +    .maxByOrNull { it.chapter_number }
 +    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..27278180 100644
+index b9bc9c66..fe5f12aa 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 @@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
@@ -738,7 +738,16 @@ index b9bc9c66..27278180 100644
              !fetchDetails -> null
              walked != null -> walked.mangaDetail()
              else -> getQueries().mangaDetail()
-@@ -570,14 +567,49 @@ abstract class Comix :
+@@ -506,6 +503,8 @@ abstract class Comix :
+             buildScript = { passPayloadName ->
+                 """
+                 (function () {
++                    // script#initial-data is partial while the document is still parsing
++                    if (document.readyState === 'loading') return;
+                     const raw = document.querySelector('script#initial-data')?.textContent;
+                     if (raw) window.$passPayloadName(raw);
+                 })();
+@@ -570,14 +569,49 @@ abstract class Comix :
          knownIds: List<Int>,
      ): ChapterList {
          val mangaId = manga.url.removePrefix("/").substringBefore('-')
@@ -790,7 +799,7 @@ index b9bc9c66..27278180 100644
      private fun selectChapters(
          allChapters: List<SChapter>,
          shouldDeduplicate: Boolean,
-@@ -684,13 +716,13 @@ abstract class Comix :
+@@ -684,13 +718,13 @@ abstract class Comix :
          url: String,
          isDataRequest: ((HttpUrl) -> Boolean)? = null,
          buildScript: ((passPayloadName: String) -> String)? = null,
@@ -807,7 +816,7 @@ index b9bc9c66..27278180 100644
          return runWebView(timeout = Duration.INFINITE) {
              userAgent = headers["User-Agent"].orEmpty()
              blockImages = true
-@@ -701,7 +733,7 @@ abstract class Comix :
+@@ -701,7 +735,7 @@ abstract class Comix :
                      ?: return@interceptRequest emptyResponse
                  if (UNUSED_SITE_PATHS.any(requestUrl.encodedPath::startsWith)) return@interceptRequest emptyResponse
                  // The solver's own request for this path reads the site's page
@@ -816,7 +825,7 @@ index b9bc9c66..27278180 100644
                  if (requestUrl.encodedPath == WAF_CHALLENGE_PATH && isFrameLoad) {
                      if (!preferences.solveCaptchas()) {
                          reject(Exception("Open in WebView to solve the captcha, or turn on \"Solve captchas\" in extension settings"))
-@@ -728,15 +760,12 @@ abstract class Comix :
+@@ -728,15 +762,12 @@ abstract class Comix :
  
              jsBridge(bridgeName) { resolve(it) }
              jsBridge(errorBridgeName) { reject(Exception(it)) }
@@ -837,7 +846,7 @@ index b9bc9c66..27278180 100644
              // Refuse the site's first-tap ad window
              withNativeWebView { it.settings.setSupportMultipleWindows(true) }
  
-@@ -768,8 +797,7 @@ abstract class Comix :
+@@ -768,8 +799,7 @@ abstract class Comix :
                  try { localStorage.setItem("__pu1", "[" + Date.now() + "]"); } catch (e) {}
                  window.$passPayloadName = payload => window.$bridgeName.post(payload);
                  window.$rejectName = message => window.$errorBridgeName.post(message);
@@ -847,7 +856,7 @@ index b9bc9c66..27278180 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
-@@ -783,6 +811,16 @@ abstract class Comix :
+@@ -783,6 +813,16 @@ abstract class Comix :
  
      private fun asset(name: String) = javaClass.getResource("/assets/$name")!!.readText()
  
@@ -864,7 +873,7 @@ index b9bc9c66..27278180 100644
      private fun HttpUrl.isChapterPagesRequest(): Boolean = pathSegments.size == 4 &&
          pathSegments[0] == "api" &&
          pathSegments[1] == "v1" &&
-@@ -976,10 +1014,14 @@ abstract class Comix :
+@@ -976,10 +1016,14 @@ abstract class Comix :
  
          private const val DEFAULT_CONTENT_RATING = "suggestive"
          private const val WEBVIEW_TIMEOUT_SECONDS = 120L
@@ -881,7 +890,7 @@ index b9bc9c66..27278180 100644
          private const val OFFICIAL_GROUP_ID = 10702
          private const val TAG_ID_CACHE_SIZE = 50
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
-index 2e3126a7..4dca0aed 100644
+index 2e3126a7..7deac3f7 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
 @@ -16,10 +16,6 @@ const val CHAPTER_ID_MEMO = "chapterId"
@@ -895,6 +904,31 @@ index 2e3126a7..4dca0aed 100644
  
  @Serializable
  class Term(
+@@ -325,11 +321,23 @@ class ChapterPages(
+     val items: List<PageDto>,
+     private val alt: List<String>? = null,
+     private val node: String? = null,
++    private val alt2: String? = null,
++    @SerialName("alt_node") private val altNode: String? = null,
+ ) {
+     // Alt hosts in the site reader's retry order
+     fun altHosts(host: String, index: Int): List<String> {
+-        if (alt.isNullOrEmpty()) return emptyList()
+         val label = host.substringBefore('.')
++        if (altNode != null || alt2 != null) {
++            val domains = listOfNotNull(
++                host.substringAfter('.'),
++                alt?.takeIf { it.isNotEmpty() }?.let { it[index % it.size] },
++                alt2,
++            ).distinct()
++            return listOfNotNull(label, altNode).distinct()
++                .flatMap { node -> domains.map { "$node.$it" } }
++                .filter { it != host }
++        }
++        if (alt.isNullOrEmpty()) return emptyList()
+         val start = index % alt.size
+         val domains = alt.drop(start) + alt.take(start)
+         val hosts = domains.map { "$label.$it" } + domains.map { "${node ?: label}.$it" }
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Swipe.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Swipe.kt
 deleted file mode 100644
 index 95fd9c58..00000000

@@ -1,0 +1,1010 @@
+{
+  "date": "2026-10-25",
+  "version": "1.6.65",
+  "upstream": {
+    "latestMergedCommit": "70476a1a69459eb31176df6667ba376fd22b3daf",
+    "openPRIncorporated": 20384,
+    "prHead": "e8017765131117309156f134d6aeb153a1e34255",
+    "previousPR20348": "closed, superseded by 20337"
+  },
+  "metadataChange": [
+    {
+      "hid": "0080d",
+      "before": {
+        "alt": [
+          "puremind27.site",
+          "clearglow16.site",
+          "purelife84.site",
+          "trueforce46.site",
+          "happymind76.site"
+        ],
+        "node": "447"
+      },
+      "after": {
+        "alt": [
+          "puremind27.site",
+          "clearglow16.site",
+          "purelife84.site",
+          "trueforce46.site",
+          "happymind76.site"
+        ],
+        "alt2": "kkplayer.wtf",
+        "alt_node": "447"
+      },
+      "imageCount": 87
+    },
+    {
+      "hid": "vwk5z",
+      "before": {
+        "alt": [
+          "sharpwave36.site",
+          "happytrail92.site",
+          "wildglow54.site",
+          "freewave49.site",
+          "deeppath92.site"
+        ],
+        "node": "497"
+      },
+      "after": {
+        "alt": [
+          "sharpwave36.site",
+          "happytrail92.site",
+          "wildglow54.site",
+          "freewave49.site",
+          "deeppath92.site"
+        ],
+        "alt2": "kkplayer.wtf",
+        "alt_node": "lov"
+      },
+      "imageCount": 183
+    }
+  ],
+  "browserRuns": [
+    {
+      "date": "2026-10-25",
+      "engine": "webkit",
+      "host": "comix.to",
+      "stages": [
+        {
+          "name": "popular",
+          "url": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 2184,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "popular-page2",
+          "url": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "status": 200,
+          "ms": 1996,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "latest",
+          "url": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 1624,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "search",
+          "url": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "status": 200,
+          "ms": 688,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "empty-search",
+          "url": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "status": 200,
+          "ms": 626,
+          "count": 0,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "chapters-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "status": 200,
+          "ms": 407,
+          "complete": true,
+          "count": 20,
+          "title": "The Unlimited Bacteriomancer",
+          "network": [
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "status": 200,
+          "ms": 543,
+          "count": 87,
+          "title": "The Unlimited Bacteriomancer \u00b7 Ch.16",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11546755",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-0080d-0",
+          "url": "https://pq4.amandathoughts.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+          "status": 200,
+          "ms": 112,
+          "length": 369272,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "5249464670a2050057454250"
+        },
+        {
+          "name": "image-0080d-43",
+          "url": "https://pq4.wanderingsoulblog.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+          "status": 200,
+          "ms": 98,
+          "length": 200072,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646800d030057454250"
+        },
+        {
+          "name": "image-0080d-86",
+          "url": "https://pq4.softvisualstudio.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+          "status": 200,
+          "ms": 104,
+          "length": 369272,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "5249464670a2050057454250"
+        },
+        {
+          "name": "chapters-vwk5z",
+          "url": "https://comix.to/title/vwk5z",
+          "finalUrl": "https://comix.to/title/vwk5z",
+          "status": 200,
+          "ms": 418,
+          "complete": true,
+          "count": 20,
+          "title": "The Shepherd Wizard",
+          "network": [
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-vwk5z",
+          "url": "https://comix.to/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "finalUrl": "https://comix.to/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "status": 200,
+          "ms": 640,
+          "count": 183,
+          "title": "The Shepherd Wizard \u00b7 Ch.41",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11533039",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-vwk5z-0",
+          "url": "https://1xx.sophiejournal.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4AiVMhaGDNl",
+          "status": 200,
+          "ms": 61,
+          "length": 147280,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646483f020057454250"
+        },
+        {
+          "name": "image-vwk5z-91",
+          "url": "https://1xx.lifeinpixels.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4ArV8haGDNl",
+          "status": 200,
+          "ms": 213,
+          "length": 214068,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462c44030057454250"
+        },
+        {
+          "name": "image-vwk5z-182",
+          "url": "https://1xx.softfabricstore.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4EqVshaGDNl",
+          "status": 200,
+          "ms": 60,
+          "length": 91432,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462065010057454250"
+        },
+        {
+          "name": "tags",
+          "url": "https://comix.to/browse",
+          "finalUrl": "https://comix.to/browse",
+          "status": 200,
+          "ms": 452,
+          "count": 20,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/tags/search",
+              "status": 200
+            }
+          ],
+          "errors": []
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "engine": "webkit",
+      "host": "comix.ws",
+      "stages": [
+        {
+          "name": "popular",
+          "url": "https://comix.ws/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 2802,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "popular-page2",
+          "url": "https://comix.ws/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "status": 200,
+          "ms": 2316,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "latest",
+          "url": "https://comix.ws/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 1828,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "search",
+          "url": "https://comix.ws/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "finalUrl": "https://comix.ws/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "status": 200,
+          "ms": 736,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "empty-search",
+          "url": "https://comix.ws/browse?keyword=codexnonexistenttitle774328&page=1",
+          "finalUrl": "https://comix.ws/browse?keyword=codexnonexistenttitle774328&page=1",
+          "status": 200,
+          "ms": 514,
+          "count": 0,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "chapters-0080d",
+          "url": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer",
+          "finalUrl": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer",
+          "status": 200,
+          "ms": 555,
+          "complete": true,
+          "count": 20,
+          "title": "The Unlimited Bacteriomancer",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/threads/lookup",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-0080d",
+          "url": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "finalUrl": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer/11546755-chapter-16",
+          "status": 200,
+          "ms": 691,
+          "count": 87,
+          "title": "The Unlimited Bacteriomancer \u00b7 Ch.16",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11546755",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-0080d-0",
+          "url": "https://pq4.amandathoughts.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4AjS5FIHyE",
+          "status": 200,
+          "ms": 99,
+          "length": 369272,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "5249464670a2050057454250"
+        },
+        {
+          "name": "image-0080d-43",
+          "url": "https://pq4.wanderingsoulblog.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4QmS5FIHyE",
+          "status": 200,
+          "ms": 63,
+          "length": 200072,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646800d030057454250"
+        },
+        {
+          "name": "image-0080d-86",
+          "url": "https://pq4.softvisualstudio.site/hi/bEqPbYfoNT0GmxHlDkKfoD5U4qUBevqi3R0VurLI6y4glS5FIHyE",
+          "status": 200,
+          "ms": 76,
+          "length": 369272,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "5249464670a2050057454250"
+        },
+        {
+          "name": "chapters-vwk5z",
+          "url": "https://comix.ws/title/vwk5z",
+          "finalUrl": "https://comix.ws/title/vwk5z",
+          "status": 200,
+          "ms": 466,
+          "complete": true,
+          "count": 20,
+          "title": "The Shepherd Wizard",
+          "network": [
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-vwk5z",
+          "url": "https://comix.ws/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "finalUrl": "https://comix.ws/title/vwk5z-the-shepherd-wizard/11533039-chapter-41",
+          "status": 200,
+          "ms": 750,
+          "count": 183,
+          "title": "The Shepherd Wizard \u00b7 Ch.41",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11533039",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/chapters/11533039",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-vwk5z-0",
+          "url": "https://1xx.sophiejournal.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4AiVMhaGDNl",
+          "status": 200,
+          "ms": 68,
+          "length": 147280,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646483f020057454250"
+        },
+        {
+          "name": "image-vwk5z-91",
+          "url": "https://1xx.lifeinpixels.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4ArV8haGDNl",
+          "status": 200,
+          "ms": 63,
+          "length": 214068,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462c44030057454250"
+        },
+        {
+          "name": "image-vwk5z-182",
+          "url": "https://1xx.softfabricstore.site/hi/bEqPbYfoKT0Gmw3ld2KfoD5U2r0ZVvai3R0VvqLI6y4EqVshaGDNl",
+          "status": 200,
+          "ms": 61,
+          "length": 91432,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946462065010057454250"
+        },
+        {
+          "name": "tags",
+          "url": "https://comix.ws/browse",
+          "finalUrl": "https://comix.ws/browse",
+          "status": 200,
+          "ms": 474,
+          "count": 20,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/tags/search",
+              "status": 200
+            }
+          ],
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "limitations": "Representative titles; not every catalog entry. Desktop WebKit and JVM OkHttp, no physical iPhone or native Tachimanga test. Primary image hosts worked on this network. The native recovery test deliberately rejects the primary before contacting live alternate hosts. No new Cloudflare verification claim.",
+  "observedBrowserRetry": {
+    "setup": "Normal site reader; image requests deliberately aborted before network access to trigger its fallback selection.",
+    "firstImageHostsAndQuery": [
+      {
+        "host": "pq4.amandathoughts.site",
+        "query": ""
+      },
+      {
+        "host": "pq4.puremind27.site",
+        "query": ""
+      },
+      {
+        "host": "pq4.kkplayer.wtf",
+        "query": ""
+      },
+      {
+        "host": "447.amandathoughts.site",
+        "query": ""
+      },
+      {
+        "host": "447.puremind27.site",
+        "query": ""
+      },
+      {
+        "host": "447.kkplayer.wtf",
+        "query": ""
+      },
+      {
+        "host": "pq4.amandathoughts.site",
+        "query": "r=1"
+      },
+      {
+        "host": "pq4.puremind27.site",
+        "query": "r=1"
+      },
+      {
+        "host": "pq4.kkplayer.wtf",
+        "query": "r=1"
+      },
+      {
+        "host": "447.amandathoughts.site",
+        "query": "r=1"
+      },
+      {
+        "host": "447.puremind27.site",
+        "query": "r=1"
+      },
+      {
+        "host": "447.kkplayer.wtf",
+        "query": "r=1"
+      }
+    ]
+  },
+  "liveHostProbes": [
+    {
+      "hid": "0080d",
+      "oldFallbackHosts": [
+        "pq4.puremind27.site",
+        "pq4.clearglow16.site",
+        "pq4.purelife84.site",
+        "pq4.trueforce46.site",
+        "pq4.happymind76.site",
+        "pq4.puremind27.site"
+      ],
+      "newFallbackHosts": [
+        "pq4.puremind27.site",
+        "pq4.kkplayer.wtf",
+        "447.amandathoughts.site",
+        "447.puremind27.site",
+        "447.kkplayer.wtf"
+      ],
+      "probes": [
+        {
+          "host": "pq4.amandathoughts.site",
+          "status": 200,
+          "bytes": 369272,
+          "format": "WEBP",
+          "size": [
+            1600,
+            900
+          ],
+          "seconds": 0.344
+        },
+        {
+          "host": "pq4.puremind27.site",
+          "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+          "seconds": 0.187
+        },
+        {
+          "host": "pq4.clearglow16.site",
+          "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+          "seconds": 0.203
+        },
+        {
+          "host": "pq4.purelife84.site",
+          "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+          "seconds": 0.172
+        },
+        {
+          "host": "pq4.trueforce46.site",
+          "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+          "seconds": 0.156
+        },
+        {
+          "host": "pq4.happymind76.site",
+          "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+          "seconds": 0.172
+        },
+        {
+          "host": "pq4.kkplayer.wtf",
+          "error": "<urlopen error [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1147)>",
+          "seconds": 0.453
+        },
+        {
+          "host": "447.amandathoughts.site",
+          "status": 200,
+          "bytes": 369272,
+          "format": "WEBP",
+          "size": [
+            1600,
+            900
+          ],
+          "seconds": 0.782
+        },
+        {
+          "host": "447.puremind27.site",
+          "status": 200,
+          "bytes": 369272,
+          "format": "WEBP",
+          "size": [
+            1600,
+            900
+          ],
+          "seconds": 0.297
+        },
+        {
+          "host": "447.kkplayer.wtf",
+          "status": 200,
+          "bytes": 369272,
+          "format": "WEBP",
+          "size": [
+            1600,
+            900
+          ],
+          "seconds": 1.203
+        }
+      ]
+    },
+    {
+      "hid": "vwk5z",
+      "oldFallbackHosts": [
+        "1xx.sharpwave36.site",
+        "1xx.happytrail92.site",
+        "1xx.wildglow54.site",
+        "1xx.freewave49.site",
+        "1xx.deeppath92.site",
+        "1xx.sharpwave36.site"
+      ],
+      "newFallbackHosts": [
+        "1xx.sharpwave36.site",
+        "1xx.kkplayer.wtf",
+        "lov.sophiejournal.site",
+        "lov.sharpwave36.site",
+        "lov.kkplayer.wtf"
+      ],
+      "probes": [
+        {
+          "host": "1xx.sophiejournal.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.234
+        },
+        {
+          "host": "1xx.sharpwave36.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.469
+        },
+        {
+          "host": "1xx.happytrail92.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.469
+        },
+        {
+          "host": "1xx.wildglow54.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.468
+        },
+        {
+          "host": "1xx.freewave49.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.469
+        },
+        {
+          "host": "1xx.deeppath92.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.453
+        },
+        {
+          "host": "1xx.kkplayer.wtf",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 1.11
+        },
+        {
+          "host": "lov.sophiejournal.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.468
+        },
+        {
+          "host": "lov.sharpwave36.site",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 0.5
+        },
+        {
+          "host": "lov.kkplayer.wtf",
+          "status": 200,
+          "bytes": 147280,
+          "format": "WEBP",
+          "size": [
+            800,
+            1500
+          ],
+          "seconds": 1.203
+        }
+      ]
+    }
+  ],
+  "nativeRecovery": {
+    "baselineVersion": "1.6.64",
+    "baselineError": "UnknownHostException: pq4.puremind27.site",
+    "fixed": [
+      {
+        "hid": "0080d",
+        "samples": [
+          {
+            "index": 0,
+            "host": "447.amandathoughts.site",
+            "bytes": 369272,
+            "seconds": 0.6200861,
+            "attempts": [
+              "pq4.amandathoughts.site",
+              "pq4.puremind27.site",
+              "pq4.kkplayer.wtf",
+              "447.amandathoughts.site"
+            ]
+          },
+          {
+            "index": 43,
+            "host": "447.wanderingsoulblog.site",
+            "bytes": 200072,
+            "seconds": 0.5953059,
+            "attempts": [
+              "pq4.wanderingsoulblog.site",
+              "pq4.trueforce46.site",
+              "pq4.kkplayer.wtf",
+              "447.wanderingsoulblog.site"
+            ]
+          },
+          {
+            "index": 86,
+            "host": "447.softvisualstudio.site",
+            "bytes": 369272,
+            "seconds": 0.5854667,
+            "attempts": [
+              "pq4.softvisualstudio.site",
+              "pq4.clearglow16.site",
+              "pq4.kkplayer.wtf",
+              "447.softvisualstudio.site"
+            ]
+          }
+        ]
+      },
+      {
+        "hid": "vwk5z",
+        "samples": [
+          {
+            "index": 0,
+            "host": "1xx.sharpwave36.site",
+            "bytes": 147280,
+            "seconds": 0.3613434,
+            "attempts": [
+              "1xx.sophiejournal.site",
+              "1xx.sharpwave36.site"
+            ]
+          },
+          {
+            "index": 91,
+            "host": "1xx.happytrail92.site",
+            "bytes": 214068,
+            "seconds": 0.2899248,
+            "attempts": [
+              "1xx.lifeinpixels.site",
+              "1xx.happytrail92.site"
+            ]
+          },
+          {
+            "index": 182,
+            "host": "1xx.wildglow54.site",
+            "bytes": 91432,
+            "seconds": 0.2731141,
+            "attempts": [
+              "1xx.softfabricstore.site",
+              "1xx.wildglow54.site"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "decodedNativeImages": [
+    {
+      "file": "native-fallback-webkit-comix.to-pages-0080d-0.bin",
+      "format": "WEBP",
+      "size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-0080d-43.bin",
+      "format": "WEBP",
+      "size": [
+        800,
+        1594
+      ]
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-0080d-86.bin",
+      "format": "WEBP",
+      "size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-vwk5z-0.bin",
+      "format": "WEBP",
+      "size": [
+        800,
+        1500
+      ]
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-vwk5z-182.bin",
+      "format": "WEBP",
+      "size": [
+        800,
+        1248
+      ]
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-vwk5z-91.bin",
+      "format": "WEBP",
+      "size": [
+        800,
+        1500
+      ]
+    }
+  ],
+  "tests": {
+    "javascript": 44,
+    "kotlin": 37
+  }
+}
