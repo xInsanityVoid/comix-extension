@@ -125,14 +125,31 @@ val generateImageHarness = tasks.register("generateImageHarness") {
     }
 }
 
+val generatedTags = layout.buildDirectory.file("generated/tags/TagSearchResponse.kt")
+val generateTagsHarness = tasks.register("generateTagsHarness") {
+    val dtoSource = productionSource.parentFile.resolve("Dto.kt")
+    inputs.file(dtoSource)
+    outputs.file(generatedTags)
+    doLast {
+        val source = dtoSource.readText().replace("\r\n", "\n")
+        val start = source.indexOf("@Serializable\nclass TagSearchResponse(")
+        val end = source.indexOf("@Serializable\nclass Manga(", start)
+        check(start >= 0 && end > start)
+        generatedTags.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText("package eu.kanade.tachiyomi.extension.en.comix\nimport kotlinx.serialization.Serializable\n" + source.substring(start, end))
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(21)
     sourceSets.main {
-        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh"), layout.buildDirectory.dir("generated/resume"), layout.buildDirectory.dir("generated/routing"), layout.buildDirectory.dir("generated/pages"), layout.buildDirectory.dir("generated/image")))
-        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt", "**/ResumePreferences.kt", "**/ResumeHarness.kt", "**/RoutingHarness.kt", "**/ChapterPages.kt", "**/ImageHarness.kt", "**/Page.kt")
+        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh"), layout.buildDirectory.dir("generated/resume"), layout.buildDirectory.dir("generated/routing"), layout.buildDirectory.dir("generated/pages"), layout.buildDirectory.dir("generated/image"), layout.buildDirectory.dir("generated/tags")))
+        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt", "**/ResumePreferences.kt", "**/ResumeHarness.kt", "**/RoutingHarness.kt", "**/ChapterPages.kt", "**/ImageHarness.kt", "**/Page.kt", "**/TagSearchResponse.kt", "**/Filters.kt", "**/Filter.kt", "**/FilterList.kt")
     }
 }
-tasks.named("compileKotlin") { dependsOn(generateRefreshHarness, generateResumeHarness, generateRoutingHarness, generatePagesHarness, generateImageHarness) }
+tasks.named("compileKotlin") { dependsOn(generateRefreshHarness, generateResumeHarness, generateRoutingHarness, generatePagesHarness, generateImageHarness, generateTagsHarness) }
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("com.squareup.okhttp3:okhttp:5.4.0")

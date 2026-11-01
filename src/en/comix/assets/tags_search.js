@@ -8,7 +8,7 @@
         const search = await findSearch();
         if (!search) return reject("Could not find the site's tag API");
         const result = await search({ type, q: query });
-        pass(JSON.stringify(result));
+        pass(JSON.stringify(Array.isArray(result) ? { result } : result));
     };
 
     const start = () => read().catch((e) => {

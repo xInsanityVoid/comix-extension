@@ -605,8 +605,21 @@ index 40f16b52..f2eef4e2 100644
 +        }
 +    };
  }
+diff --git a/src/en/comix/assets/tags_search.js b/src/en/comix/assets/tags_search.js
+index c9cbd865..05268fef 100644
+--- a/src/en/comix/assets/tags_search.js
++++ b/src/en/comix/assets/tags_search.js
+@@ -8,7 +8,7 @@
+         const search = await findSearch();
+         if (!search) return reject("Could not find the site's tag API");
+         const result = await search({ type, q: query });
+-        pass(JSON.stringify(result));
++        pass(JSON.stringify(Array.isArray(result) ? { result } : result));
+     };
+ 
+     const start = () => read().catch((e) => {
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..78c9ec76 100644
+index 523b26a1..71dde47d 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -614,7 +627,7 @@ index 523b26a1..78c9ec76 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 65
++    versionCode = 66
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
@@ -641,7 +654,7 @@ index 00000000..3f1d204a
 +    .maxByOrNull { it.chapter_number }
 +    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..fe5f12aa 100644
+index b9bc9c66..c188a27e 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 @@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
@@ -652,7 +665,43 @@ index b9bc9c66..fe5f12aa 100644
  import keiyoushi.utils.parseAs
  import keiyoushi.utils.runWebView
  import keiyoushi.utils.string
-@@ -366,7 +365,7 @@ abstract class Comix :
+@@ -181,35 +180,11 @@ abstract class Comix :
+     }
+ 
+     private suspend fun getMangaListFromBrowse(url: HttpUrl): MangasPage {
+-        val contentRating = url.queryParameter("content_rating")
+-            ?: preferences.contentRating()
+-        val effectiveContentRating = contentRating
+-            .split(',')
+-            .lastOrNull { it.isNotBlank() }
+-            .orEmpty()
+-            .ifEmpty { "pornographic" }
+         val expectedKeyword = JSONObject.quote(
+             url.queryParameter("q") ?: url.queryParameter("keyword").orEmpty(),
+         )
+         val searchResponse = runInWebView(
+             url = url.toString(),
+-            pageScript = { _, _, _ ->
+-                """
+-                (function () {
+-                    const key = 'settings_v2';
+-                    let settings = {};
+-                    try {
+-                        settings = JSON.parse(localStorage.getItem(key) || '{}');
+-                    } catch (e) {}
+-                    settings.state = {
+-                        ...(settings.state || {}),
+-                        contentFilter: '$effectiveContentRating'
+-                    };
+-                    if (settings.version === undefined) settings.version = 0;
+-                    localStorage.setItem(key, JSON.stringify(settings));
+-                })();
+-                """.trimIndent()
+-            },
+             buildScript = { passPayloadName ->
+                 """
+                     (function () {
+@@ -366,7 +341,7 @@ abstract class Comix :
      }
  
      override suspend fun getMangaByUrl(url: HttpUrl): SManga? {
@@ -661,7 +710,16 @@ index b9bc9c66..fe5f12aa 100644
          if (url.pathSegments.size < 2 || url.pathSegments[0] != "title") return null
  
          val mangaSlug = url.pathSegments[1]
-@@ -430,24 +429,22 @@ abstract class Comix :
+@@ -409,7 +384,7 @@ abstract class Comix :
+                 "${JSONObject.quote(type)}, ${JSONObject.quote(name)}, " +
+                 "window.$passPayloadName, window.$rejectName);"
+         }
+-        val ids = payload.parseAs<TagSearchResponse>().result.map { it.id.toString() }
++        val ids = payload.parseAs<TagSearchResponse>().matchingIds(type, name)
+         synchronized(tagIdCache) { tagIdCache[cacheKey] = ids }
+         return ids
+     }
+@@ -430,24 +405,22 @@ abstract class Comix :
          val scanlatorBlacklist = preferences.scanlatorBlacklist()
          val blacklistSignature = scanlatorBlacklist.sorted().joinToString(",")
          // List settings live on the newest chapter; browse and search results replace a non-library entry's memo
@@ -695,7 +753,7 @@ index b9bc9c66..fe5f12aa 100644
              // Site dates are relative ("2w ago"), so keep the date a chapter was first stored with
              val knownDates = chapters.mapNotNull { chapter ->
                  chapter.chapterId()?.let { it to chapter.date_upload }?.takeIf { it.second > 0 }
-@@ -455,19 +452,19 @@ abstract class Comix :
+@@ -455,19 +428,19 @@ abstract class Comix :
              val mangaSlug = manga.url.removePrefix("/")
              val fetchStartedAt = System.currentTimeMillis()
              val chapterList = getWebViewChapterList(manga, knownIds)
@@ -720,7 +778,7 @@ index b9bc9c66..fe5f12aa 100644
              selectChapters(candidates, deduplicateChapters, scanlatorBlacklist).also { selected ->
                  selected.firstOrNull()?.apply {
                      memo = buildJsonObject {
-@@ -475,7 +472,8 @@ abstract class Comix :
+@@ -475,7 +448,8 @@ abstract class Comix :
                          put(CHAPTER_LIST_DEDUPLICATED_MEMO, deduplicateChapters)
                          put(CHAPTER_LIST_BLACKLIST_MEMO, blacklistSignature)
                          put(CHAPTER_LIST_COMPLETE_MEMO, chapterList.complete)
@@ -730,7 +788,7 @@ index b9bc9c66..fe5f12aa 100644
                      }
                  }
              }
-@@ -484,7 +482,6 @@ abstract class Comix :
+@@ -484,7 +458,6 @@ abstract class Comix :
          }
          val walked = walkedQueries
          val detail = when {
@@ -738,7 +796,7 @@ index b9bc9c66..fe5f12aa 100644
              !fetchDetails -> null
              walked != null -> walked.mangaDetail()
              else -> getQueries().mangaDetail()
-@@ -506,6 +503,8 @@ abstract class Comix :
+@@ -506,6 +479,8 @@ abstract class Comix :
              buildScript = { passPayloadName ->
                  """
                  (function () {
@@ -747,7 +805,7 @@ index b9bc9c66..fe5f12aa 100644
                      const raw = document.querySelector('script#initial-data')?.textContent;
                      if (raw) window.$passPayloadName(raw);
                  })();
-@@ -570,14 +569,49 @@ abstract class Comix :
+@@ -570,14 +545,49 @@ abstract class Comix :
          knownIds: List<Int>,
      ): ChapterList {
          val mangaId = manga.url.removePrefix("/").substringBefore('-')
@@ -799,7 +857,7 @@ index b9bc9c66..fe5f12aa 100644
      private fun selectChapters(
          allChapters: List<SChapter>,
          shouldDeduplicate: Boolean,
-@@ -684,13 +718,13 @@ abstract class Comix :
+@@ -684,13 +694,13 @@ abstract class Comix :
          url: String,
          isDataRequest: ((HttpUrl) -> Boolean)? = null,
          buildScript: ((passPayloadName: String) -> String)? = null,
@@ -816,7 +874,7 @@ index b9bc9c66..fe5f12aa 100644
          return runWebView(timeout = Duration.INFINITE) {
              userAgent = headers["User-Agent"].orEmpty()
              blockImages = true
-@@ -701,7 +735,7 @@ abstract class Comix :
+@@ -701,7 +711,7 @@ abstract class Comix :
                      ?: return@interceptRequest emptyResponse
                  if (UNUSED_SITE_PATHS.any(requestUrl.encodedPath::startsWith)) return@interceptRequest emptyResponse
                  // The solver's own request for this path reads the site's page
@@ -825,7 +883,7 @@ index b9bc9c66..fe5f12aa 100644
                  if (requestUrl.encodedPath == WAF_CHALLENGE_PATH && isFrameLoad) {
                      if (!preferences.solveCaptchas()) {
                          reject(Exception("Open in WebView to solve the captcha, or turn on \"Solve captchas\" in extension settings"))
-@@ -728,15 +762,12 @@ abstract class Comix :
+@@ -728,15 +738,12 @@ abstract class Comix :
  
              jsBridge(bridgeName) { resolve(it) }
              jsBridge(errorBridgeName) { reject(Exception(it)) }
@@ -846,7 +904,7 @@ index b9bc9c66..fe5f12aa 100644
              // Refuse the site's first-tap ad window
              withNativeWebView { it.settings.setSupportMultipleWindows(true) }
  
-@@ -768,8 +799,7 @@ abstract class Comix :
+@@ -768,8 +775,7 @@ abstract class Comix :
                  try { localStorage.setItem("__pu1", "[" + Date.now() + "]"); } catch (e) {}
                  window.$passPayloadName = payload => window.$bridgeName.post(payload);
                  window.$rejectName = message => window.$errorBridgeName.post(message);
@@ -856,7 +914,7 @@ index b9bc9c66..fe5f12aa 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
-@@ -783,6 +813,16 @@ abstract class Comix :
+@@ -783,6 +789,16 @@ abstract class Comix :
  
      private fun asset(name: String) = javaClass.getResource("/assets/$name")!!.readText()
  
@@ -873,7 +931,25 @@ index b9bc9c66..fe5f12aa 100644
      private fun HttpUrl.isChapterPagesRequest(): Boolean = pathSegments.size == 4 &&
          pathSegments[0] == "api" &&
          pathSegments[1] == "v1" &&
-@@ -976,10 +1016,14 @@ abstract class Comix :
+@@ -844,7 +860,7 @@ abstract class Comix :
+         MultiSelectListPreference(screen.context).apply {
+             key = PREF_DEFAULT_DEMOGRAPHICS
+             title = "Default demographics"
+-            summary = "Demographics to include in popular, latest, and search " +
++            summary = "Unticked demographics are hidden from popular, latest, and search " +
+                 "results. The Demographic filter in search overrides this."
+             entries = Filters.getDemographics().map { it.first }.toTypedArray()
+             entryValues = Filters.getDemographics().map { it.second }.toTypedArray()
+@@ -941,7 +957,7 @@ abstract class Comix :
+ 
+     private fun SharedPreferences.defaultDemographics(): Set<String> {
+         val all = Filters.getDemographics().map { it.second }.toSet()
+-        return getStringSet(PREF_DEFAULT_DEMOGRAPHICS, all) ?: all
++        return getStringSet(PREF_DEFAULT_DEMOGRAPHICS, all)?.ifEmpty { all } ?: all
+     }
+ 
+     private fun SharedPreferences.blockedGenres(): Set<String> = getStringSet(PREF_BLOCKED_GENRES, emptySet()) ?: emptySet()
+@@ -976,10 +992,14 @@ abstract class Comix :
  
          private const val DEFAULT_CONTENT_RATING = "suggestive"
          private const val WEBVIEW_TIMEOUT_SECONDS = 120L
@@ -890,7 +966,7 @@ index b9bc9c66..fe5f12aa 100644
          private const val OFFICIAL_GROUP_ID = 10702
          private const val TAG_ID_CACHE_SIZE = 50
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
-index 2e3126a7..7deac3f7 100644
+index 2e3126a7..f1dc345a 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
 @@ -16,10 +16,6 @@ const val CHAPTER_ID_MEMO = "chapterId"
@@ -904,7 +980,28 @@ index 2e3126a7..7deac3f7 100644
  
  @Serializable
  class Term(
-@@ -325,11 +321,23 @@ class ChapterPages(
+@@ -28,11 +24,17 @@ class Term(
+ 
+ @Serializable
+ class TagSearchResponse(
+-    val result: List<TagSearchHit> = emptyList(),
+-)
++    private val result: List<TagSearchHit> = emptyList(),
++) {
++    fun matchingIds(type: String, name: String): List<String> {
++        if (result.isEmpty()) throw Exception("No $type named \"$name\"")
++        return result.filter { it.label.equals(name, ignoreCase = true) }.ifEmpty { result }
++            .map { it.id.toString() }
++    }
++}
+ 
+ @Serializable
+-class TagSearchHit(val id: Int)
++class TagSearchHit(val id: Int, val label: String)
+ 
+ @Serializable
+ class Manga(
+@@ -325,11 +327,23 @@ class ChapterPages(
      val items: List<PageDto>,
      private val alt: List<String>? = null,
      private val node: String? = null,
@@ -929,6 +1026,63 @@ index 2e3126a7..7deac3f7 100644
          val start = index % alt.size
          val domains = alt.drop(start) + alt.take(start)
          val hosts = domains.map { "$label.$it" } + domains.map { "${node ?: label}.$it" }
+diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Filters.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Filters.kt
+index dc79d9f0..748d1c35 100644
+--- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Filters.kt
++++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Filters.kt
+@@ -192,18 +192,26 @@ class Filters(
+ 
+     private open class UriTriSelectOption(name: String, val value: String) : Filter.TriState(name)
+ 
+-    // The API ignores demographic exclusions, so this must remain include/off.
++    // Demographics are genre terms on the site
+     private class DemographicFilter(
+         demographics: Array<Pair<String, String>>,
+         selectedValues: Set<String>,
+-    ) : UriMultiSelectFilter(
++    ) : Filter.Group<UriTriSelectOption>(
+         "Demographic",
+-        "demographics[]",
+-        demographics,
+-        selectedValues,
+-        true,
++        demographics.map { (name, value) ->
++            UriTriSelectOption(name, value).apply {
++                if (value !in selectedValues) state = TriState.STATE_EXCLUDE
++            }
++        },
+     ),
+-        PreferenceFilter
++        PreferenceFilter {
++        override fun addToUri(builder: HttpUrl.Builder) {
++            state.filter { it.state == TriState.STATE_INCLUDE }
++                .forEach { builder.addQueryParameter("demographics[]", it.value) }
++            state.filter { it.state == TriState.STATE_EXCLUDE }
++                .forEach { builder.addQueryParameter("genres_ex[]", it.value) }
++        }
++    }
+ 
+     private class TypeFilter(selectedValues: Set<String>) :
+         UriMultiSelectFilter(
+@@ -306,14 +314,11 @@ class Filters(
+             defaultValue,
+         ),
+         PreferenceFilter {
++        // The site reads one comma-separated content_rating
+         override fun addToUri(builder: HttpUrl.Builder) {
+-            Filters.getContentRatingsUpTo(CONTENT_RATING_OPTIONS[state].second)
+-                .takeIf { it.isNotEmpty() }
+-                ?.let { ratings ->
+-                    ratings.map {
+-                        builder.addQueryParameter("content_rating[]", it)
+-                    }
+-                }
++            val ratings = getContentRatingsUpTo(CONTENT_RATING_OPTIONS[state].second)
++                .ifEmpty { getContentRatingsUpTo("pornographic") }
++            builder.addQueryParameter("content_rating", ratings.joinToString(","))
+         }
+     }
+ 
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Swipe.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Swipe.kt
 deleted file mode 100644
 index 95fd9c58..00000000

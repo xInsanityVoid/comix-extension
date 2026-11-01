@@ -1,0 +1,1106 @@
+{
+  "date": "2026-10-31",
+  "version": "1.6.66",
+  "upstream": {
+    "latestCommitTouchingComix": "5240ce7bec6e0dfbc871318f19884961bc1032e9",
+    "filterFixCommit": "71552cfb93bb99fd3853c8494c9317e4ee485be3",
+    "incorporatedPR": 20419,
+    "coreHeadersPR": {
+      "number": 20458,
+      "decision": "Reviewed; no rebase required for the reproduced filter/parser defects. Our existing core is embedded in the build. A future rebase requires imageRequest to become getImageRequest."
+    },
+    "openChapterPR": {
+      "number": 20547,
+      "decision": "Not incorporated: relies on native browser interaction unavailable in this Tachimanga-compatible path."
+    }
+  },
+  "browserRuns": [
+    {
+      "date": "2026-10-31",
+      "engine": "webkit",
+      "host": "comix.to",
+      "stages": [
+        {
+          "name": "popular",
+          "url": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 2284,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "popular-page2",
+          "url": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "status": 200,
+          "ms": 2128,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "latest",
+          "url": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.to/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 1129,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "search",
+          "url": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "status": 200,
+          "ms": 680,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "empty-search",
+          "url": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "finalUrl": "https://comix.to/browse?keyword=codexnonexistenttitle774328&page=1",
+          "status": 200,
+          "ms": 471,
+          "count": 0,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "chapters-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer",
+          "status": 200,
+          "ms": 4927,
+          "complete": true,
+          "count": 40,
+          "title": "The Unlimited Bacteriomancer",
+          "network": [
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/threads/lookup",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/threads/3716139/comments",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-0080d",
+          "url": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11595020-chapter-19",
+          "finalUrl": "https://comix.to/title/0080d-the-unlimited-bacteriomancer/11595020-chapter-19",
+          "status": 200,
+          "ms": 619,
+          "count": 73,
+          "title": "The Unlimited Bacteriomancer \u00b7 Ch.19",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11595020",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-0080d-0",
+          "url": "https://wyr.adamjournal.site/hi/bEqPbYfoKT0GmznlPhqfoD5Q1qEBYvqi3R0VurbI6y4AjS5FIHyE",
+          "status": 200,
+          "ms": 124,
+          "length": 398254,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646a613060057454250"
+        },
+        {
+          "name": "image-0080d-36",
+          "url": "https://wyr.tylerspace.site/hi/bEqPbYfoKT0GmznlPhqfoD5Q1qEBYvqi3R0VurbI6y4MlS5FIHyE",
+          "status": 200,
+          "ms": 101,
+          "length": 164864,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646f883020057454250"
+        },
+        {
+          "name": "image-0080d-72",
+          "url": "https://wyr.blogofjason.site/hi/bEqPbYfoKT0GmznlPhqfoD5Q1qEBYvqi3R0VurbI6y4chS5FIHyE",
+          "status": 200,
+          "ms": 91,
+          "length": 65040,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "5249464608fe000057454250"
+        },
+        {
+          "name": "chapters-vwk5z",
+          "url": "https://comix.to/title/vwk5z",
+          "finalUrl": "https://comix.to/title/vwk5z",
+          "status": 200,
+          "ms": 428,
+          "complete": true,
+          "count": 20,
+          "title": "The Shepherd Wizard",
+          "network": [
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-vwk5z",
+          "url": "https://comix.to/title/vwk5z-the-shepherd-wizard/11578670-chapter-42",
+          "finalUrl": "https://comix.to/title/vwk5z-the-shepherd-wizard/11578670-chapter-42",
+          "status": 200,
+          "ms": 554,
+          "count": 178,
+          "title": "The Shepherd Wizard \u00b7 Ch.42",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11578670",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-vwk5z-0",
+          "url": "https://rxn.meganwrites.site/hi/bEqPbYfoKT0Gml3kZg6foD5Qzq0pesai3R0Vvq7I6y4AiVMhaGDNl",
+          "status": 200,
+          "ms": 103,
+          "length": 147294,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646563f020057454250"
+        },
+        {
+          "name": "image-vwk5z-89",
+          "url": "https://rxn.blogofscott.site/hi/bEqPbYfoKT0Gml3kZg6foD5Qzq0pesai3R0Vvq7I6y4ArVchaGDNl",
+          "status": 200,
+          "ms": 96,
+          "length": 110466,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946467aaf010057454250"
+        },
+        {
+          "name": "image-vwk5z-177",
+          "url": "https://rxn.authenticworkspace.site/hi/bEqPbYfoKT0Gml3kZg6foD5Qzq0pesai3R0Vvq7I6y4ElXchaGDNl",
+          "status": 200,
+          "ms": 92,
+          "length": 92494,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946464669010057454250"
+        },
+        {
+          "name": "tags",
+          "url": "https://comix.to/browse",
+          "finalUrl": "https://comix.to/browse",
+          "status": 200,
+          "ms": 443,
+          "count": 20,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/tags/search",
+              "status": 200
+            }
+          ],
+          "errors": []
+        }
+      ]
+    },
+    {
+      "date": "2026-10-31",
+      "engine": "webkit",
+      "host": "comix.ws",
+      "stages": [
+        {
+          "name": "popular",
+          "url": "https://comix.ws/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[score]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 2147,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "popular-page2",
+          "url": "https://comix.ws/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[score]=desc&page=2&content_rating=suggestive",
+          "status": 200,
+          "ms": 2020,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "latest",
+          "url": "https://comix.ws/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "finalUrl": "https://comix.ws/browse?order[chapter_updated_at]=desc&page=1&content_rating=suggestive",
+          "status": 200,
+          "ms": 1266,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "search",
+          "url": "https://comix.ws/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "finalUrl": "https://comix.ws/browse?keyword=Shepherd%20Wizard&order[relevance]=desc&page=1",
+          "status": 200,
+          "ms": 673,
+          "count": 28,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "empty-search",
+          "url": "https://comix.ws/browse?keyword=codexnonexistenttitle774328&page=1",
+          "finalUrl": "https://comix.ws/browse?keyword=codexnonexistenttitle774328&page=1",
+          "status": 200,
+          "ms": 485,
+          "count": 0,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "chapters-0080d",
+          "url": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer",
+          "finalUrl": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer",
+          "status": 200,
+          "ms": 5169,
+          "complete": true,
+          "count": 40,
+          "title": "The Unlimited Bacteriomancer",
+          "network": [
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/threads/lookup",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/threads/3716139/comments",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/manga/0080d/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-0080d",
+          "url": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer/11595020-chapter-19",
+          "finalUrl": "https://comix.ws/title/0080d-the-unlimited-bacteriomancer/11595020-chapter-19",
+          "status": 200,
+          "ms": 595,
+          "count": 73,
+          "title": "The Unlimited Bacteriomancer \u00b7 Ch.19",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11595020",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-0080d-0",
+          "url": "https://wyr.adamjournal.site/hi/bEqPbYfoKT0GmznlPhqfoD5Q1qEBYvqi3R0VurbI6y4AjS5FIHyE",
+          "status": 200,
+          "ms": 78,
+          "length": 398254,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646a613060057454250"
+        },
+        {
+          "name": "image-0080d-36",
+          "url": "https://wyr.tylerspace.site/hi/bEqPbYfoKT0GmznlPhqfoD5Q1qEBYvqi3R0VurbI6y4MlS5FIHyE",
+          "status": 200,
+          "ms": 52,
+          "length": 164864,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646f883020057454250"
+        },
+        {
+          "name": "image-0080d-72",
+          "url": "https://wyr.blogofjason.site/hi/bEqPbYfoKT0GmznlPhqfoD5Q1qEBYvqi3R0VurbI6y4chS5FIHyE",
+          "status": 200,
+          "ms": 66,
+          "length": 65040,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "5249464608fe000057454250"
+        },
+        {
+          "name": "chapters-vwk5z",
+          "url": "https://comix.ws/title/vwk5z",
+          "finalUrl": "https://comix.ws/title/vwk5z",
+          "status": 200,
+          "ms": 459,
+          "complete": true,
+          "count": 20,
+          "title": "The Shepherd Wizard",
+          "network": [
+            {
+              "path": "/api/v1/manga/vwk5z/chapters",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "pages-vwk5z",
+          "url": "https://comix.ws/title/vwk5z-the-shepherd-wizard/11578670-chapter-42",
+          "finalUrl": "https://comix.ws/title/vwk5z-the-shepherd-wizard/11578670-chapter-42",
+          "status": 200,
+          "ms": 509,
+          "count": 178,
+          "title": "The Shepherd Wizard \u00b7 Ch.42",
+          "network": [
+            {
+              "path": "/api/v1/chapters/11578670",
+              "status": 200
+            }
+          ],
+          "errors": []
+        },
+        {
+          "name": "image-vwk5z-0",
+          "url": "https://rxn.meganwrites.site/hi/bEqPbYfoKT0Gml3kZg6foD5Qzq0pesai3R0Vvq7I6y4AiVMhaGDNl",
+          "status": 200,
+          "ms": 61,
+          "length": 147294,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "52494646563f020057454250"
+        },
+        {
+          "name": "image-vwk5z-89",
+          "url": "https://rxn.blogofscott.site/hi/bEqPbYfoKT0Gml3kZg6foD5Qzq0pesai3R0Vvq7I6y4ArVchaGDNl",
+          "status": 200,
+          "ms": 55,
+          "length": 110466,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946467aaf010057454250"
+        },
+        {
+          "name": "image-vwk5z-177",
+          "url": "https://rxn.authenticworkspace.site/hi/bEqPbYfoKT0Gml3kZg6foD5Qzq0pesai3R0Vvq7I6y4ElXchaGDNl",
+          "status": 200,
+          "ms": 50,
+          "length": 92494,
+          "type": "image/webp",
+          "headers": {},
+          "magic": "524946464669010057454250"
+        },
+        {
+          "name": "tags",
+          "url": "https://comix.ws/browse",
+          "finalUrl": "https://comix.ws/browse",
+          "status": 200,
+          "ms": 455,
+          "count": 20,
+          "title": "Comix - Read Comics online for free",
+          "network": [
+            {
+              "path": "/api/v1/manga",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/user",
+              "status": 200
+            },
+            {
+              "path": "/api/v1/tags/search",
+              "status": 200
+            }
+          ],
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "filterAndTagRuns": [
+    {
+      "host": "comix.to",
+      "name": "old-safe",
+      "url": "https://comix.to/browse?content_rating[]=safe&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ],
+          [
+            "content_rating[]",
+            "suggestive"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe",
+        "suggestive"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 80117,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2862,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.to",
+      "name": "new-safe",
+      "url": "https://comix.to/browse?content_rating=safe&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 70193,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2507,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.to",
+      "name": "new-suggestive",
+      "url": "https://comix.to/browse?content_rating=safe,suggestive&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ],
+          [
+            "content_rating[]",
+            "suggestive"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe",
+        "suggestive"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 80117,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2862,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.to",
+      "name": "new-demographic-exclusion",
+      "url": "https://comix.to/browse?content_rating=safe,suggestive&genres_ex[]=1&genres_ex[]=3&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ],
+          [
+            "content_rating[]",
+            "suggestive"
+          ],
+          [
+            "genres_ex[]",
+            "1"
+          ],
+          [
+            "genres_ex[]",
+            "3"
+          ],
+          [
+            "genres_mode",
+            "and"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe",
+        "suggestive"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 57742,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2063,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.to",
+      "name": "tag-lookup",
+      "query": "Cheongdam",
+      "count": 1,
+      "labels": [
+        "Cheongdam"
+      ]
+    },
+    {
+      "host": "comix.to",
+      "name": "tag-lookup",
+      "query": "zzcodexnonexistentauthor774328",
+      "count": 0,
+      "labels": []
+    },
+    {
+      "host": "comix.ws",
+      "name": "old-safe",
+      "url": "https://comix.ws/browse?content_rating[]=safe&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ],
+          [
+            "content_rating[]",
+            "suggestive"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe",
+        "suggestive"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 80117,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2862,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.ws",
+      "name": "new-safe",
+      "url": "https://comix.ws/browse?content_rating=safe&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 70193,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2507,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.ws",
+      "name": "new-suggestive",
+      "url": "https://comix.ws/browse?content_rating=safe,suggestive&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ],
+          [
+            "content_rating[]",
+            "suggestive"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe",
+        "suggestive"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 80117,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2862,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.ws",
+      "name": "new-demographic-exclusion",
+      "url": "https://comix.ws/browse?content_rating=safe,suggestive&genres_ex[]=1&genres_ex[]=3&order[score]=desc",
+      "apiQueries": [
+        [
+          [
+            "order[score]",
+            "desc"
+          ],
+          [
+            "page",
+            "1"
+          ],
+          [
+            "limit",
+            "28"
+          ],
+          [
+            "content_rating[]",
+            "safe"
+          ],
+          [
+            "content_rating[]",
+            "suggestive"
+          ],
+          [
+            "genres_ex[]",
+            "1"
+          ],
+          [
+            "genres_ex[]",
+            "3"
+          ],
+          [
+            "genres_mode",
+            "and"
+          ]
+        ]
+      ],
+      "count": 28,
+      "ratings": [
+        "safe",
+        "suggestive"
+      ],
+      "demographicIds": [],
+      "meta": {
+        "total": 57742,
+        "perPage": 28,
+        "page": 1,
+        "lastPage": 2063,
+        "from": 1,
+        "to": 28,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    },
+    {
+      "host": "comix.ws",
+      "name": "tag-lookup",
+      "query": "Cheongdam",
+      "count": 1,
+      "labels": [
+        "Cheongdam"
+      ]
+    },
+    {
+      "host": "comix.ws",
+      "name": "tag-lookup",
+      "query": "zzcodexnonexistentauthor774328",
+      "count": 0,
+      "labels": []
+    }
+  ],
+  "nativeImageRecovery": [
+    {
+      "hid": "0080d",
+      "samples": [
+        {
+          "index": 0,
+          "host": "wyr.kkplayer.wtf",
+          "bytes": 398254,
+          "seconds": 1.730713,
+          "attempts": [
+            "wyr.adamjournal.site",
+            "wyr.purepath24.site",
+            "wyr.kkplayer.wtf"
+          ]
+        },
+        {
+          "index": 36,
+          "host": "wyr.kkplayer.wtf",
+          "bytes": 164864,
+          "seconds": 1.1129199,
+          "attempts": [
+            "wyr.tylerspace.site",
+            "wyr.happyday58.site",
+            "wyr.kkplayer.wtf"
+          ]
+        },
+        {
+          "index": 72,
+          "host": "wyr.kkplayer.wtf",
+          "bytes": 65040,
+          "seconds": 0.9325521,
+          "attempts": [
+            "wyr.blogofjason.site",
+            "wyr.freeglow58.site",
+            "wyr.kkplayer.wtf"
+          ]
+        }
+      ]
+    },
+    {
+      "hid": "vwk5z",
+      "samples": [
+        {
+          "index": 0,
+          "host": "rxn.strongglow22.site",
+          "bytes": 147294,
+          "seconds": 0.44955,
+          "attempts": [
+            "rxn.meganwrites.site",
+            "rxn.strongglow22.site"
+          ]
+        },
+        {
+          "index": 89,
+          "host": "rxn.boldglow73.site",
+          "bytes": 110466,
+          "seconds": 0.3416206,
+          "attempts": [
+            "rxn.blogofscott.site",
+            "rxn.boldglow73.site"
+          ]
+        },
+        {
+          "index": 177,
+          "host": "rxn.brightforce08.site",
+          "bytes": 92494,
+          "seconds": 0.4158737,
+          "attempts": [
+            "rxn.authenticworkspace.site",
+            "rxn.brightforce08.site"
+          ]
+        }
+      ]
+    }
+  ],
+  "decodedNativeImages": [
+    {
+      "file": "native-fallback-webkit-comix.to-pages-0080d-0.bin",
+      "format": "WEBP",
+      "width": 900,
+      "height": 1750
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-0080d-36.bin",
+      "format": "WEBP",
+      "width": 900,
+      "height": 1700
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-0080d-72.bin",
+      "format": "WEBP",
+      "width": 900,
+      "height": 452
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-vwk5z-0.bin",
+      "format": "WEBP",
+      "width": 800,
+      "height": 1500
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-vwk5z-177.bin",
+      "format": "WEBP",
+      "width": 800,
+      "height": 1493
+    },
+    {
+      "file": "native-fallback-webkit-comix.to-pages-vwk5z-89.bin",
+      "format": "WEBP",
+      "width": 800,
+      "height": 1500
+    }
+  ],
+  "tests": {
+    "javascript": 49,
+    "kotlin": 48
+  },
+  "limitations": [
+    "Representative titles, not every catalog entry.",
+    "Desktop WebKit and JVM OkHttp; no physical iPhone or native Tachimanga test.",
+    "Normal routes were not challenged. Cloudflare solver behavior is not newly verified.",
+    "Native recovery test deliberately rejects primary hosts before contacting live alternates.",
+    "Chapter refresh samples stop at a supplied known chapter; they are not full-catalog imports.",
+    "Browse rows omit demographic IDs. Exclusion query forwarding and changed totals were verified, not individual result membership."
+  ]
+}

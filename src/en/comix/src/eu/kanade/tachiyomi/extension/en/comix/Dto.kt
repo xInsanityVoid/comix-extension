@@ -24,11 +24,17 @@ class Term(
 
 @Serializable
 class TagSearchResponse(
-    val result: List<TagSearchHit> = emptyList(),
-)
+    private val result: List<TagSearchHit> = emptyList(),
+) {
+    fun matchingIds(type: String, name: String): List<String> {
+        if (result.isEmpty()) throw Exception("No $type named \"$name\"")
+        return result.filter { it.label.equals(name, ignoreCase = true) }.ifEmpty { result }
+            .map { it.id.toString() }
+    }
+}
 
 @Serializable
-class TagSearchHit(val id: Int)
+class TagSearchHit(val id: Int, val label: String)
 
 @Serializable
 class Manga(

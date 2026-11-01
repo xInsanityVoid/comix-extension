@@ -180,35 +180,11 @@ abstract class Comix :
     }
 
     private suspend fun getMangaListFromBrowse(url: HttpUrl): MangasPage {
-        val contentRating = url.queryParameter("content_rating")
-            ?: preferences.contentRating()
-        val effectiveContentRating = contentRating
-            .split(',')
-            .lastOrNull { it.isNotBlank() }
-            .orEmpty()
-            .ifEmpty { "pornographic" }
         val expectedKeyword = JSONObject.quote(
             url.queryParameter("q") ?: url.queryParameter("keyword").orEmpty(),
         )
         val searchResponse = runInWebView(
             url = url.toString(),
-            pageScript = { _, _, _ ->
-                """
-                (function () {
-                    const key = 'settings_v2';
-                    let settings = {};
-                    try {
-                        settings = JSON.parse(localStorage.getItem(key) || '{}');
-                    } catch (e) {}
-                    settings.state = {
-                        ...(settings.state || {}),
-                        contentFilter: '$effectiveContentRating'
-                    };
-                    if (settings.version === undefined) settings.version = 0;
-                    localStorage.setItem(key, JSON.stringify(settings));
-                })();
-                """.trimIndent()
-            },
             buildScript = { passPayloadName ->
                 """
                     (function () {
@@ -408,7 +384,7 @@ abstract class Comix :
                 "${JSONObject.quote(type)}, ${JSONObject.quote(name)}, " +
                 "window.$passPayloadName, window.$rejectName);"
         }
-        val ids = payload.parseAs<TagSearchResponse>().result.map { it.id.toString() }
+        val ids = payload.parseAs<TagSearchResponse>().matchingIds(type, name)
         synchronized(tagIdCache) { tagIdCache[cacheKey] = ids }
         return ids
     }
@@ -884,7 +860,7 @@ abstract class Comix :
         MultiSelectListPreference(screen.context).apply {
             key = PREF_DEFAULT_DEMOGRAPHICS
             title = "Default demographics"
-            summary = "Demographics to include in popular, latest, and search " +
+            summary = "Unticked demographics are hidden from popular, latest, and search " +
                 "results. The Demographic filter in search overrides this."
             entries = Filters.getDemographics().map { it.first }.toTypedArray()
             entryValues = Filters.getDemographics().map { it.second }.toTypedArray()
@@ -981,7 +957,7 @@ abstract class Comix :
 
     private fun SharedPreferences.defaultDemographics(): Set<String> {
         val all = Filters.getDemographics().map { it.second }.toSet()
-        return getStringSet(PREF_DEFAULT_DEMOGRAPHICS, all) ?: all
+        return getStringSet(PREF_DEFAULT_DEMOGRAPHICS, all)?.ifEmpty { all } ?: all
     }
 
     private fun SharedPreferences.blockedGenres(): Set<String> = getStringSet(PREF_BLOCKED_GENRES, emptySet()) ?: emptySet()
