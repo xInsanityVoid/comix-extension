@@ -10,6 +10,24 @@ class SChapter(
     val id: Int = chapter_number.toInt(),
 )
 
-class SManga(val url: String, val memo: JsonObject = JsonObject(emptyMap()))
+class SManga(var url: String = "", var memo: JsonObject = JsonObject(emptyMap())) {
+    var title = ""
+    var author: String? = null
+    var artist: String? = null
+    var description: String? = null
+    var initialized = false
+    var status = UNKNOWN
+    var thumbnail_url: String? = null
+    var genre: String? = null
+
+    companion object {
+        const val UNKNOWN = 0
+        const val ONGOING = 1
+        const val COMPLETED = 2
+        const val ON_HIATUS = 6
+        const val CANCELLED = 5
+        fun create() = SManga()
+    }
+}
 
 class SMangaUpdate(val manga: SManga, val chapters: List<SChapter>)

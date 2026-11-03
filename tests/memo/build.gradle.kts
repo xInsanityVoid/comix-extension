@@ -142,14 +142,44 @@ val generateTagsHarness = tasks.register("generateTagsHarness") {
     }
 }
 
+val generatedManga = layout.buildDirectory.file("generated/manga/Manga.kt")
+val generateMangaHarness = tasks.register("generateMangaHarness") {
+    val dtoSource = productionSource.parentFile.resolve("Dto.kt")
+    inputs.file(dtoSource)
+    outputs.file(generatedManga)
+    doLast {
+        val source = dtoSource.readText().replace("\r\n", "\n")
+        val start = source.indexOf("@Serializable\nclass Manga(")
+        val end = source.indexOf("@Serializable\nclass SingleMangaResponse(", start)
+        val termStart = source.indexOf("@Serializable\nclass Term(")
+        val termEnd = source.indexOf("@Serializable\nclass TagSearchResponse(", termStart)
+        check(start >= 0 && end > start && termStart >= 0 && termEnd > termStart)
+        generatedManga.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText("""
+                package eu.kanade.tachiyomi.extension.en.comix
+                import eu.kanade.tachiyomi.source.model.SManga
+                import kotlinx.serialization.Serializable
+                import kotlinx.serialization.SerialName
+                import kotlinx.serialization.json.buildJsonObject
+                import kotlinx.serialization.json.put
+                import okhttp3.HttpUrl.Companion.toHttpUrl
+                import java.math.BigDecimal
+                import java.math.RoundingMode
+                const val MANGA_ID_MEMO = "mangaId"
+            """.trimIndent() + "\n" + source.substring(termStart, termEnd) + source.substring(start, end))
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(21)
     sourceSets.main {
-        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh"), layout.buildDirectory.dir("generated/resume"), layout.buildDirectory.dir("generated/routing"), layout.buildDirectory.dir("generated/pages"), layout.buildDirectory.dir("generated/image"), layout.buildDirectory.dir("generated/tags")))
-        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt", "**/ResumePreferences.kt", "**/ResumeHarness.kt", "**/RoutingHarness.kt", "**/ChapterPages.kt", "**/ImageHarness.kt", "**/Page.kt", "**/TagSearchResponse.kt", "**/Filters.kt", "**/Filter.kt", "**/FilterList.kt")
+        kotlin.setSrcDirs(listOf("stubs", comixSourceDir.get(), layout.buildDirectory.dir("generated/refresh"), layout.buildDirectory.dir("generated/resume"), layout.buildDirectory.dir("generated/routing"), layout.buildDirectory.dir("generated/pages"), layout.buildDirectory.dir("generated/image"), layout.buildDirectory.dir("generated/tags"), layout.buildDirectory.dir("generated/manga")))
+        kotlin.include("**/SChapter.kt", "**/ChapterListMemo.kt", "**/RefreshHost.kt", "**/RefreshHarness.kt", "**/ResumePreferences.kt", "**/ResumeHarness.kt", "**/RoutingHarness.kt", "**/ChapterPages.kt", "**/ImageHarness.kt", "**/Page.kt", "**/TagSearchResponse.kt", "**/Filters.kt", "**/Filter.kt", "**/FilterList.kt", "**/Manga.kt")
     }
 }
-tasks.named("compileKotlin") { dependsOn(generateRefreshHarness, generateResumeHarness, generateRoutingHarness, generatePagesHarness, generateImageHarness, generateTagsHarness) }
+tasks.named("compileKotlin") { dependsOn(generateRefreshHarness, generateResumeHarness, generateRoutingHarness, generatePagesHarness, generateImageHarness, generateTagsHarness, generateMangaHarness) }
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("com.squareup.okhttp3:okhttp:5.4.0")
@@ -161,4 +191,11 @@ tasks.register<JavaExec>("probeImages") {
     classpath = sourceSets["test"].runtimeClasspath
     mainClass.set("eu.kanade.tachiyomi.extension.en.comix.LiveImageProbeKt")
     args(providers.gradleProperty("pagesFile").orElse("").get())
+}
+
+tasks.register<JavaExec>("probeCovers") {
+    dependsOn("testClasses")
+    classpath = sourceSets["test"].runtimeClasspath
+    mainClass.set("eu.kanade.tachiyomi.extension.en.comix.LiveCoverProbeKt")
+    args(providers.gradleProperty("coversFile").orElse("").get())
 }

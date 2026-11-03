@@ -286,7 +286,7 @@ abstract class Comix :
         ).parseAs<SearchResponse>()
 
         val mangaList = searchResponse.result.items.map {
-            it.toBasicSManga(preferences.posterQuality())
+            it.toBasicSManga(baseUrl, preferences.posterQuality())
         }
         return MangasPage(mangaList, searchResponse.result.hasNextPage())
     }
@@ -508,6 +508,7 @@ abstract class Comix :
     }
 
     private fun parseMangaDetails(detail: Manga): SManga = detail.toSManga(
+        baseUrl,
         preferences.posterQuality(),
         preferences.alternativeNamesInDescription(),
         preferences.scorePosition(),
@@ -527,7 +528,7 @@ abstract class Comix :
             ?: return emptyList()
 
         return related.parseAs<SearchResponse.Items>().items.map {
-            it.toBasicSManga(preferences.posterQuality())
+            it.toBasicSManga(baseUrl, preferences.posterQuality())
         }
     }
 

@@ -24,8 +24,6 @@ class RefreshPreferences {
     fun scanlatorBlacklist() = blacklist
 }
 
-class Manga(val chapterUpdatedAtFormatted: String? = "2w")
-
 class ChapterList(
     val chapters: List<Chapter>,
     val complete: Boolean,
@@ -72,7 +70,7 @@ abstract class RefreshHost {
         return detailQueries
     }
 
-    protected fun JsonObject.mangaDetail() = Manga()
+    protected fun JsonObject.mangaDetail() = Manga(hid = "stub", title = "Stub", chapterUpdatedAtFormatted = "2w")
     protected fun parseMangaDetails(detail: Manga): SManga {
         detailParses++
         return parsedManga

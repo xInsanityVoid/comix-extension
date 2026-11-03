@@ -1,0 +1,2994 @@
+{
+  "date": "2026-11-03",
+  "version": "1.6.67",
+  "cause": "The site now mixes relative /images/covers/ paths and absolute CDN URLs. Build 66 returned relative thumbnail_url values verbatim, which cannot construct a native image request.",
+  "fix": "Resolve cover paths against the selected baseUrl in the production Poster mapping used by both detailed and basic Manga conversion.",
+  "upstream": {
+    "latestCheckedCommit": "72b13edd8cb97c8cd289639320cdd445227ffbdd",
+    "reviewedPRs": [
+      20643,
+      20573
+    ],
+    "relativeCoverFixPresent": false
+  },
+  "before": {
+    "date": "2026-11-03",
+    "routes": [
+      {
+        "host": "comix.to",
+        "name": "popular",
+        "items": 28
+      },
+      {
+        "host": "comix.to",
+        "name": "latest",
+        "items": 28
+      },
+      {
+        "host": "comix.ws",
+        "name": "popular",
+        "items": 28
+      },
+      {
+        "host": "comix.ws",
+        "name": "latest",
+        "items": 28
+      }
+    ],
+    "covers": [
+      {
+        "title": "On the Way to Meet Mom",
+        "hid": "g2rk",
+        "poster": {
+          "medium": "/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+          "large": "/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "The Greatest Estate Developer",
+        "hid": "8wgym",
+        "poster": {
+          "medium": "/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+          "large": "/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Omniscient Reader",
+        "hid": "w2399",
+        "poster": {
+          "medium": "/images/covers/18607/7c73d382292dc51ac39855e7938ce616df0a1bf6@280.jpg",
+          "large": "/images/covers/18607/7c73d382292dc51ac39855e7938ce616df0a1bf6.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/18607/7c73d382292dc51ac39855e7938ce616df0a1bf6@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Got Dropped into a Ghost Story, Still Gotta Work",
+        "hid": "301dn",
+        "poster": {
+          "medium": "https://static.comix.to/0270/i/c/55/6ae7119f515ff@280.jpg",
+          "large": "https://static.comix.to/0270/i/c/55/6ae7119f515ff.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/0270/i/c/55/6ae7119f515ff@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 48659,
+        "ms": 79,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Villains Are Destined to Die",
+        "hid": "x0ynk",
+        "poster": {
+          "medium": "/images/covers/17667/e99a532e5231e4c769215a1eadbd346435d1ae31@280.jpg",
+          "large": "/images/covers/17667/e99a532e5231e4c769215a1eadbd346435d1ae31.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/17667/e99a532e5231e4c769215a1eadbd346435d1ae31@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "A Painter Who Draws Dungeons",
+        "hid": "6062v",
+        "poster": {
+          "medium": "https://static.comix.to/728a/i/5/c6/6a92edf129f12@280.jpg",
+          "large": "https://static.comix.to/728a/i/5/c6/6a92edf129f12.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/728a/i/5/c6/6a92edf129f12@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 45157,
+        "ms": 19,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Eternally Regressing Knight",
+        "hid": "0kx0d",
+        "poster": {
+          "medium": "/images/covers/50321/e2f1d5fd5b4e2c6b9145f7a6cbcda170549d69c5@280.jpg",
+          "large": "/images/covers/50321/e2f1d5fd5b4e2c6b9145f7a6cbcda170549d69c5.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/50321/e2f1d5fd5b4e2c6b9145f7a6cbcda170549d69c5@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Roxana",
+        "hid": "k1re",
+        "poster": {
+          "medium": "/images/covers/5909/1725d87a0f6335f002a4ff0f43e35f14cc484dc9@280.jpg",
+          "large": "/images/covers/5909/1725d87a0f6335f002a4ff0f43e35f14cc484dc9.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/5909/1725d87a0f6335f002a4ff0f43e35f14cc484dc9@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Secretly Strong and Searching for My Daddy",
+        "hid": "ye9xn",
+        "poster": {
+          "medium": "https://static.comix.to/20fb/i/2/c1/6ace77abe5b4f@280.jpg",
+          "large": "https://static.comix.to/20fb/i/2/c1/6ace77abe5b4f.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/20fb/i/2/c1/6ace77abe5b4f@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 49309,
+        "ms": 16,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "No Home",
+        "hid": "jrdk3",
+        "poster": {
+          "medium": "/images/covers/16604/73d3ae97d967da45a140494f80e6a2496f3cc954@280.jpg",
+          "large": "/images/covers/16604/73d3ae97d967da45a140494f80e6a2496f3cc954.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/16604/73d3ae97d967da45a140494f80e6a2496f3cc954@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "The Hunter's Gonna Lay Low",
+        "hid": "dnvg",
+        "poster": {
+          "medium": "/images/covers/10195/0090e6e577feb3287b5a62c8a9c732781d3abe4f@280.jpg",
+          "large": "/images/covers/10195/0090e6e577feb3287b5a62c8a9c732781d3abe4f.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/10195/0090e6e577feb3287b5a62c8a9c732781d3abe4f@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "The Fantasie of a Stepmother",
+        "hid": "z905",
+        "poster": {
+          "medium": "/images/covers/3589/3db58125f3759a3b4fbcdd69b40f329e0abbf825@280.jpg",
+          "large": "/images/covers/3589/3db58125f3759a3b4fbcdd69b40f329e0abbf825.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/3589/3db58125f3759a3b4fbcdd69b40f329e0abbf825@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "I Shall Master this Family",
+        "hid": "z3m26",
+        "poster": {
+          "medium": "/images/covers/24189/8ee0f036abf43dac81d7385956c05cc897abd0da@280.jpg",
+          "large": "/images/covers/24189/8ee0f036abf43dac81d7385956c05cc897abd0da.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/24189/8ee0f036abf43dac81d7385956c05cc897abd0da@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "The One Within the Villainess",
+        "hid": "xkjq",
+        "poster": {
+          "medium": "/images/covers/2191/b19c5bdad2b691dab837a7b8bdbbb51af3d6fda6@280.jpg",
+          "large": "/images/covers/2191/b19c5bdad2b691dab837a7b8bdbbb51af3d6fda6.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/2191/b19c5bdad2b691dab837a7b8bdbbb51af3d6fda6@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Little Mushroom",
+        "hid": "zq0m",
+        "poster": {
+          "medium": "/images/covers/1289/8e84c84db92a1c60afc2e5dad5f851dfe9088532@280.jpg",
+          "large": "/images/covers/1289/8e84c84db92a1c60afc2e5dad5f851dfe9088532.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/1289/8e84c84db92a1c60afc2e5dad5f851dfe9088532@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Return of the Blossoming Blade",
+        "hid": "9nej6",
+        "poster": {
+          "medium": "/images/covers/50370/0cd641c9af562cc9d7eefb04e9857c653b94a0c1@280.jpg",
+          "large": "/images/covers/50370/0cd641c9af562cc9d7eefb04e9857c653b94a0c1.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/50370/0cd641c9af562cc9d7eefb04e9857c653b94a0c1@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Daytime Star",
+        "hid": "556gl",
+        "poster": {
+          "medium": "/images/covers/54273/0d236c7c8bfe85ff034fafddc66692792b8085ad@280.jpg",
+          "large": "/images/covers/54273/0d236c7c8bfe85ff034fafddc66692792b8085ad.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/54273/0d236c7c8bfe85ff034fafddc66692792b8085ad@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Star-Embracing Swordmaster",
+        "hid": "0j5d",
+        "poster": {
+          "medium": "/images/covers/13769/a2d960893d9a10005bd9708f009f1d43e7af8f01@280.jpg",
+          "large": "/images/covers/13769/a2d960893d9a10005bd9708f009f1d43e7af8f01.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/13769/a2d960893d9a10005bd9708f009f1d43e7af8f01@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Debut or Die!",
+        "hid": "jnke",
+        "poster": {
+          "medium": "/images/covers/13704/2c4401a567a9395b9afa1ca09a7ca948e5ef26f0@280.jpg",
+          "large": "/images/covers/13704/2c4401a567a9395b9afa1ca09a7ca948e5ef26f0.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/13704/2c4401a567a9395b9afa1ca09a7ca948e5ef26f0@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "The Spark in Your Eyes",
+        "hid": "k7yg7",
+        "poster": {
+          "medium": "/images/covers/19009/4314a79e60f0207e08828b30ca495a2a9e5050eb@280.jpg",
+          "large": "/images/covers/19009/4314a79e60f0207e08828b30ca495a2a9e5050eb.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/19009/4314a79e60f0207e08828b30ca495a2a9e5050eb@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Fog Land",
+        "hid": "lgkg7",
+        "poster": {
+          "medium": "https://static.comix.to/4309/i/2/25/68e62903a8637@280.jpg",
+          "large": "https://static.comix.to/4309/i/2/25/68e62903a8637.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/4309/i/2/25/68e62903a8637@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 39873,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Absolute Regression",
+        "hid": "zdlj5",
+        "poster": {
+          "medium": "/images/covers/50341/ba5fea0adee7223c1fc496681be465ea23a87732@280.jpg",
+          "large": "/images/covers/50341/ba5fea0adee7223c1fc496681be465ea23a87732.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/50341/ba5fea0adee7223c1fc496681be465ea23a87732@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "The Legend of the Northern Blade",
+        "hid": "190ml",
+        "poster": {
+          "medium": "/images/covers/18537/35653220c9194be658c1e0c4f3093a4d3f79d4f0@280.jpg",
+          "large": "/images/covers/18537/35653220c9194be658c1e0c4f3093a4d3f79d4f0.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/18537/35653220c9194be658c1e0c4f3093a4d3f79d4f0@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Eleceed",
+        "hid": "xlyyj",
+        "poster": {
+          "medium": "/images/covers/31267/c61fb76d40071252aa556dd0b5ccd16789ee4257@280.jpg",
+          "large": "/images/covers/31267/c61fb76d40071252aa556dd0b5ccd16789ee4257.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/31267/c61fb76d40071252aa556dd0b5ccd16789ee4257@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "The Ramparts of Ice",
+        "hid": "9l36",
+        "poster": {
+          "medium": "/images/covers/4722/f61e4b677856d504b9e60d527dc20fe930a203f1@280.jpg",
+          "large": "/images/covers/4722/f61e4b677856d504b9e60d527dc20fe930a203f1.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/4722/f61e4b677856d504b9e60d527dc20fe930a203f1@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "One Piece",
+        "hid": "pvry",
+        "poster": {
+          "medium": "/images/covers/366/02cf07e468775e4ca94f1f2247162ecfe999179a@280.jpg",
+          "large": "/images/covers/366/02cf07e468775e4ca94f1f2247162ecfe999179a.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/366/02cf07e468775e4ca94f1f2247162ecfe999179a@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "The Count's Secret Maid",
+        "hid": "2rlj2",
+        "poster": {
+          "medium": "/images/covers/60962/6b471e7ad0b9ad7dade1672ca5770c8af94bd32e@280.jpg",
+          "large": "/images/covers/60962/6b471e7ad0b9ad7dade1672ca5770c8af94bd32e.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/60962/6b471e7ad0b9ad7dade1672ca5770c8af94bd32e@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Our Guild's Idol",
+        "hid": "e9l8",
+        "poster": {
+          "medium": "/images/covers/802/5a023a7608829765878639d6fc5f5db8d5f76971@280.jpg",
+          "large": "/images/covers/802/5a023a7608829765878639d6fc5f5db8d5f76971.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/802/5a023a7608829765878639d6fc5f5db8d5f76971@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Persona 3 Characters Anthology",
+        "hid": "mrvrz",
+        "poster": {
+          "medium": "https://static.comix.to/6e4c/i/d/7b/6a6d208318049@280.jpg",
+          "large": "https://static.comix.to/6e4c/i/d/7b/6a6d208318049.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/6e4c/i/d/7b/6a6d208318049@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 54847,
+        "ms": 17,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "A Decade of Us",
+        "hid": "316mn",
+        "poster": {
+          "medium": "https://static.comix.to/985d/i/9/d4/6ae7c2ea68685@280.jpg",
+          "large": "https://static.comix.to/985d/i/9/d4/6ae7c2ea68685.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/985d/i/9/d4/6ae7c2ea68685@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 30077,
+        "ms": 13,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "I'll Retire After Saving the World",
+        "hid": "71r2",
+        "poster": {
+          "medium": "/images/covers/8254/b6fd927077873bd0e1b6c1df45b714d43666f1ba@280.jpg",
+          "large": "/images/covers/8254/b6fd927077873bd0e1b6c1df45b714d43666f1ba.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/8254/b6fd927077873bd0e1b6c1df45b714d43666f1ba@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "DuskMaiden",
+        "hid": "5lkel",
+        "poster": {
+          "medium": "https://static.comix.to/b10e/i/1/eb/6ae63fa38ea54@280.jpg",
+          "large": "https://static.comix.to/b10e/i/1/eb/6ae63fa38ea54.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/b10e/i/1/eb/6ae63fa38ea54@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 38326,
+        "ms": 18,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Who is the Succubus!",
+        "hid": "20kxd",
+        "poster": {
+          "medium": "https://static.comix.to/0365/i/6/a0/6ac78f7450f84@280.jpg",
+          "large": "https://static.comix.to/0365/i/6/a0/6ac78f7450f84.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/0365/i/6/a0/6ac78f7450f84@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 33727,
+        "ms": 16,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The Tomorrow I Want to See with Kako: A Time-Loop Romantic Comedy",
+        "hid": "9ldr6",
+        "poster": {
+          "medium": "https://static.comix.to/8ed7/i/8/45/69d1c38cef169@280.jpg",
+          "large": "https://static.comix.to/8ed7/i/8/45/69d1c38cef169.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/8ed7/i/8/45/69d1c38cef169@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 30067,
+        "ms": 13,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "She is Fed Up with Her Siscon Brother",
+        "hid": "v78z",
+        "poster": {
+          "medium": "/images/covers/13766/c1c5946a488b08753f6a5326a422f0371479e2a9@280.jpg",
+          "large": "/images/covers/13766/c1c5946a488b08753f6a5326a422f0371479e2a9.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/13766/c1c5946a488b08753f6a5326a422f0371479e2a9@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "The Result of Confessing to the Class Angel",
+        "hid": "9l1g5",
+        "poster": {
+          "medium": "https://static.comix.to/5389/i/f/b2/6a7af8f5dd04b@280.jpg",
+          "large": "https://static.comix.to/5389/i/f/b2/6a7af8f5dd04b.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/5389/i/f/b2/6a7af8f5dd04b@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 37802,
+        "ms": 17,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Uchi no Maid ga Class no Suki na Ko ni Niteiru",
+        "hid": "yegn1",
+        "poster": {
+          "medium": "https://static.comix.to/cc12/i/2/76/69fa11ea2f514@280.jpg",
+          "large": "https://static.comix.to/cc12/i/2/76/69fa11ea2f514.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/cc12/i/2/76/69fa11ea2f514@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 41680,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "I Am the Demon King, Pig Goblin! The Boy Despised as a Pig Goblin Becomes a Demon King in the VRMMO Iancams and Aims to Become the Strongest Player",
+        "hid": "80m9d",
+        "poster": {
+          "medium": "https://static.comix.to/afc5/i/5/bf/6aabcf39e5602@280.jpg",
+          "large": "https://static.comix.to/afc5/i/5/bf/6aabcf39e5602.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/afc5/i/5/bf/6aabcf39e5602@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 56017,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Mechanic: Slayer",
+        "hid": "nrx80",
+        "poster": {
+          "medium": "https://static.comix.to/01e0/i/6/1b/6ae8a8ff0d5ae@280.jpg",
+          "large": "https://static.comix.to/01e0/i/6/1b/6ae8a8ff0d5ae.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/01e0/i/6/1b/6ae8a8ff0d5ae@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 51654,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The Wolf That Picked Something Up",
+        "hid": "19v5e",
+        "poster": {
+          "medium": "/images/covers/17013/30cb772090df4b414a0eeaa57f15a7583bdab5cb@280.jpg",
+          "large": "/images/covers/17013/30cb772090df4b414a0eeaa57f15a7583bdab5cb.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/17013/30cb772090df4b414a0eeaa57f15a7583bdab5cb@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Fei Ren Zai",
+        "hid": "0ydwq",
+        "poster": {
+          "medium": "/images/covers/37969/0159acbbca915e396471879b097582e8c03d08c7@280.jpg",
+          "large": "/images/covers/37969/0159acbbca915e396471879b097582e8c03d08c7.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/37969/0159acbbca915e396471879b097582e8c03d08c7@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Ossan no Remake Bouken Nikki ~Autocamp kara Hajimaru Isekai Mankitsu Life~",
+        "hid": "mwdvz",
+        "poster": {
+          "medium": "/images/covers/22282/2e85a167ccc65907b6d13f39271a0c52173436e3@280.jpg",
+          "large": "/images/covers/22282/2e85a167ccc65907b6d13f39271a0c52173436e3.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/22282/2e85a167ccc65907b6d13f39271a0c52173436e3@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Zipang",
+        "hid": "gqwx",
+        "poster": {
+          "medium": "/images/covers/6051/b861780b1bce64c533593ad3a0b592d8269f65a0@280.jpg",
+          "large": "/images/covers/6051/b861780b1bce64c533593ad3a0b592d8269f65a0.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/6051/b861780b1bce64c533593ad3a0b592d8269f65a0@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "The Long Way of the Warrior",
+        "hid": "9geq0",
+        "poster": {
+          "medium": "/images/covers/22946/775a8d246a7210da091c212525832fdd3b738b45@280.jpg",
+          "large": "/images/covers/22946/775a8d246a7210da091c212525832fdd3b738b45.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/22946/775a8d246a7210da091c212525832fdd3b738b45@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Lucid Dream",
+        "hid": "7zl2m",
+        "poster": {
+          "medium": "/images/covers/18978/d36852f7f67147943d5e1f665bc9650b9d71bc4d@280.jpg",
+          "large": "/images/covers/18978/d36852f7f67147943d5e1f665bc9650b9d71bc4d.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/18978/d36852f7f67147943d5e1f665bc9650b9d71bc4d@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Tsui no Taimashi: Ender Geister",
+        "hid": "3y0vn",
+        "poster": {
+          "medium": "/images/covers/18548/68c6192dcfdfd3369bc531790a8a72ea30444383@280.jpg",
+          "large": "/images/covers/18548/68c6192dcfdfd3369bc531790a8a72ea30444383.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/18548/68c6192dcfdfd3369bc531790a8a72ea30444383@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Hisshou Dungeon Unei Houhou",
+        "hid": "lw0x2",
+        "poster": {
+          "medium": "/images/covers/33920/6a0fc4d1d9e5b4490a335ec379110658d0e1ae27@280.jpg",
+          "large": "/images/covers/33920/6a0fc4d1d9e5b4490a335ec379110658d0e1ae27.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/33920/6a0fc4d1d9e5b4490a335ec379110658d0e1ae27@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Irregulars",
+        "hid": "vk3ln",
+        "poster": {
+          "medium": "/images/covers/46690/dc7ca8904880cd87ae11e4dee5f9a0c71cdf3098@280.jpg",
+          "large": "/images/covers/46690/dc7ca8904880cd87ae11e4dee5f9a0c71cdf3098.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/46690/dc7ca8904880cd87ae11e4dee5f9a0c71cdf3098@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Just Go Save the World Already",
+        "hid": "30dnv",
+        "poster": {
+          "medium": "https://static.comix.to/60b5/i/6/83/6ac994672c631@280.jpg",
+          "large": "https://static.comix.to/60b5/i/6/83/6ac994672c631.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.to/60b5/i/6/83/6ac994672c631@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 49464,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Lost Man",
+        "hid": "mwxrm",
+        "poster": {
+          "medium": "/images/covers/14034/cae296d7972ff368169e53b8abbe1eeabdc0751a@280.jpg",
+          "large": "/images/covers/14034/cae296d7972ff368169e53b8abbe1eeabdc0751a.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/14034/cae296d7972ff368169e53b8abbe1eeabdc0751a@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Soukyuu Boys",
+        "hid": "y931w",
+        "poster": {
+          "medium": "/images/covers/35315/a77e21800d781c66dd5d63a796015f4594417945@280.jpg",
+          "large": "/images/covers/35315/a77e21800d781c66dd5d63a796015f4594417945.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/35315/a77e21800d781c66dd5d63a796015f4594417945@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 1
+      },
+      {
+        "title": "Jiisan Baasan Wakagaeru",
+        "hid": "dndk",
+        "poster": {
+          "medium": "/images/covers/9847/fe39f70c69f06fcf32b859d56f01e8a65ffd33ff@280.jpg",
+          "large": "/images/covers/9847/fe39f70c69f06fcf32b859d56f01e8a65ffd33ff.jpg"
+        },
+        "origin": "live",
+        "url": "/images/covers/9847/fe39f70c69f06fcf32b859d56f01e8a65ffd33ff@280.jpg",
+        "error": "apiRequestContext.get: Invalid URL",
+        "ms": 0
+      },
+      {
+        "title": "Got Dropped into a Ghost Story, Still Gotta Work",
+        "hid": "301dn",
+        "poster": {
+          "medium": "https://static.comix.ws/94eb/i/c/55/6ae7119f515ff@280.jpg",
+          "large": "https://static.comix.ws/94eb/i/c/55/6ae7119f515ff.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/94eb/i/c/55/6ae7119f515ff@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 48659,
+        "ms": 143,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "A Painter Who Draws Dungeons",
+        "hid": "6062v",
+        "poster": {
+          "medium": "https://static.comix.ws/2df4/i/5/c6/6a92edf129f12@280.jpg",
+          "large": "https://static.comix.ws/2df4/i/5/c6/6a92edf129f12.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/2df4/i/5/c6/6a92edf129f12@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 45157,
+        "ms": 17,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Secretly Strong and Searching for My Daddy",
+        "hid": "ye9xn",
+        "poster": {
+          "medium": "https://static.comix.ws/65bc/i/2/c1/6ace77abe5b4f@280.jpg",
+          "large": "https://static.comix.ws/65bc/i/2/c1/6ace77abe5b4f.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/65bc/i/2/c1/6ace77abe5b4f@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 49309,
+        "ms": 16,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Fog Land",
+        "hid": "lgkg7",
+        "poster": {
+          "medium": "https://static.comix.ws/8d39/i/2/25/68e62903a8637@280.jpg",
+          "large": "https://static.comix.ws/8d39/i/2/25/68e62903a8637.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/8d39/i/2/25/68e62903a8637@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 39873,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Persona 3 Characters Anthology",
+        "hid": "mrvrz",
+        "poster": {
+          "medium": "https://static.comix.ws/695f/i/d/7b/6a6d208318049@280.jpg",
+          "large": "https://static.comix.ws/695f/i/d/7b/6a6d208318049.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/695f/i/d/7b/6a6d208318049@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 54847,
+        "ms": 18,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "A Decade of Us",
+        "hid": "316mn",
+        "poster": {
+          "medium": "https://static.comix.ws/bccd/i/9/d4/6ae7c2ea68685@280.jpg",
+          "large": "https://static.comix.ws/bccd/i/9/d4/6ae7c2ea68685.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/bccd/i/9/d4/6ae7c2ea68685@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 30077,
+        "ms": 13,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "DuskMaiden",
+        "hid": "5lkel",
+        "poster": {
+          "medium": "https://static.comix.ws/1b2e/i/1/eb/6ae63fa38ea54@280.jpg",
+          "large": "https://static.comix.ws/1b2e/i/1/eb/6ae63fa38ea54.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/1b2e/i/1/eb/6ae63fa38ea54@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 38326,
+        "ms": 140,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Who is the Succubus!",
+        "hid": "20kxd",
+        "poster": {
+          "medium": "https://static.comix.ws/202d/i/6/a0/6ac78f7450f84@280.jpg",
+          "large": "https://static.comix.ws/202d/i/6/a0/6ac78f7450f84.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/202d/i/6/a0/6ac78f7450f84@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 33727,
+        "ms": 140,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The Tomorrow I Want to See with Kako: A Time-Loop Romantic Comedy",
+        "hid": "9ldr6",
+        "poster": {
+          "medium": "https://static.comix.ws/1ba4/i/8/45/69d1c38cef169@280.jpg",
+          "large": "https://static.comix.ws/1ba4/i/8/45/69d1c38cef169.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/1ba4/i/8/45/69d1c38cef169@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 30067,
+        "ms": 139,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The Result of Confessing to the Class Angel",
+        "hid": "9l1g5",
+        "poster": {
+          "medium": "https://static.comix.ws/3cd5/i/f/b2/6a7af8f5dd04b@280.jpg",
+          "large": "https://static.comix.ws/3cd5/i/f/b2/6a7af8f5dd04b.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/3cd5/i/f/b2/6a7af8f5dd04b@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 37802,
+        "ms": 143,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Uchi no Maid ga Class no Suki na Ko ni Niteiru",
+        "hid": "yegn1",
+        "poster": {
+          "medium": "https://static.comix.ws/5ddf/i/2/76/69fa11ea2f514@280.jpg",
+          "large": "https://static.comix.ws/5ddf/i/2/76/69fa11ea2f514.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/5ddf/i/2/76/69fa11ea2f514@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 41680,
+        "ms": 148,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "I Am the Demon King, Pig Goblin! The Boy Despised as a Pig Goblin Becomes a Demon King in the VRMMO Iancams and Aims to Become the Strongest Player",
+        "hid": "80m9d",
+        "poster": {
+          "medium": "https://static.comix.ws/7299/i/5/bf/6aabcf39e5602@280.jpg",
+          "large": "https://static.comix.ws/7299/i/5/bf/6aabcf39e5602.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/7299/i/5/bf/6aabcf39e5602@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 56017,
+        "ms": 18,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Mechanic: Slayer",
+        "hid": "nrx80",
+        "poster": {
+          "medium": "https://static.comix.ws/f15f/i/6/1b/6ae8a8ff0d5ae@280.jpg",
+          "large": "https://static.comix.ws/f15f/i/6/1b/6ae8a8ff0d5ae.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/f15f/i/6/1b/6ae8a8ff0d5ae@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 51654,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Just Go Save the World Already",
+        "hid": "30dnv",
+        "poster": {
+          "medium": "https://static.comix.ws/51a6/i/6/83/6ac994672c631@280.jpg",
+          "large": "https://static.comix.ws/51a6/i/6/83/6ac994672c631.jpg"
+        },
+        "origin": "live",
+        "url": "https://static.comix.ws/51a6/i/6/83/6ac994672c631@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 49464,
+        "ms": 153,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Absolute Regression",
+        "hid": "zdlj5",
+        "poster": {
+          "medium": "https://static.comix.to/d4b2/i/f/5a/68e0ce2d1ebcb@280.jpg",
+          "large": "https://static.comix.to/d4b2/i/f/5a/68e0ce2d1ebcb.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/d4b2/i/f/5a/68e0ce2d1ebcb@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 36211,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "One Piece",
+        "hid": "pvry",
+        "poster": {
+          "medium": "https://static.comix.to/369f/i/7/51/6a9ce20480ddc@280.jpg",
+          "large": "https://static.comix.to/369f/i/7/51/6a9ce20480ddc.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/369f/i/7/51/6a9ce20480ddc@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 52266,
+        "ms": 17,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Lost in the Cloud",
+        "hid": "3v11v",
+        "poster": {
+          "medium": "https://static.comix.to/40a0/i/d/f8/68df584738065@280.jpg",
+          "large": "https://static.comix.to/40a0/i/d/f8/68df584738065.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/40a0/i/d/f8/68df584738065@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 20727,
+        "ms": 16,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Aching",
+        "hid": "e1l1x",
+        "poster": {
+          "medium": "https://static.comix.to/a196/i/9/f4/69eccbdd0823a@280.jpg",
+          "large": "https://static.comix.to/a196/i/9/f4/69eccbdd0823a.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/a196/i/9/f4/69eccbdd0823a@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 30682,
+        "ms": 13,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "After a Meal",
+        "hid": "02l05",
+        "poster": {
+          "medium": "https://static.comix.to/4d93/i/0/60/6a682c1e0d2fb@280.jpg",
+          "large": "https://static.comix.to/4d93/i/0/60/6a682c1e0d2fb.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/4d93/i/0/60/6a682c1e0d2fb@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 28092,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Love by Mistake",
+        "hid": "4d38",
+        "poster": {
+          "medium": "https://static.comix.to/9a48/i/d/45/68de753270514@280.jpg",
+          "large": "https://static.comix.to/9a48/i/d/45/68de753270514.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/9a48/i/d/45/68de753270514@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 30184,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "A Home Far Away",
+        "hid": "mw2ye",
+        "poster": {
+          "medium": "https://static.comix.to/73bc/i/5/09/68e4ea40d3532@280.jpg",
+          "large": "https://static.comix.to/73bc/i/5/09/68e4ea40d3532.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/73bc/i/5/09/68e4ea40d3532@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 41059,
+        "ms": 18,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Gachiakuta",
+        "hid": "n9z0",
+        "poster": {
+          "medium": "https://static.comix.to/7cb5/i/5/3c/6a9d161f61967@280.jpg",
+          "large": "https://static.comix.to/7cb5/i/5/3c/6a9d161f61967.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/7cb5/i/5/3c/6a9d161f61967@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 46619,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Touch Within the Abyss",
+        "hid": "emre",
+        "poster": {
+          "medium": "https://static.comix.to/07c5/i/3/d8/68e087ceb1620@280.jpg",
+          "large": "https://static.comix.to/07c5/i/3/d8/68e087ceb1620.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/07c5/i/3/d8/68e087ceb1620@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 23423,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Secret Lady",
+        "hid": "yv8x1",
+        "poster": {
+          "medium": "https://static.comix.to/da50/i/1/a6/6ae37664ac274@280.jpg",
+          "large": "https://static.comix.to/da50/i/1/a6/6ae37664ac274.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/da50/i/1/a6/6ae37664ac274@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 40424,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "19 Days",
+        "hid": "5vwvl",
+        "poster": {
+          "medium": "https://static.comix.to/7c2f/i/6/02/68e0c0d9d5ff5@280.jpg",
+          "large": "https://static.comix.to/7c2f/i/6/02/68e0c0d9d5ff5.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/7c2f/i/6/02/68e0c0d9d5ff5@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 39155,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The Extra's Academy Survival Guide",
+        "hid": "nnl80",
+        "poster": {
+          "medium": "https://static.comix.to/a3cd/i/a/29/6a683ffba297b@280.jpg",
+          "large": "https://static.comix.to/a3cd/i/a/29/6a683ffba297b.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/a3cd/i/a/29/6a683ffba297b@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 39489,
+        "ms": 16,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Killer Crush",
+        "hid": "jl6g6",
+        "poster": {
+          "medium": "https://static.comix.to/27f2/i/e/91/68e0c65373323@280.jpg",
+          "large": "https://static.comix.to/27f2/i/e/91/68e0c65373323.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/27f2/i/e/91/68e0c65373323@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 36196,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "What a Bountiful Harvest, Demon Lord!",
+        "hid": "7n3xg",
+        "poster": {
+          "medium": "https://static.comix.to/a886/i/3/28/6a781d61d6895@280.jpg",
+          "large": "https://static.comix.to/a886/i/3/28/6a781d61d6895.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/a886/i/3/28/6a781d61d6895@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 37815,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Semantic Error",
+        "hid": "9gjq8",
+        "poster": {
+          "medium": "https://static.comix.to/d382/i/9/df/6a5d7209c43ad@280.jpg",
+          "large": "https://static.comix.to/d382/i/9/df/6a5d7209c43ad.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/d382/i/9/df/6a5d7209c43ad@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 42146,
+        "ms": 16,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Akatsuki no Yona",
+        "hid": "ymgk6",
+        "poster": {
+          "medium": "https://static.comix.to/0ec3/i/b/a7/68e4e1643d250@280.jpg",
+          "large": "https://static.comix.to/0ec3/i/b/a7/68e4e1643d250.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/0ec3/i/b/a7/68e4e1643d250@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 42061,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The Wind Spell",
+        "hid": "q05x",
+        "poster": {
+          "medium": "https://static.comix.to/3d2a/i/d/be/68e114d1c0704@280.jpg",
+          "large": "https://static.comix.to/3d2a/i/d/be/68e114d1c0704.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/3d2a/i/d/be/68e114d1c0704@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 32762,
+        "ms": 19,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Tune In to the Midnight Heart",
+        "hid": "87520",
+        "poster": {
+          "medium": "https://static.comix.to/90f1/i/a/e7/68e4862137dcd@280.jpg",
+          "large": "https://static.comix.to/90f1/i/a/e7/68e4862137dcd.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/90f1/i/a/e7/68e4862137dcd@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 44443,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The King and Me",
+        "hid": "e92yr",
+        "poster": {
+          "medium": "https://static.comix.to/d929/i/e/ea/68de92891708b@280.jpg",
+          "large": "https://static.comix.to/d929/i/e/ea/68de92891708b.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/d929/i/e/ea/68de92891708b@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 46698,
+        "ms": 17,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "The Other World's Books Depend on the Bean Counter",
+        "hid": "81938",
+        "poster": {
+          "medium": "https://static.comix.to/6fa1/i/3/a3/68e4e0da53f28@280.jpg",
+          "large": "https://static.comix.to/6fa1/i/3/a3/68e4e0da53f28.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/6fa1/i/3/a3/68e4e0da53f28@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 38553,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Berserk",
+        "hid": "zjem",
+        "poster": {
+          "medium": "https://static.comix.to/a344/i/1/8d/68e08b4727e8d@280.jpg",
+          "large": "https://static.comix.to/a344/i/1/8d/68e08b4727e8d.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/a344/i/1/8d/68e08b4727e8d@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 36975,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Our Youth",
+        "hid": "e32de",
+        "poster": {
+          "medium": "https://static.comix.to/c2a5/i/8/8f/68e506c7ae88e@280.jpg",
+          "large": "https://static.comix.to/c2a5/i/8/8f/68e506c7ae88e.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/c2a5/i/8/8f/68e506c7ae88e@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 21870,
+        "ms": 19,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "My Dress-Up Darling",
+        "hid": "m0v5y",
+        "poster": {
+          "medium": "https://static.comix.to/33a7/i/8/a4/68ded8f0bd11f@280.jpg",
+          "large": "https://static.comix.to/33a7/i/8/a4/68ded8f0bd11f.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/33a7/i/8/a4/68ded8f0bd11f@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 23535,
+        "ms": 14,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Grand Blue Dreaming",
+        "hid": "xkknq",
+        "poster": {
+          "medium": "https://static.comix.to/c9eb/i/f/b6/68dee39f32187@280.jpg",
+          "large": "https://static.comix.to/c9eb/i/f/b6/68dee39f32187.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/c9eb/i/f/b6/68dee39f32187@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 46096,
+        "ms": 19,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Bride of Ignat",
+        "hid": "83q8",
+        "poster": {
+          "medium": "https://static.comix.to/77e0/i/5/1c/68de85b8cff9c@280.jpg",
+          "large": "https://static.comix.to/77e0/i/5/1c/68de85b8cff9c.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/77e0/i/5/1c/68de85b8cff9c@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 33408,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Another Typical Fantasy Romance",
+        "hid": "jdend",
+        "poster": {
+          "medium": "https://static.comix.to/780f/i/7/eb/6a9a5330df128@280.jpg",
+          "large": "https://static.comix.to/780f/i/7/eb/6a9a5330df128.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/780f/i/7/eb/6a9a5330df128@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 41374,
+        "ms": 16,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Dreaming Freedom",
+        "hid": "m7gm",
+        "poster": {
+          "medium": "https://static.comix.to/7c09/i/d/27/6ac51ef3183b3@280.jpg",
+          "large": "https://static.comix.to/7c09/i/d/27/6ac51ef3183b3.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/7c09/i/d/27/6ac51ef3183b3@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 37204,
+        "ms": 17,
+        "magic": "ffd8ffe100bc457869660000"
+      },
+      {
+        "title": "Garden of May",
+        "hid": "1010n",
+        "poster": {
+          "medium": "https://static.comix.to/c231/i/0/3a/6a79fd78572ce@280.jpg",
+          "large": "https://static.comix.to/c231/i/0/3a/6a79fd78572ce.jpg"
+        },
+        "origin": "Oct31",
+        "url": "https://static.comix.to/c231/i/0/3a/6a79fd78572ce@280.jpg",
+        "status": 200,
+        "type": "image/jpg",
+        "bytes": 35338,
+        "ms": 15,
+        "magic": "ffd8ffe100bc457869660000"
+      }
+    ]
+  },
+  "resolved": [
+    {
+      "hid": "g2rk",
+      "title": "On the Way to Meet Mom",
+      "url": "https://comix.to/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34100,
+      "ms": 216,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "g2rk",
+      "title": "On the Way to Meet Mom",
+      "url": "https://comix.to/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "variant": "no-origin",
+      "finalUrl": "https://comix.to/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34100,
+      "ms": 14,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "g2rk",
+      "title": "On the Way to Meet Mom",
+      "url": "https://comix.to/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "variant": "no-referer-or-origin",
+      "finalUrl": "https://comix.to/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34100,
+      "ms": 16,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "8wgym",
+      "title": "The Greatest Estate Developer",
+      "url": "https://comix.to/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35655,
+      "ms": 138,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "8wgym",
+      "title": "The Greatest Estate Developer",
+      "url": "https://comix.to/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "variant": "no-origin",
+      "finalUrl": "https://comix.to/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35655,
+      "ms": 13,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "8wgym",
+      "title": "The Greatest Estate Developer",
+      "url": "https://comix.to/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "variant": "no-referer-or-origin",
+      "finalUrl": "https://comix.to/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35655,
+      "ms": 13,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "w2399",
+      "title": "Omniscient Reader",
+      "url": "https://comix.to/images/covers/18607/7c73d382292dc51ac39855e7938ce616df0a1bf6@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/18607/7c73d382292dc51ac39855e7938ce616df0a1bf6@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 31618,
+      "ms": 146,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "x0ynk",
+      "title": "Villains Are Destined to Die",
+      "url": "https://comix.to/images/covers/17667/e99a532e5231e4c769215a1eadbd346435d1ae31@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/17667/e99a532e5231e4c769215a1eadbd346435d1ae31@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43944,
+      "ms": 136,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "0kx0d",
+      "title": "Eternally Regressing Knight",
+      "url": "https://comix.to/images/covers/50321/e2f1d5fd5b4e2c6b9145f7a6cbcda170549d69c5@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/50321/e2f1d5fd5b4e2c6b9145f7a6cbcda170549d69c5@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38959,
+      "ms": 175,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "k1re",
+      "title": "Roxana",
+      "url": "https://comix.to/images/covers/5909/1725d87a0f6335f002a4ff0f43e35f14cc484dc9@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/5909/1725d87a0f6335f002a4ff0f43e35f14cc484dc9@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 39706,
+      "ms": 151,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "jrdk3",
+      "title": "No Home",
+      "url": "https://comix.to/images/covers/16604/73d3ae97d967da45a140494f80e6a2496f3cc954@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/16604/73d3ae97d967da45a140494f80e6a2496f3cc954@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 39477,
+      "ms": 183,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "dnvg",
+      "title": "The Hunter's Gonna Lay Low",
+      "url": "https://comix.to/images/covers/10195/0090e6e577feb3287b5a62c8a9c732781d3abe4f@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/10195/0090e6e577feb3287b5a62c8a9c732781d3abe4f@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38576,
+      "ms": 183,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "z905",
+      "title": "The Fantasie of a Stepmother",
+      "url": "https://comix.to/images/covers/3589/3db58125f3759a3b4fbcdd69b40f329e0abbf825@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/3589/3db58125f3759a3b4fbcdd69b40f329e0abbf825@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43012,
+      "ms": 167,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "z3m26",
+      "title": "I Shall Master this Family",
+      "url": "https://comix.to/images/covers/24189/8ee0f036abf43dac81d7385956c05cc897abd0da@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/24189/8ee0f036abf43dac81d7385956c05cc897abd0da@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43064,
+      "ms": 162,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "xkjq",
+      "title": "The One Within the Villainess",
+      "url": "https://comix.to/images/covers/2191/b19c5bdad2b691dab837a7b8bdbbb51af3d6fda6@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/2191/b19c5bdad2b691dab837a7b8bdbbb51af3d6fda6@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 46124,
+      "ms": 168,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "zq0m",
+      "title": "Little Mushroom",
+      "url": "https://comix.to/images/covers/1289/8e84c84db92a1c60afc2e5dad5f851dfe9088532@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/1289/8e84c84db92a1c60afc2e5dad5f851dfe9088532@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 25239,
+      "ms": 168,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "9nej6",
+      "title": "Return of the Blossoming Blade",
+      "url": "https://comix.to/images/covers/50370/0cd641c9af562cc9d7eefb04e9857c653b94a0c1@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/50370/0cd641c9af562cc9d7eefb04e9857c653b94a0c1@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38692,
+      "ms": 179,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "556gl",
+      "title": "Daytime Star",
+      "url": "https://comix.to/images/covers/54273/0d236c7c8bfe85ff034fafddc66692792b8085ad@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/54273/0d236c7c8bfe85ff034fafddc66692792b8085ad@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 42861,
+      "ms": 163,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "0j5d",
+      "title": "Star-Embracing Swordmaster",
+      "url": "https://comix.to/images/covers/13769/a2d960893d9a10005bd9708f009f1d43e7af8f01@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/13769/a2d960893d9a10005bd9708f009f1d43e7af8f01@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 42917,
+      "ms": 184,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "jnke",
+      "title": "Debut or Die!",
+      "url": "https://comix.to/images/covers/13704/2c4401a567a9395b9afa1ca09a7ca948e5ef26f0@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/13704/2c4401a567a9395b9afa1ca09a7ca948e5ef26f0@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 26980,
+      "ms": 145,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "k7yg7",
+      "title": "The Spark in Your Eyes",
+      "url": "https://comix.to/images/covers/19009/4314a79e60f0207e08828b30ca495a2a9e5050eb@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/19009/4314a79e60f0207e08828b30ca495a2a9e5050eb@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 42905,
+      "ms": 141,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "zdlj5",
+      "title": "Absolute Regression",
+      "url": "https://comix.to/images/covers/50341/ba5fea0adee7223c1fc496681be465ea23a87732@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/50341/ba5fea0adee7223c1fc496681be465ea23a87732@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35333,
+      "ms": 144,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "190ml",
+      "title": "The Legend of the Northern Blade",
+      "url": "https://comix.to/images/covers/18537/35653220c9194be658c1e0c4f3093a4d3f79d4f0@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/18537/35653220c9194be658c1e0c4f3093a4d3f79d4f0@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 29549,
+      "ms": 177,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "xlyyj",
+      "title": "Eleceed",
+      "url": "https://comix.to/images/covers/31267/c61fb76d40071252aa556dd0b5ccd16789ee4257@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/31267/c61fb76d40071252aa556dd0b5ccd16789ee4257@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 37657,
+      "ms": 163,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "9l36",
+      "title": "The Ramparts of Ice",
+      "url": "https://comix.to/images/covers/4722/f61e4b677856d504b9e60d527dc20fe930a203f1@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/4722/f61e4b677856d504b9e60d527dc20fe930a203f1@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 32842,
+      "ms": 139,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "pvry",
+      "title": "One Piece",
+      "url": "https://comix.to/images/covers/366/02cf07e468775e4ca94f1f2247162ecfe999179a@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/366/02cf07e468775e4ca94f1f2247162ecfe999179a@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 50180,
+      "ms": 146,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "2rlj2",
+      "title": "The Count's Secret Maid",
+      "url": "https://comix.to/images/covers/60962/6b471e7ad0b9ad7dade1672ca5770c8af94bd32e@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/60962/6b471e7ad0b9ad7dade1672ca5770c8af94bd32e@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 39669,
+      "ms": 170,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "e9l8",
+      "title": "Our Guild's Idol",
+      "url": "https://comix.to/images/covers/802/5a023a7608829765878639d6fc5f5db8d5f76971@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/802/5a023a7608829765878639d6fc5f5db8d5f76971@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 41457,
+      "ms": 174,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "71r2",
+      "title": "I'll Retire After Saving the World",
+      "url": "https://comix.to/images/covers/8254/b6fd927077873bd0e1b6c1df45b714d43666f1ba@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/8254/b6fd927077873bd0e1b6c1df45b714d43666f1ba@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 45898,
+      "ms": 144,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "v78z",
+      "title": "She is Fed Up with Her Siscon Brother",
+      "url": "https://comix.to/images/covers/13766/c1c5946a488b08753f6a5326a422f0371479e2a9@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/13766/c1c5946a488b08753f6a5326a422f0371479e2a9@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 30520,
+      "ms": 148,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "19v5e",
+      "title": "The Wolf That Picked Something Up",
+      "url": "https://comix.to/images/covers/17013/30cb772090df4b414a0eeaa57f15a7583bdab5cb@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/17013/30cb772090df4b414a0eeaa57f15a7583bdab5cb@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 44727,
+      "ms": 147,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "0ydwq",
+      "title": "Fei Ren Zai",
+      "url": "https://comix.to/images/covers/37969/0159acbbca915e396471879b097582e8c03d08c7@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/37969/0159acbbca915e396471879b097582e8c03d08c7@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43434,
+      "ms": 145,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "mwdvz",
+      "title": "Ossan no Remake Bouken Nikki ~Autocamp kara Hajimaru Isekai Mankitsu Life~",
+      "url": "https://comix.to/images/covers/22282/2e85a167ccc65907b6d13f39271a0c52173436e3@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/22282/2e85a167ccc65907b6d13f39271a0c52173436e3@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 40707,
+      "ms": 137,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "gqwx",
+      "title": "Zipang",
+      "url": "https://comix.to/images/covers/6051/b861780b1bce64c533593ad3a0b592d8269f65a0@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/6051/b861780b1bce64c533593ad3a0b592d8269f65a0@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 46503,
+      "ms": 154,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "9geq0",
+      "title": "The Long Way of the Warrior",
+      "url": "https://comix.to/images/covers/22946/775a8d246a7210da091c212525832fdd3b738b45@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/22946/775a8d246a7210da091c212525832fdd3b738b45@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 26584,
+      "ms": 142,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "7zl2m",
+      "title": "Lucid Dream",
+      "url": "https://comix.to/images/covers/18978/d36852f7f67147943d5e1f665bc9650b9d71bc4d@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/18978/d36852f7f67147943d5e1f665bc9650b9d71bc4d@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35884,
+      "ms": 136,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "3y0vn",
+      "title": "Tsui no Taimashi: Ender Geister",
+      "url": "https://comix.to/images/covers/18548/68c6192dcfdfd3369bc531790a8a72ea30444383@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/18548/68c6192dcfdfd3369bc531790a8a72ea30444383@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 31025,
+      "ms": 147,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "lw0x2",
+      "title": "Hisshou Dungeon Unei Houhou",
+      "url": "https://comix.to/images/covers/33920/6a0fc4d1d9e5b4490a335ec379110658d0e1ae27@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/33920/6a0fc4d1d9e5b4490a335ec379110658d0e1ae27@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38704,
+      "ms": 138,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "vk3ln",
+      "title": "Irregulars",
+      "url": "https://comix.to/images/covers/46690/dc7ca8904880cd87ae11e4dee5f9a0c71cdf3098@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/46690/dc7ca8904880cd87ae11e4dee5f9a0c71cdf3098@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38145,
+      "ms": 139,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "mwxrm",
+      "title": "Lost Man",
+      "url": "https://comix.to/images/covers/14034/cae296d7972ff368169e53b8abbe1eeabdc0751a@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/14034/cae296d7972ff368169e53b8abbe1eeabdc0751a@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34179,
+      "ms": 146,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "y931w",
+      "title": "Soukyuu Boys",
+      "url": "https://comix.to/images/covers/35315/a77e21800d781c66dd5d63a796015f4594417945@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/35315/a77e21800d781c66dd5d63a796015f4594417945@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 44421,
+      "ms": 147,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "dndk",
+      "title": "Jiisan Baasan Wakagaeru",
+      "url": "https://comix.to/images/covers/9847/fe39f70c69f06fcf32b859d56f01e8a65ffd33ff@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.to/images/covers/9847/fe39f70c69f06fcf32b859d56f01e8a65ffd33ff@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 27552,
+      "ms": 136,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "g2rk",
+      "title": "On the Way to Meet Mom",
+      "url": "https://comix.ws/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34100,
+      "ms": 213,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "g2rk",
+      "title": "On the Way to Meet Mom",
+      "url": "https://comix.ws/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "variant": "no-origin",
+      "finalUrl": "https://comix.ws/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34100,
+      "ms": 13,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "g2rk",
+      "title": "On the Way to Meet Mom",
+      "url": "https://comix.ws/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "variant": "no-referer-or-origin",
+      "finalUrl": "https://comix.ws/images/covers/12127/f0816afb6e53abbfb56defb6c4a3c5c2ad4ec0c2@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34100,
+      "ms": 14,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "8wgym",
+      "title": "The Greatest Estate Developer",
+      "url": "https://comix.ws/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35655,
+      "ms": 172,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "8wgym",
+      "title": "The Greatest Estate Developer",
+      "url": "https://comix.ws/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "variant": "no-origin",
+      "finalUrl": "https://comix.ws/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35655,
+      "ms": 13,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "8wgym",
+      "title": "The Greatest Estate Developer",
+      "url": "https://comix.ws/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "variant": "no-referer-or-origin",
+      "finalUrl": "https://comix.ws/images/covers/47780/8c537e90fe343b977a44664b832287a1853375ea@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35655,
+      "ms": 15,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "w2399",
+      "title": "Omniscient Reader",
+      "url": "https://comix.ws/images/covers/18607/7c73d382292dc51ac39855e7938ce616df0a1bf6@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/18607/7c73d382292dc51ac39855e7938ce616df0a1bf6@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 31618,
+      "ms": 174,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "x0ynk",
+      "title": "Villains Are Destined to Die",
+      "url": "https://comix.ws/images/covers/17667/e99a532e5231e4c769215a1eadbd346435d1ae31@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/17667/e99a532e5231e4c769215a1eadbd346435d1ae31@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43944,
+      "ms": 183,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "0kx0d",
+      "title": "Eternally Regressing Knight",
+      "url": "https://comix.ws/images/covers/50321/e2f1d5fd5b4e2c6b9145f7a6cbcda170549d69c5@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/50321/e2f1d5fd5b4e2c6b9145f7a6cbcda170549d69c5@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38959,
+      "ms": 183,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "k1re",
+      "title": "Roxana",
+      "url": "https://comix.ws/images/covers/5909/1725d87a0f6335f002a4ff0f43e35f14cc484dc9@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/5909/1725d87a0f6335f002a4ff0f43e35f14cc484dc9@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 39706,
+      "ms": 206,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "jrdk3",
+      "title": "No Home",
+      "url": "https://comix.ws/images/covers/16604/73d3ae97d967da45a140494f80e6a2496f3cc954@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/16604/73d3ae97d967da45a140494f80e6a2496f3cc954@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 39477,
+      "ms": 160,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "dnvg",
+      "title": "The Hunter's Gonna Lay Low",
+      "url": "https://comix.ws/images/covers/10195/0090e6e577feb3287b5a62c8a9c732781d3abe4f@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/10195/0090e6e577feb3287b5a62c8a9c732781d3abe4f@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38576,
+      "ms": 175,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "z905",
+      "title": "The Fantasie of a Stepmother",
+      "url": "https://comix.ws/images/covers/3589/3db58125f3759a3b4fbcdd69b40f329e0abbf825@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/3589/3db58125f3759a3b4fbcdd69b40f329e0abbf825@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43012,
+      "ms": 171,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "z3m26",
+      "title": "I Shall Master this Family",
+      "url": "https://comix.ws/images/covers/24189/8ee0f036abf43dac81d7385956c05cc897abd0da@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/24189/8ee0f036abf43dac81d7385956c05cc897abd0da@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43064,
+      "ms": 169,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "xkjq",
+      "title": "The One Within the Villainess",
+      "url": "https://comix.ws/images/covers/2191/b19c5bdad2b691dab837a7b8bdbbb51af3d6fda6@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/2191/b19c5bdad2b691dab837a7b8bdbbb51af3d6fda6@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 46124,
+      "ms": 177,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "zq0m",
+      "title": "Little Mushroom",
+      "url": "https://comix.ws/images/covers/1289/8e84c84db92a1c60afc2e5dad5f851dfe9088532@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/1289/8e84c84db92a1c60afc2e5dad5f851dfe9088532@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 25239,
+      "ms": 176,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "9nej6",
+      "title": "Return of the Blossoming Blade",
+      "url": "https://comix.ws/images/covers/50370/0cd641c9af562cc9d7eefb04e9857c653b94a0c1@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/50370/0cd641c9af562cc9d7eefb04e9857c653b94a0c1@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38692,
+      "ms": 169,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "556gl",
+      "title": "Daytime Star",
+      "url": "https://comix.ws/images/covers/54273/0d236c7c8bfe85ff034fafddc66692792b8085ad@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/54273/0d236c7c8bfe85ff034fafddc66692792b8085ad@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 42861,
+      "ms": 181,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "0j5d",
+      "title": "Star-Embracing Swordmaster",
+      "url": "https://comix.ws/images/covers/13769/a2d960893d9a10005bd9708f009f1d43e7af8f01@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/13769/a2d960893d9a10005bd9708f009f1d43e7af8f01@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 42917,
+      "ms": 189,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "jnke",
+      "title": "Debut or Die!",
+      "url": "https://comix.ws/images/covers/13704/2c4401a567a9395b9afa1ca09a7ca948e5ef26f0@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/13704/2c4401a567a9395b9afa1ca09a7ca948e5ef26f0@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 26980,
+      "ms": 191,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "k7yg7",
+      "title": "The Spark in Your Eyes",
+      "url": "https://comix.ws/images/covers/19009/4314a79e60f0207e08828b30ca495a2a9e5050eb@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/19009/4314a79e60f0207e08828b30ca495a2a9e5050eb@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 42905,
+      "ms": 168,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "zdlj5",
+      "title": "Absolute Regression",
+      "url": "https://comix.ws/images/covers/50341/ba5fea0adee7223c1fc496681be465ea23a87732@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/50341/ba5fea0adee7223c1fc496681be465ea23a87732@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35333,
+      "ms": 179,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "190ml",
+      "title": "The Legend of the Northern Blade",
+      "url": "https://comix.ws/images/covers/18537/35653220c9194be658c1e0c4f3093a4d3f79d4f0@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/18537/35653220c9194be658c1e0c4f3093a4d3f79d4f0@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 29549,
+      "ms": 174,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "xlyyj",
+      "title": "Eleceed",
+      "url": "https://comix.ws/images/covers/31267/c61fb76d40071252aa556dd0b5ccd16789ee4257@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/31267/c61fb76d40071252aa556dd0b5ccd16789ee4257@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 37657,
+      "ms": 169,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "9l36",
+      "title": "The Ramparts of Ice",
+      "url": "https://comix.ws/images/covers/4722/f61e4b677856d504b9e60d527dc20fe930a203f1@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/4722/f61e4b677856d504b9e60d527dc20fe930a203f1@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 32842,
+      "ms": 170,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "pvry",
+      "title": "One Piece",
+      "url": "https://comix.ws/images/covers/366/02cf07e468775e4ca94f1f2247162ecfe999179a@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/366/02cf07e468775e4ca94f1f2247162ecfe999179a@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 50180,
+      "ms": 181,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "2rlj2",
+      "title": "The Count's Secret Maid",
+      "url": "https://comix.ws/images/covers/60962/6b471e7ad0b9ad7dade1672ca5770c8af94bd32e@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/60962/6b471e7ad0b9ad7dade1672ca5770c8af94bd32e@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 39669,
+      "ms": 175,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "e9l8",
+      "title": "Our Guild's Idol",
+      "url": "https://comix.ws/images/covers/802/5a023a7608829765878639d6fc5f5db8d5f76971@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/802/5a023a7608829765878639d6fc5f5db8d5f76971@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 41457,
+      "ms": 167,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "71r2",
+      "title": "I'll Retire After Saving the World",
+      "url": "https://comix.ws/images/covers/8254/b6fd927077873bd0e1b6c1df45b714d43666f1ba@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/8254/b6fd927077873bd0e1b6c1df45b714d43666f1ba@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 45898,
+      "ms": 190,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "v78z",
+      "title": "She is Fed Up with Her Siscon Brother",
+      "url": "https://comix.ws/images/covers/13766/c1c5946a488b08753f6a5326a422f0371479e2a9@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/13766/c1c5946a488b08753f6a5326a422f0371479e2a9@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 30520,
+      "ms": 178,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "19v5e",
+      "title": "The Wolf That Picked Something Up",
+      "url": "https://comix.ws/images/covers/17013/30cb772090df4b414a0eeaa57f15a7583bdab5cb@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/17013/30cb772090df4b414a0eeaa57f15a7583bdab5cb@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 44727,
+      "ms": 172,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "0ydwq",
+      "title": "Fei Ren Zai",
+      "url": "https://comix.ws/images/covers/37969/0159acbbca915e396471879b097582e8c03d08c7@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/37969/0159acbbca915e396471879b097582e8c03d08c7@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 43434,
+      "ms": 206,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "mwdvz",
+      "title": "Ossan no Remake Bouken Nikki ~Autocamp kara Hajimaru Isekai Mankitsu Life~",
+      "url": "https://comix.ws/images/covers/22282/2e85a167ccc65907b6d13f39271a0c52173436e3@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/22282/2e85a167ccc65907b6d13f39271a0c52173436e3@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 40707,
+      "ms": 180,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "gqwx",
+      "title": "Zipang",
+      "url": "https://comix.ws/images/covers/6051/b861780b1bce64c533593ad3a0b592d8269f65a0@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/6051/b861780b1bce64c533593ad3a0b592d8269f65a0@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 46503,
+      "ms": 179,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "9geq0",
+      "title": "The Long Way of the Warrior",
+      "url": "https://comix.ws/images/covers/22946/775a8d246a7210da091c212525832fdd3b738b45@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/22946/775a8d246a7210da091c212525832fdd3b738b45@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 26584,
+      "ms": 167,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "7zl2m",
+      "title": "Lucid Dream",
+      "url": "https://comix.ws/images/covers/18978/d36852f7f67147943d5e1f665bc9650b9d71bc4d@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/18978/d36852f7f67147943d5e1f665bc9650b9d71bc4d@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 35884,
+      "ms": 172,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "3y0vn",
+      "title": "Tsui no Taimashi: Ender Geister",
+      "url": "https://comix.ws/images/covers/18548/68c6192dcfdfd3369bc531790a8a72ea30444383@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/18548/68c6192dcfdfd3369bc531790a8a72ea30444383@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 31025,
+      "ms": 173,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "lw0x2",
+      "title": "Hisshou Dungeon Unei Houhou",
+      "url": "https://comix.ws/images/covers/33920/6a0fc4d1d9e5b4490a335ec379110658d0e1ae27@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/33920/6a0fc4d1d9e5b4490a335ec379110658d0e1ae27@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38704,
+      "ms": 175,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "vk3ln",
+      "title": "Irregulars",
+      "url": "https://comix.ws/images/covers/46690/dc7ca8904880cd87ae11e4dee5f9a0c71cdf3098@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/46690/dc7ca8904880cd87ae11e4dee5f9a0c71cdf3098@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 38145,
+      "ms": 182,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "mwxrm",
+      "title": "Lost Man",
+      "url": "https://comix.ws/images/covers/14034/cae296d7972ff368169e53b8abbe1eeabdc0751a@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/14034/cae296d7972ff368169e53b8abbe1eeabdc0751a@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 34179,
+      "ms": 180,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "y931w",
+      "title": "Soukyuu Boys",
+      "url": "https://comix.ws/images/covers/35315/a77e21800d781c66dd5d63a796015f4594417945@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/35315/a77e21800d781c66dd5d63a796015f4594417945@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 44421,
+      "ms": 182,
+      "magic": "ffd8ffe000104a4649460001"
+    },
+    {
+      "hid": "dndk",
+      "title": "Jiisan Baasan Wakagaeru",
+      "url": "https://comix.ws/images/covers/9847/fe39f70c69f06fcf32b859d56f01e8a65ffd33ff@280.jpg",
+      "variant": "source-headers",
+      "finalUrl": "https://comix.ws/images/covers/9847/fe39f70c69f06fcf32b859d56f01e8a65ffd33ff@280.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 27552,
+      "ms": 175,
+      "magic": "ffd8ffe000104a4649460001"
+    }
+  ],
+  "decoded": [
+    {
+      "file": "resolved-cover-comix.to-0-no-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-0-no-referer-or-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-0-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-1-no-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-1-no-referer-or-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-1-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-10-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-11-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-12-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-13-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-14-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-15-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-16-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-17-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-18-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-19-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-2-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-20-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-21-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-22-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-23-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-24-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-25-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-26-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-27-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-28-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-29-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-3-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-30-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-31-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-32-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-33-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-34-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-35-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-36-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-37-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-4-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-5-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-6-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-7-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-8-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.to-9-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-0-no-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-0-no-referer-or-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-0-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-1-no-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-1-no-referer-or-origin.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-1-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-10-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-11-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-12-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-13-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-14-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-15-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-16-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-17-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-18-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-19-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-2-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-20-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-21-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-22-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-23-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-24-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-25-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-26-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-27-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-28-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-29-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-3-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-30-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-31-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-32-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-33-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-34-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-35-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-36-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-37-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-4-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-5-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-6-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-7-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-8-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    },
+    {
+      "file": "resolved-cover-comix.ws-9-source-headers.bin",
+      "format": "JPEG",
+      "width": 280,
+      "height": 420
+    }
+  ],
+  "nativeProductionMapping": [
+    {
+      "host": "comix.to",
+      "hid": "g2rk",
+      "quality": "medium",
+      "bytes": 34100,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "comix.to",
+      "hid": "g2rk",
+      "quality": "large",
+      "bytes": 51883,
+      "width": 400,
+      "height": 600
+    },
+    {
+      "host": "comix.to",
+      "hid": "8wgym",
+      "quality": "medium",
+      "bytes": 35655,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "comix.to",
+      "hid": "8wgym",
+      "quality": "large",
+      "bytes": 57195,
+      "width": 400,
+      "height": 600
+    },
+    {
+      "host": "comix.to",
+      "hid": "w2399",
+      "quality": "medium",
+      "bytes": 31618,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "comix.to",
+      "hid": "w2399",
+      "quality": "large",
+      "bytes": 50281,
+      "width": 400,
+      "height": 600
+    },
+    {
+      "host": "static.comix.to",
+      "hid": "301dn",
+      "quality": "medium",
+      "bytes": 48659,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "static.comix.to",
+      "hid": "301dn",
+      "quality": "large",
+      "bytes": 82850,
+      "width": 400,
+      "height": 600
+    },
+    {
+      "host": "comix.ws",
+      "hid": "g2rk",
+      "quality": "medium",
+      "bytes": 34100,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "comix.ws",
+      "hid": "g2rk",
+      "quality": "large",
+      "bytes": 51883,
+      "width": 400,
+      "height": 600
+    },
+    {
+      "host": "comix.ws",
+      "hid": "8wgym",
+      "quality": "medium",
+      "bytes": 35655,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "comix.ws",
+      "hid": "8wgym",
+      "quality": "large",
+      "bytes": 57195,
+      "width": 400,
+      "height": 600
+    },
+    {
+      "host": "comix.ws",
+      "hid": "w2399",
+      "quality": "medium",
+      "bytes": 31618,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "comix.ws",
+      "hid": "w2399",
+      "quality": "large",
+      "bytes": 50281,
+      "width": 400,
+      "height": 600
+    },
+    {
+      "host": "static.comix.to",
+      "hid": "301dn",
+      "quality": "medium",
+      "bytes": 48659,
+      "width": 280,
+      "height": 420
+    },
+    {
+      "host": "static.comix.to",
+      "hid": "301dn",
+      "quality": "large",
+      "bytes": 82850,
+      "width": 400,
+      "height": 600
+    }
+  ],
+  "tests": {
+    "javascript": 49,
+    "kotlin": 54
+  },
+  "limitations": [
+    "Representative sample, not the entire catalog.",
+    "Desktop WebKit and JVM OkHttp, not a physical iPhone or installed Tachimanga integration.",
+    "The initial audit ended with a summary-formatting error on a relative URL after writing the full report; per-cover failures were recorded independently.",
+    "No new Cloudflare or chapter API validation claim. Production chapter code is unchanged.",
+    "Existing library cover URLs require a metadata refresh after installing the fix."
+  ]
+}

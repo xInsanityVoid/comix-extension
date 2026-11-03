@@ -619,7 +619,7 @@ index c9cbd865..05268fef 100644
  
      const start = () => read().catch((e) => {
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..71dde47d 100644
+index 523b26a1..1528bb04 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -627,7 +627,7 @@ index 523b26a1..71dde47d 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 66
++    versionCode = 67
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  
@@ -654,7 +654,7 @@ index 00000000..3f1d204a
 +    .maxByOrNull { it.chapter_number }
 +    ?.memo
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
-index b9bc9c66..c188a27e 100644
+index b9bc9c66..06b7349f 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Comix.kt
 @@ -23,7 +23,6 @@ import keiyoushi.utils.booleanOrNull
@@ -701,6 +701,15 @@ index b9bc9c66..c188a27e 100644
              buildScript = { passPayloadName ->
                  """
                      (function () {
+@@ -311,7 +286,7 @@ abstract class Comix :
+         ).parseAs<SearchResponse>()
+ 
+         val mangaList = searchResponse.result.items.map {
+-            it.toBasicSManga(preferences.posterQuality())
++            it.toBasicSManga(baseUrl, preferences.posterQuality())
+         }
+         return MangasPage(mangaList, searchResponse.result.hasNextPage())
+     }
 @@ -366,7 +341,7 @@ abstract class Comix :
      }
  
@@ -805,7 +814,24 @@ index b9bc9c66..c188a27e 100644
                      const raw = document.querySelector('script#initial-data')?.textContent;
                      if (raw) window.$passPayloadName(raw);
                  })();
-@@ -570,14 +545,49 @@ abstract class Comix :
+@@ -533,6 +508,7 @@ abstract class Comix :
+     }
+ 
+     private fun parseMangaDetails(detail: Manga): SManga = detail.toSManga(
++        baseUrl,
+         preferences.posterQuality(),
+         preferences.alternativeNamesInDescription(),
+         preferences.scorePosition(),
+@@ -552,7 +528,7 @@ abstract class Comix :
+             ?: return emptyList()
+ 
+         return related.parseAs<SearchResponse.Items>().items.map {
+-            it.toBasicSManga(preferences.posterQuality())
++            it.toBasicSManga(baseUrl, preferences.posterQuality())
+         }
+     }
+ 
+@@ -570,14 +546,49 @@ abstract class Comix :
          knownIds: List<Int>,
      ): ChapterList {
          val mangaId = manga.url.removePrefix("/").substringBefore('-')
@@ -857,7 +883,7 @@ index b9bc9c66..c188a27e 100644
      private fun selectChapters(
          allChapters: List<SChapter>,
          shouldDeduplicate: Boolean,
-@@ -684,13 +694,13 @@ abstract class Comix :
+@@ -684,13 +695,13 @@ abstract class Comix :
          url: String,
          isDataRequest: ((HttpUrl) -> Boolean)? = null,
          buildScript: ((passPayloadName: String) -> String)? = null,
@@ -874,7 +900,7 @@ index b9bc9c66..c188a27e 100644
          return runWebView(timeout = Duration.INFINITE) {
              userAgent = headers["User-Agent"].orEmpty()
              blockImages = true
-@@ -701,7 +711,7 @@ abstract class Comix :
+@@ -701,7 +712,7 @@ abstract class Comix :
                      ?: return@interceptRequest emptyResponse
                  if (UNUSED_SITE_PATHS.any(requestUrl.encodedPath::startsWith)) return@interceptRequest emptyResponse
                  // The solver's own request for this path reads the site's page
@@ -883,7 +909,7 @@ index b9bc9c66..c188a27e 100644
                  if (requestUrl.encodedPath == WAF_CHALLENGE_PATH && isFrameLoad) {
                      if (!preferences.solveCaptchas()) {
                          reject(Exception("Open in WebView to solve the captcha, or turn on \"Solve captchas\" in extension settings"))
-@@ -728,15 +738,12 @@ abstract class Comix :
+@@ -728,15 +739,12 @@ abstract class Comix :
  
              jsBridge(bridgeName) { resolve(it) }
              jsBridge(errorBridgeName) { reject(Exception(it)) }
@@ -904,7 +930,7 @@ index b9bc9c66..c188a27e 100644
              // Refuse the site's first-tap ad window
              withNativeWebView { it.settings.setSupportMultipleWindows(true) }
  
-@@ -768,8 +775,7 @@ abstract class Comix :
+@@ -768,8 +776,7 @@ abstract class Comix :
                  try { localStorage.setItem("__pu1", "[" + Date.now() + "]"); } catch (e) {}
                  window.$passPayloadName = payload => window.$bridgeName.post(payload);
                  window.$rejectName = message => window.$errorBridgeName.post(message);
@@ -914,7 +940,7 @@ index b9bc9c66..c188a27e 100644
                  })();
              """.trimIndent()
              injectAtDocumentStart(bootstrapScript, setOf(siteOrigin))
-@@ -783,6 +789,16 @@ abstract class Comix :
+@@ -783,6 +790,16 @@ abstract class Comix :
  
      private fun asset(name: String) = javaClass.getResource("/assets/$name")!!.readText()
  
@@ -931,7 +957,7 @@ index b9bc9c66..c188a27e 100644
      private fun HttpUrl.isChapterPagesRequest(): Boolean = pathSegments.size == 4 &&
          pathSegments[0] == "api" &&
          pathSegments[1] == "v1" &&
-@@ -844,7 +860,7 @@ abstract class Comix :
+@@ -844,7 +861,7 @@ abstract class Comix :
          MultiSelectListPreference(screen.context).apply {
              key = PREF_DEFAULT_DEMOGRAPHICS
              title = "Default demographics"
@@ -940,7 +966,7 @@ index b9bc9c66..c188a27e 100644
                  "results. The Demographic filter in search overrides this."
              entries = Filters.getDemographics().map { it.first }.toTypedArray()
              entryValues = Filters.getDemographics().map { it.second }.toTypedArray()
-@@ -941,7 +957,7 @@ abstract class Comix :
+@@ -941,7 +958,7 @@ abstract class Comix :
  
      private fun SharedPreferences.defaultDemographics(): Set<String> {
          val all = Filters.getDemographics().map { it.second }.toSet()
@@ -949,7 +975,7 @@ index b9bc9c66..c188a27e 100644
      }
  
      private fun SharedPreferences.blockedGenres(): Set<String> = getStringSet(PREF_BLOCKED_GENRES, emptySet()) ?: emptySet()
-@@ -976,10 +992,14 @@ abstract class Comix :
+@@ -976,10 +993,14 @@ abstract class Comix :
  
          private const val DEFAULT_CONTENT_RATING = "suggestive"
          private const val WEBVIEW_TIMEOUT_SECONDS = 120L
@@ -966,10 +992,18 @@ index b9bc9c66..c188a27e 100644
          private const val OFFICIAL_GROUP_ID = 10702
          private const val TAG_ID_CACHE_SIZE = 50
 diff --git a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
-index 2e3126a7..f1dc345a 100644
+index 2e3126a7..5e24688d 100644
 --- a/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
 +++ b/src/en/comix/src/eu/kanade/tachiyomi/extension/en/comix/Dto.kt
-@@ -16,10 +16,6 @@ const val CHAPTER_ID_MEMO = "chapterId"
+@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
+ import kotlinx.serialization.json.JsonObject
+ import kotlinx.serialization.json.buildJsonObject
+ import kotlinx.serialization.json.put
++import okhttp3.HttpUrl.Companion.toHttpUrl
+ import java.math.BigDecimal
+ import java.math.RoundingMode
+ import java.util.Calendar
+@@ -16,10 +17,6 @@ const val CHAPTER_ID_MEMO = "chapterId"
  const val CHAPTER_VOTES_MEMO = "votes"
  const val CHAPTER_OFFICIAL_MEMO = "official"
  const val CHAPTER_GROUP_ID_MEMO = "groupId"
@@ -980,7 +1014,7 @@ index 2e3126a7..f1dc345a 100644
  
  @Serializable
  class Term(
-@@ -28,11 +24,17 @@ class Term(
+@@ -28,11 +25,17 @@ class Term(
  
  @Serializable
  class TagSearchResponse(
@@ -1001,7 +1035,52 @@ index 2e3126a7..f1dc345a 100644
  
  @Serializable
  class Manga(
-@@ -325,11 +327,23 @@ class ChapterPages(
+@@ -72,10 +75,13 @@ class Manga(
+         private val medium: String? = null,
+         private val large: String? = null,
+     ) {
+-        fun from(quality: String?) = when (quality) {
+-            "large" -> large ?: medium ?: small ?: ""
+-            "small" -> small ?: medium ?: large ?: ""
+-            else -> medium ?: large ?: small ?: ""
++        fun from(quality: String?, baseUrl: String): String {
++            val url = when (quality) {
++                "large" -> large ?: medium ?: small
++                "small" -> small ?: medium ?: large
++                else -> medium ?: large ?: small
++            }?.takeIf { it.isNotBlank() } ?: return ""
++            return baseUrl.toHttpUrl().resolve(url)?.toString().orEmpty()
+         }
+     }
+ 
+@@ -101,6 +107,7 @@ class Manga(
+         }
+ 
+     fun toSManga(
++        baseUrl: String,
+         posterQuality: String?,
+         altTitlesInDesc: Boolean = false,
+         scorePosition: String,
+@@ -163,15 +170,15 @@ class Manga(
+             "discontinued" -> SManga.CANCELLED
+             else -> SManga.UNKNOWN
+         }
+-        thumbnail_url = this@Manga.poster?.from(posterQuality)
++        thumbnail_url = this@Manga.poster?.from(posterQuality, baseUrl)
+         genre = getGenres(showTags)
+     }
+ 
+-    fun toBasicSManga(posterQuality: String?) = SManga.create().apply {
++    fun toBasicSManga(baseUrl: String, posterQuality: String?) = SManga.create().apply {
+         url = this@Manga.url?.substringAfter("/title") ?: "/$hid"
+         memo = buildJsonObject { put(MANGA_ID_MEMO, hid) }
+         title = this@Manga.title
+-        thumbnail_url = this@Manga.poster?.from(posterQuality)
++        thumbnail_url = this@Manga.poster?.from(posterQuality, baseUrl)
+     }
+ 
+     private fun buildExtraInfo(): List<String> = buildList {
+@@ -325,11 +332,23 @@ class ChapterPages(
      val items: List<PageDto>,
      private val alt: List<String>? = null,
      private val node: String? = null,
