@@ -1,16 +1,16 @@
 # COMIX extension fix
 
-Independent build of [Keiyoushi's COMIX extension](https://github.com/keiyoushi/extensions-source/tree/ff521c17bb3e503c01e658e8fac00b60a95829f3/src/en/comix), version **1.6.67**, build **106067**.
+Independent build of [Keiyoushi's COMIX extension](https://github.com/keiyoushi/extensions-source/tree/ff521c17bb3e503c01e658e8fac00b60a95829f3/src/en/comix), version **1.6.68**, build **106068**.
 
-Fixes missing covers caused by COMIX returning relative image paths. Retains the existing chapter refresh, image fallback, search, filter and recovery fixes.
+Fetches 100 chapter entries per request with the existing 2.5-5 second pagination interval, reducing the requests needed for longer lists. Retains the cover, image fallback, search, filter and refresh recovery fixes.
 
 ## Install or update
 
-Refresh your reader's existing extension repository and update COMIX to **1.6.67**. Then refresh affected series to replace cover URLs saved by an older build. Keep **Faster chapter list fetching** enabled.
+Refresh your reader's existing extension repository and update COMIX to **1.6.68**. Keep **Faster chapter list fetching** enabled.
 
-- [Release and checksums](https://github.com/xInsanityVoid/comix-extension/releases/tag/v1.6.67)
-- [Android APK](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.67/tachiyomi-en.comix-v1.6.67.apk)
-- [Extension JAR](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.67/tachiyomi-en.comix-v1.6.67.jar)
+- [Release and checksums](https://github.com/xInsanityVoid/comix-extension/releases/tag/v1.6.68)
+- [Android APK](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.68/tachiyomi-en.comix-v1.6.68.apk)
+- [Extension JAR](https://github.com/xInsanityVoid/comix-extension/releases/download/v1.6.68/tachiyomi-en.comix-v1.6.68.jar)
 
 Repository URL:
 
@@ -18,29 +18,35 @@ Repository URL:
 https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/index.pb
 ```
 
-[Repository descriptor](https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/repo.json). The repository uses upstream's protobuf format and requires extension API 1.6. The APK and index both advertise build **106067**.
+[Repository descriptor](https://raw.githubusercontent.com/xInsanityVoid/comix-extension/repo/repo.json). The repository uses upstream's protobuf format and requires extension API 1.6. The APK and index both advertise build **106068**.
 
 The package, source ID and signing key are unchanged. Updating from our earlier builds does not require uninstalling. On Android, switching from the official Keiyoushi-signed APK requires uninstalling only that extension first; keep the reader and library.
 
-## Changes in 1.6.67
+## Changes in 1.6.68
 
-COMIX now mixes absolute CDN cover URLs with relative paths such as `/images/covers/47780/...@280.jpg`. Build 66 passed both formats straight to the reader. Relative paths have no domain and cannot be used as image request URLs.
+Adopts the larger-batch approach discussed in official [PR #20547](https://github.com/keiyoushi/extensions-source/pull/20547), reviewed at head `9a17afffe79a2905e7cffd67e33fe54e97302bda` (still open). COMIX now accepts 100 entries per chapter-list request. The extension requests 100 instead of 20 while retaining sequential requests and the existing 2.5-5 second interval in both the JavaScript and native pacing paths.
 
-This build resolves cover paths against the selected COMIX mirror before returning browse/search results, series details and related titles. Absolute CDN URLs stay on their original host, and the existing quality selection and missing-size fallback order are preserved. Empty cover values remain empty instead of pointing to the site home page.
+This uses our existing API discovery and raw-response mapping. It does not require the PR's native tap/display implementation. Returned chapter IDs and metadata remain the same. Stored progress now records its page size; progress from older 20-entry builds is discarded and re-fetched so an interrupted refresh cannot resume at the wrong offset. Known-chapter stopping and incomplete-list rejection remain covered by regression tests.
 
-Update COMIX, then refresh affected series so Tachimanga can replace any previously saved relative cover URLs. The extension update cannot directly rewrite cover URLs already stored in the reader's library.
+The PR discussion reports CAPTCHA failures from bursts and tighter intervals, then a clean paced 100-entry walk. We adopted the batch size without changing the interval. This reduces requests; it does not guarantee a particular speed on every device/network, and very large initial imports can still take minutes.
 
-## Validation on November 3, 2026
+## Validation on November 10, 2026
 
-- Popular and latest browse captures succeeded on both mirrors. The combined audit contained 38 relative cover paths and 56 absolute URLs, including saved October 31 URLs. All 56 absolute URLs returned HTTP 200; the 38 relative paths reproduced invalid-URL errors before resolution.
-- All 38 relative covers returned HTTP 200 after resolving against `comix.to`, and again against `comix.ws`. Eight additional header-comparison requests also succeeded. All 84 downloaded responses decoded as images.
-- The actual production Kotlin Manga/Poster mapping and OkHttp downloaded and decoded 16 additional cover samples: medium and large covers for three titles with relative paths and one with an absolute CDN URL, using both selected mirrors and the current source Origin/Referer headers.
-- All 49 JavaScript and 54 Kotlin tests passed. New regression coverage checks browse/detail consistency, each mirror, absolute and protocol-relative URLs, quality fallback, missing covers and invalid schemes.
-- Release formatting, assembly and lint passed (0 errors; 2 existing generated-manifest warnings). APK/JAR signatures, assets, source ID and build number verified.
+Fresh desktop WebKit contexts, no native taps, no saved chapter progress, same network:
 
-Reviewed official commits through `72b13edd8cb97c8cd289639320cdd445227ffbdd`: [PR #20643](https://github.com/keiyoushi/extensions-source/pull/20643) changes description formatting, and [PR #20573](https://github.com/keiyoushi/extensions-source/pull/20573) migrates request APIs/headers. Neither resolves relative poster URLs. This cover fix does not require a core or Cloudflare change.
+| Case | Chapter entries | Extension chapter requests | Elapsed |
+| --- | ---: | ---: | ---: |
+| Shepherd Wizard, 1.6.67 behavior, comix.to | 337 | 17 | 65.240 s |
+| Shepherd Wizard, 100-entry candidate, comix.to | 337 | 4 | 13.729 s |
+| Shepherd Wizard, final 1.6.68 JavaScript, comix.ws | 337 | 4 | 12.992 s |
 
-See `tests/cover-audit-v67.json` for evidence and scope. Testing used desktop WebKit and JVM OkHttp, not the installed iPhone app. Representative covers were checked, not every catalog entry. Chapter/image API behavior was not re-audited live for this cover-only change; its regression tests passed and the production chapter code is unchanged.
+The two batch sizes returned identical chapter IDs, URLs, numbers, names, votes, scanlator groups and official flags. All observed chapter requests returned HTTP 200 with `v=0&w=0`. The site also made one separate default 20-entry request per navigation; that request is excluded from the extension-request counts above. No CAPTCHA appeared during these runs.
+
+- All 52 JavaScript and 54 Kotlin regression tests passed, including 100-entry boundaries, known-chapter stopping, failed-page recovery, incompatible saved offsets and incomplete-list rejection.
+- Release formatting, assembly and lint passed (0 errors; 2 existing generated-manifest warnings). APK/JAR signatures, assets, source identity and build number verified.
+- The comix.to candidate changed only the request size and resume-length arithmetic; the final implementation also names the page-size constant and tags saved progress. The comix.ws run used that final implementation.
+
+See `tests/chapter-batching-v68.json` for request timing and comparison evidence. This is one representative title on one network, not a catalog-wide or fresh-IP CAPTCHA test. The installed iPhone app and Tachimanga 5.4 beta were not directly tested. Covers and image transport were not re-audited live for this change; their code is unchanged and regression tests passed.
 
 ## Rebuild
 

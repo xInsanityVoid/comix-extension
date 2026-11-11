@@ -1,0 +1,516 @@
+{
+  "date": "2026-11-10",
+  "version": "1.6.68",
+  "pr": {
+    "url": "https://github.com/keiyoushi/extensions-source/pull/20547",
+    "head": "9a17afffe79a2905e7cffd67e33fe54e97302bda",
+    "status": "open",
+    "adopted": "100-entry pages at existing pacing; our existing discovery/mapping and no native taps"
+  },
+  "runs": [
+    {
+      "date": "2026-11-10",
+      "host": "comix.to",
+      "hid": "vwk5z",
+      "limit": 20,
+      "requests": [
+        {
+          "ms": 667,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "1",
+          "limit": "20",
+          "order": null,
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 892,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "1",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 6357,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "2",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 9360,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "3",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 12579,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "4",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 17226,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "5",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 20265,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "6",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 24204,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "7",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 27113,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "8",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 30970,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "9",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 34619,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "10",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 39678,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "11",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 45051,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "12",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 48237,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "13",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 52300,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "14",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 56521,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "15",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 61743,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "16",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 65194,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "17",
+          "limit": "20",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        }
+      ],
+      "progress": [
+        {
+          "ms": 904,
+          "nextPage": 2,
+          "total": 337,
+          "count": 20
+        },
+        {
+          "ms": 6360,
+          "nextPage": 3,
+          "total": 337,
+          "count": 40
+        },
+        {
+          "ms": 9370,
+          "nextPage": 4,
+          "total": 337,
+          "count": 60
+        },
+        {
+          "ms": 12591,
+          "nextPage": 5,
+          "total": 337,
+          "count": 80
+        },
+        {
+          "ms": 17236,
+          "nextPage": 6,
+          "total": 337,
+          "count": 100
+        },
+        {
+          "ms": 20268,
+          "nextPage": 7,
+          "total": 337,
+          "count": 120
+        },
+        {
+          "ms": 24219,
+          "nextPage": 8,
+          "total": 337,
+          "count": 140
+        },
+        {
+          "ms": 27121,
+          "nextPage": 9,
+          "total": 337,
+          "count": 160
+        },
+        {
+          "ms": 30984,
+          "nextPage": 10,
+          "total": 337,
+          "count": 180
+        },
+        {
+          "ms": 34639,
+          "nextPage": 11,
+          "total": 337,
+          "count": 200
+        },
+        {
+          "ms": 39694,
+          "nextPage": 12,
+          "total": 337,
+          "count": 220
+        },
+        {
+          "ms": 45066,
+          "nextPage": 13,
+          "total": 337,
+          "count": 240
+        },
+        {
+          "ms": 48249,
+          "nextPage": 14,
+          "total": 337,
+          "count": 260
+        },
+        {
+          "ms": 52316,
+          "nextPage": 15,
+          "total": 337,
+          "count": 280
+        },
+        {
+          "ms": 56533,
+          "nextPage": 16,
+          "total": 337,
+          "count": 300
+        },
+        {
+          "ms": 61756,
+          "nextPage": 17,
+          "total": 337,
+          "count": 320
+        },
+        {
+          "ms": 65201,
+          "nextPage": 18,
+          "total": 337,
+          "count": 337
+        }
+      ],
+      "ms": 65240,
+      "complete": true,
+      "count": 337,
+      "uniqueIds": 337,
+      "extensionRequestCount": 17,
+      "statusMessage": "Got 337 of 337 chapters"
+    },
+    {
+      "date": "2026-11-10",
+      "host": "comix.to",
+      "hid": "vwk5z",
+      "limit": 100,
+      "requests": [
+        {
+          "ms": 746,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "1",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 915,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "1",
+          "limit": "20",
+          "order": null,
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 4324,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "2",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 8707,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "3",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 13685,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "4",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        }
+      ],
+      "progress": [
+        {
+          "ms": 831,
+          "nextPage": 2,
+          "total": 337,
+          "count": 100
+        },
+        {
+          "ms": 4345,
+          "nextPage": 3,
+          "total": 337,
+          "count": 200
+        },
+        {
+          "ms": 8729,
+          "nextPage": 4,
+          "total": 337,
+          "count": 300
+        },
+        {
+          "ms": 13691,
+          "nextPage": 5,
+          "total": 337,
+          "count": 337
+        }
+      ],
+      "ms": 13729,
+      "complete": true,
+      "count": 337,
+      "uniqueIds": 337,
+      "extensionRequestCount": 4,
+      "statusMessage": "Got 337 of 337 chapters"
+    },
+    {
+      "date": "2026-11-10",
+      "host": "comix.ws",
+      "hid": "vwk5z",
+      "limit": 100,
+      "requests": [
+        {
+          "ms": 890,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "1",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 926,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "1",
+          "limit": "20",
+          "order": null,
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 5448,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "2",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 9556,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "3",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        },
+        {
+          "ms": 12951,
+          "status": 200,
+          "path": "/api/v1/manga/vwk5z/chapters",
+          "page": "4",
+          "limit": "100",
+          "order": "desc",
+          "v": "0",
+          "w": "0"
+        }
+      ],
+      "progress": [
+        {
+          "ms": 906,
+          "nextPage": 2,
+          "total": 337,
+          "count": 100
+        },
+        {
+          "ms": 5469,
+          "nextPage": 3,
+          "total": 337,
+          "count": 200
+        },
+        {
+          "ms": 9564,
+          "nextPage": 4,
+          "total": 337,
+          "count": 300
+        },
+        {
+          "ms": 12956,
+          "nextPage": 5,
+          "total": 337,
+          "count": 337
+        }
+      ],
+      "ms": 12992,
+      "complete": true,
+      "count": 337,
+      "uniqueIds": 337,
+      "extensionRequestCount": 4,
+      "statusMessage": "Got 337 of 337 chapters"
+    }
+  ],
+  "comparison": {
+    "matchingFields": [
+      "id",
+      "url",
+      "number",
+      "name",
+      "votes",
+      "group",
+      "isOfficial"
+    ],
+    "count": 337,
+    "allThreeEqual": true,
+    "canonicalRowsSha256": "8be6a7c1ab536528e9a92b27c89c3e51ea2fe6c3cace92627835b81717b58ad1"
+  },
+  "tests": {
+    "javascript": 52,
+    "kotlin": 54
+  },
+  "limitations": [
+    "One title and network, desktop WebKit; no physical iPhone or installed Tachimanga test.",
+    "New browser context per run, but not a new public IP per run.",
+    "comix.to 100-entry run used a limit-only candidate; final implementation also tags resume page size. comix.ws used final implementation.",
+    "No native Kotlin WebView pacing in this harness; existing JavaScript pacing was active.",
+    "The site made one additional default 20-entry request per navigation.",
+    "No CAPTCHA appeared; this does not guarantee all networks or large walks stay unchallenged."
+  ]
+}

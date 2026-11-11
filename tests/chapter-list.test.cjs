@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const {test} = require('node:test');
 const source = fs.readFileSync(`${__dirname}/../src/en/comix/assets/chapter_list.js`, 'utf8');
-async function read({readyState='complete',obfuscated=false,total=43,known=[],failPage,wrongTitle=false,missingActivity=false,ambiguousActivity=false,maxPages=1000,resume=null,clock=1000,idOffset=0}={}) {
+async function read({readyState='complete',obfuscated=false,total=243,known=[],failPage,wrongTitle=false,missingActivity=false,ambiguousActivity=false,maxPages=1000,resume=null,clock=1000,idOffset=0}={}) {
   let now=clock;
   const requests=[],delays=[],progress=[],checkpoints=[],events=[];
   const context=vm.createContext({
@@ -19,11 +19,12 @@ async function read({readyState='complete',obfuscated=false,total=43,known=[],fa
     setTimeout(callback,delay){delays.push(delay);now+=delay;queueMicrotask(callback);},
     http:{async get(url,{params}){
       assert.equal(context.activityAt,now);
+      assert.equal(params.limit,100,'fetch 100 entries per request without shortening pacing');
       requests.push(params.page);
       if(params.page===failPage)throw {response:{status:502}};
-      const first=(params.page-1)*20;
-      const items=Array.from({length:Math.max(0,Math.min(20,total-first))},(_,i)=>({id:idOffset+first+i+1,number:first+i+1,url:`/title/${wrongTitle?'wrong':'abc'}-name/${idOffset+first+i+1}-chapter-1`}));
-      return {data:{items,meta:{lastPage:Math.max(1,Math.ceil(total/20)),total}}};
+      const first=(params.page-1)*params.limit;
+      const items=Array.from({length:Math.max(0,Math.min(params.limit,total-first))},(_,i)=>({id:idOffset+first+i+1,number:first+i+1,url:`/title/${wrongTitle?'wrong':'abc'}-name/${idOffset+first+i+1}-chapter-1`}));
+      return {data:{items,meta:{lastPage:Math.max(1,Math.ceil(total/params.limit)),total}}};
     }},known,maxPages,missingActivity,ambiguousActivity,progress:state=>{if(state)checkpoints.push(JSON.parse(state));else progress.push(now);},obfuscated,resume,
   });
   vm.runInContext(`
@@ -46,27 +47,33 @@ async function read({readyState='complete',obfuscated=false,total=43,known=[],fa
 }
 test('fetches all pages without layout or native input',async()=>{
   const {result,requests,delays,progress}=await read();
-  assert.equal(result.complete,true);assert.equal(result.chapters.length,43);assert.deepEqual(requests,[1,2,3]);
+  assert.equal(result.complete,true);assert.equal(result.chapters.length,243);assert.deepEqual(requests,[1,2,3]);
   assert.equal(delays.length,2);assert.ok(delays.every(ms=>ms>=2500&&ms<=5000));assert.equal(progress.length,3);
   assert.equal(progress[0],1000,'the first request must have no artificial pause');
   assert.equal(result.queries.detail.title,'Test');
 });
-test('single and empty lists need no controls',async()=>{for(const total of [0,1]){const {result,requests}=await read({total});assert.equal(result.complete,true);assert.equal(result.chapters.length,total);assert.deepEqual(requests,[1]);}});
+test('empty lists and lists up to 100 entries need only one request',async()=>{for(const total of [0,1,99,100]){const {result,requests}=await read({total});assert.equal(result.complete,true);assert.equal(result.chapters.length,total);assert.deepEqual(requests,[1]);}});
 test('stops at a stored chapter',async()=>{const {result,requests}=await read({known:[1]});assert.equal(result.complete,true);assert.deepEqual(requests,[1]);});
-test('35 new entries need two pages even when known chapters arrive oldest first',async()=>{
+test('35 new entries fit in one page even when known chapters arrive oldest first',async()=>{
   const known=Array.from({length:276},(_,i)=>311-i);
   const {result,requests}=await read({total:311,known});
-  assert.equal(result.complete,true);assert.deepEqual(requests,[1,2]);assert.equal(result.chapters.length,40);
+  assert.equal(result.complete,true);assert.deepEqual(requests,[1]);assert.equal(result.chapters.length,100);
 });
-test('keeps fetched entries and reports an incomplete list on failure',async()=>{const {result,requests}=await read({failPage:2});assert.equal(result.complete,false);assert.equal(result.chapters.length,20);assert.deepEqual(requests,[1,2]);assert.match(result.error,/HTTP 502/);});
+
+test('more than 100 new entries continue to a known chapter on page two',async()=>{
+  const known=Array.from({length:176},(_,i)=>311-i);
+  const {result,requests}=await read({total:311,known});
+  assert.equal(result.complete,true);assert.deepEqual(requests,[1,2]);assert.equal(result.chapters.length,200);
+});
+test('keeps fetched entries and reports an incomplete list on failure',async()=>{const {result,requests}=await read({failPage:2});assert.equal(result.complete,false);assert.equal(result.chapters.length,100);assert.deepEqual(requests,[1,2]);assert.match(result.error,/HTTP 502/);});
 test('rejects another title response',async()=>{const {result}=await read({wrongTitle:true});assert.equal(result.complete,false);assert.equal(result.chapters.length,0);assert.match(result.error,/shape/);});
 test('does not guess a missing or ambiguous activity callback',async()=>{for(const options of [{missingActivity:true},{ambiguousActivity:true}]){const {result,requests}=await read(options);assert.equal(result.complete,false);assert.deepEqual(requests,[]);assert.match(result.error,/chapters API/);}});
-test('does not mark a capped list complete',async()=>{const {result}=await read({maxPages:1});assert.equal(result.complete,false);assert.match(result.error,/20 of 43/);});
+test('does not mark a capped list complete',async()=>{const {result}=await read({maxPages:1});assert.equal(result.complete,false);assert.match(result.error,/100 of 243/);});
 
 
 test('obfuscated method names, item mapping and activity callback still paginate',async()=>{
   const {result,requests}=await read({obfuscated:true});
-  assert.equal(result.complete,true);assert.equal(result.chapters.length,43);assert.deepEqual(requests,[1,2,3]);
+  assert.equal(result.complete,true);assert.equal(result.chapters.length,243);assert.deepEqual(requests,[1,2,3]);
 });
 
 test('starts on DOM readiness while images and other load resources remain pending',async()=>{
@@ -82,11 +89,12 @@ test('resumes a failed full fetch after checking the live first page',async()=>{
   assert.equal(interrupted.result.complete,false);
   assert.deepEqual(interrupted.checkpoints.map(c=>c.nextPage),[2,3]);
   const resume=interrupted.checkpoints.at(-1);
-  assert.equal(resume.chapters.length,40);
+  assert.equal(resume.chapters.length,200);
+  assert.equal(resume.pageSize,100);
   const resumed=await read({resume,clock:20000});
   assert.equal(resumed.result.complete,true);
   assert.deepEqual(resumed.requests,[1,3]);
-  assert.deepEqual(resumed.result.chapters.map(c=>c.id),Array.from({length:43},(_,i)=>i+1));
+  assert.deepEqual(resumed.result.chapters.map(c=>c.id),Array.from({length:243},(_,i)=>i+1));
   assert.equal(resumed.checkpoints.at(-1).nextPage,4);
   assert.ok(resumed.checkpoints.at(-1).savedAt>resume.savedAt,'new progress renews the retry window');
 });
@@ -107,17 +115,17 @@ test('rejects expired, future, mismatched and corrupt saved offsets',async()=>{
   const original=initial.checkpoints.at(-1);
   const variants=[
     {...original,savedAt:-300000}, {...original,savedAt:30000},
-    {...original,mangaId:'wrong'}, {...original,total:44}, {...original,lastPage:4},
+    {...original,mangaId:'wrong'}, {...original,total:244}, {...original,lastPage:4},
     {...original,nextPage:3.5}, {...original,nextPage:99},
-    {...original,chapters:original.chapters.slice(0,39)},
-    {...original,chapters:[...original.chapters.slice(0,39),original.chapters[20]]},
+    {...original,chapters:original.chapters.slice(0,199)},
+    {...original,chapters:[...original.chapters.slice(0,199),original.chapters[20]]},
     {...original,chapters:original.chapters.map((c,i)=>i===20?{...c,url:'/title/wrong/1'}:c)},
   ];
   for(const resume of variants){
     const fetched=await read({resume,clock:20000});
     assert.equal(fetched.result.complete,true);
     assert.deepEqual(fetched.requests,[1,2,3]);
-    assert.equal(fetched.result.chapters.length,43);
+    assert.equal(fetched.result.chapters.length,243);
   }
 });
 
@@ -126,21 +134,39 @@ test('new uploads with unchanged total invalidate cached page offsets',async()=>
   const fetched=await read({resume:initial.checkpoints.at(-1),clock:20000,idOffset:100});
   assert.equal(fetched.result.complete,true);
   assert.deepEqual(fetched.requests,[1,2,3]);
-  assert.deepEqual(fetched.result.chapters.map(c=>c.id),Array.from({length:43},(_,i)=>i+101));
+  assert.deepEqual(fetched.result.chapters.map(c=>c.id),Array.from({length:243},(_,i)=>i+101));
+});
+
+test('saved progress without a matching page size is re-fetched from the start',async()=>{
+  const initial=await read({failPage:3});
+  for(const pageSize of [undefined,20,50]){
+    const resume={...initial.checkpoints.at(-1),pageSize};
+    const fetched=await read({resume,clock:20000});
+    assert.equal(fetched.result.complete,true);
+    assert.deepEqual(fetched.requests,[1,2,3]);
+    assert.equal(new Set(fetched.result.chapters.map(c=>c.id)).size,243);
+  }
+});
+
+test('exact page boundaries do not request an extra empty page',async()=>{
+  const fetched=await read({total:300});
+  assert.equal(fetched.result.complete,true);
+  assert.deepEqual(fetched.requests,[1,2,3]);
+  assert.equal(fetched.result.chapters.length,300);
 });
 
 test('a resumed fetch that fails again preserves progress without claiming completion',async()=>{
-  const initial=await read({total:100,failPage:3});
-  const fetched=await read({total:100,resume:initial.checkpoints.at(-1),clock:20000,failPage:5});
+  const initial=await read({total:500,failPage:3});
+  const fetched=await read({total:500,resume:initial.checkpoints.at(-1),clock:20000,failPage:5});
   assert.equal(fetched.result.complete,false);
   assert.deepEqual(fetched.requests,[1,3,4,5]);
-  assert.equal(fetched.checkpoints.at(-1).chapters.length,80);
+  assert.equal(fetched.checkpoints.at(-1).chapters.length,400);
   assert.equal(fetched.checkpoints.at(-1).nextPage,5);
 });
 
 test('stored-chapter checks ignore full-fetch cache and do not replace it',async()=>{
   const initial=await read();
-  const fetched=await read({resume:initial.checkpoints.at(-1),clock:20000,known:[22]});
+  const fetched=await read({resume:initial.checkpoints.at(-1),clock:20000,known:[122]});
   assert.equal(fetched.result.complete,true);
   assert.deepEqual(fetched.requests,[1,2]);
   assert.deepEqual(fetched.checkpoints,[]);
@@ -239,7 +265,7 @@ test('chapter probes reject copied, altered or filtered request parameters',asyn
   for(const paramsExpression of [
     '{...b}',
     'Object.assign(b,{page:2})',
-    'Object.assign(b,{limit:100})',
+    'Object.assign(b,{limit:20})',
     'Object.assign(b,{order:{created_at:"asc"}})',
     'Object.assign(b,{order:{created_at:"desc",number:"asc"}})',
     'Object.assign(b,{scanlator_id:123})',

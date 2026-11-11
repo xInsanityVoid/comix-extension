@@ -1,8 +1,8 @@
 diff --git a/src/en/comix/assets/chapter_list.js b/src/en/comix/assets/chapter_list.js
-index d7dad967..d2e2e190 100644
+index d7dad967..be794fb1 100644
 --- a/src/en/comix/assets/chapter_list.js
 +++ b/src/en/comix/assets/chapter_list.js
-@@ -1,10 +1,5 @@
+@@ -1,10 +1,6 @@
 -// Chapter list through the site's own chapters method, newest uploads first, up to a page with a
 -// known chapter; pages past a failure are left out. Each call follows a tap in the chapter section.
 -(siteApi, knownIds, mangaId, chapterPath, maxPages, touch, pass) => {
@@ -12,10 +12,11 @@ index d7dad967..d2e2e190 100644
 -    const MAX_SWIPES = 15;
 +// Chapter lists through the site's JavaScript pagination API, without native touch events.
 +(siteApi, knownIds, mangaId, chapterPath, maxPages, pass, progress = () => {}, resume = null) => {
++    const PAGE_SIZE = 100;
      const known = new Set(knownIds);
      const chapters = [];
      const isChapter = (item) => item &&
-@@ -15,34 +10,84 @@
+@@ -15,34 +11,84 @@
      // The site's method: two arguments with an object default for the second, items mapped through
      // a named mapper, the params forwarded to the GET helper
      const isChapterMethod = (value) => {
@@ -92,7 +93,7 @@ index d7dad967..d2e2e190 100644
 +        const selectMethod = async () => {
 +            const matches = [];
 +            for (const candidate of candidates) {
-+                const params = { page: 1, limit: 20, order: { created_at: "desc" } };
++                const params = { page: 1, limit: PAGE_SIZE, order: { created_at: "desc" } };
 +                const expectedParams = JSON.stringify(params);
 +                probeRecords = [];
 +                try {
@@ -119,7 +120,7 @@ index d7dad967..d2e2e190 100644
      });
      // The detail lives in the same document, so the caller reads the manga from this one load
      const queries = () => {
-@@ -51,107 +96,13 @@
+@@ -51,117 +97,24 @@
      };
      const finish = (complete, error) => pass(JSON.stringify({ chapters, complete, error, queries: queries() }));
      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -232,18 +233,21 @@ index d7dad967..d2e2e190 100644
 +        api.activity();
          const before = api.records.length;
          try {
-             await api.method(mangaId, { page, limit: 20, order: { created_at: "desc" } });
-@@ -161,7 +112,8 @@
+-            await api.method(mangaId, { page, limit: 20, order: { created_at: "desc" } });
++            await api.method(mangaId, { page, limit: PAGE_SIZE, order: { created_at: "desc" } });
+         } catch (e) {
+             // The failed request is recorded; its error carries the status
+         }
          // The method's return has key names that change every build; the raw page the helper hands
          // it does not. The records can also hold the site's own requests, so ours is matched by params
          const record = api.records.slice(before).find(
 -            (record) => record.params && record.params.page === page && record.params.order &&
 +            (record) => record.url === `/manga/${mangaId}/chapters` &&
-+                record.params && record.params.page === page && record.params.limit === 20 && record.params.order &&
++                record.params && record.params.page === page && record.params.limit === PAGE_SIZE && record.params.order &&
                  record.params.order.created_at === "desc",
          );
          if (!record) throw new Error(`Chapter page ${page} didn't come back`);
-@@ -183,7 +135,7 @@
+@@ -183,7 +136,7 @@
      const walk = async () => {
          const api = await findChaptersApi();
          if (!api) return finish(false, "Could not find the site's chapters API");
@@ -252,7 +256,7 @@ index d7dad967..d2e2e190 100644
          const ids = new Set();
          let meta;
          let removed = false;
-@@ -193,11 +145,41 @@
+@@ -193,11 +146,42 @@
              if (meta && result.meta.total < meta.total) removed = true;
              meta = result.meta;
          };
@@ -265,11 +269,12 @@ index d7dad967..d2e2e190 100644
 +        // resuming: a changed head or total invalidates the old page offsets and requires a restart.
 +        const now = Date.now();
 +        const canResume = known.size === 0 && resume && resume.mangaId === mangaId &&
++            resume.pageSize === PAGE_SIZE &&
 +            Number.isFinite(resume.savedAt) && now >= resume.savedAt && now - resume.savedAt < 300000 &&
 +            resume.total === meta.total && resume.lastPage === meta.lastPage &&
 +            Number.isInteger(resume.nextPage) && resume.nextPage >= 2 && resume.nextPage <= meta.lastPage + 1 &&
 +            Array.isArray(resume.chapters) && resume.chapters.every(isChapter) &&
-+            resume.chapters.length === Math.min((resume.nextPage - 1) * 20, meta.total) &&
++            resume.chapters.length === Math.min((resume.nextPage - 1) * PAGE_SIZE, meta.total) &&
 +            new Set(resume.chapters.map((item) => item.id)).size === resume.chapters.length &&
 +            first.items.every((item, index) => resume.chapters[index]?.id === item.id);
 +        let nextPage = 2;
@@ -281,7 +286,7 @@ index d7dad967..d2e2e190 100644
 +        let savedAt = canResume ? resume.savedAt : now;
 +        const save = (nextPage) => {
 +            if (known.size === 0) progress(JSON.stringify({
-+                mangaId, savedAt, total: meta.total, lastPage: meta.lastPage, nextPage, chapters,
++                mangaId, pageSize: PAGE_SIZE, savedAt, total: meta.total, lastPage: meta.lastPage, nextPage, chapters,
 +            }));
 +        };
 +        save(nextPage);
@@ -296,7 +301,7 @@ index d7dad967..d2e2e190 100644
          }
          // Chapters uploaded during the walk, from the top of the list
          for (let page = 1; ids.size < meta.total && page <= Math.min(meta.lastPage, maxPages); page++) {
-@@ -212,6 +194,7 @@
+@@ -212,6 +196,7 @@
      };
  
      const start = () => walk().catch((e) => finish(false, e && e.message || String(e)));
@@ -619,7 +624,7 @@ index c9cbd865..05268fef 100644
  
      const start = () => read().catch((e) => {
 diff --git a/src/en/comix/build.gradle.kts b/src/en/comix/build.gradle.kts
-index 523b26a1..1528bb04 100644
+index 523b26a1..15dc3d47 100644
 --- a/src/en/comix/build.gradle.kts
 +++ b/src/en/comix/build.gradle.kts
 @@ -6,7 +6,7 @@ plugins {
@@ -627,7 +632,7 @@ index 523b26a1..1528bb04 100644
  keiyoushi {
      name = "Comix"
 -    versionCode = 54
-+    versionCode = 67
++    versionCode = 68
      contentWarning = ContentWarning.MIXED
      libVersion = "1.6"
  

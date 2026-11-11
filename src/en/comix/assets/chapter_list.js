@@ -1,5 +1,6 @@
 // Chapter lists through the site's JavaScript pagination API, without native touch events.
 (siteApi, knownIds, mangaId, chapterPath, maxPages, pass, progress = () => {}, resume = null) => {
+    const PAGE_SIZE = 100;
     const known = new Set(knownIds);
     const chapters = [];
     const isChapter = (item) => item &&
@@ -65,7 +66,7 @@
         const selectMethod = async () => {
             const matches = [];
             for (const candidate of candidates) {
-                const params = { page: 1, limit: 20, order: { created_at: "desc" } };
+                const params = { page: 1, limit: PAGE_SIZE, order: { created_at: "desc" } };
                 const expectedParams = JSON.stringify(params);
                 probeRecords = [];
                 try {
@@ -105,7 +106,7 @@
         api.activity();
         const before = api.records.length;
         try {
-            await api.method(mangaId, { page, limit: 20, order: { created_at: "desc" } });
+            await api.method(mangaId, { page, limit: PAGE_SIZE, order: { created_at: "desc" } });
         } catch (e) {
             // The failed request is recorded; its error carries the status
         }
@@ -113,7 +114,7 @@
         // it does not. The records can also hold the site's own requests, so ours is matched by params
         const record = api.records.slice(before).find(
             (record) => record.url === `/manga/${mangaId}/chapters` &&
-                record.params && record.params.page === page && record.params.limit === 20 && record.params.order &&
+                record.params && record.params.page === page && record.params.limit === PAGE_SIZE && record.params.order &&
                 record.params.order.created_at === "desc",
         );
         if (!record) throw new Error(`Chapter page ${page} didn't come back`);
@@ -153,11 +154,12 @@
         // resuming: a changed head or total invalidates the old page offsets and requires a restart.
         const now = Date.now();
         const canResume = known.size === 0 && resume && resume.mangaId === mangaId &&
+            resume.pageSize === PAGE_SIZE &&
             Number.isFinite(resume.savedAt) && now >= resume.savedAt && now - resume.savedAt < 300000 &&
             resume.total === meta.total && resume.lastPage === meta.lastPage &&
             Number.isInteger(resume.nextPage) && resume.nextPage >= 2 && resume.nextPage <= meta.lastPage + 1 &&
             Array.isArray(resume.chapters) && resume.chapters.every(isChapter) &&
-            resume.chapters.length === Math.min((resume.nextPage - 1) * 20, meta.total) &&
+            resume.chapters.length === Math.min((resume.nextPage - 1) * PAGE_SIZE, meta.total) &&
             new Set(resume.chapters.map((item) => item.id)).size === resume.chapters.length &&
             first.items.every((item, index) => resume.chapters[index]?.id === item.id);
         let nextPage = 2;
@@ -169,7 +171,7 @@
         let savedAt = canResume ? resume.savedAt : now;
         const save = (nextPage) => {
             if (known.size === 0) progress(JSON.stringify({
-                mangaId, savedAt, total: meta.total, lastPage: meta.lastPage, nextPage, chapters,
+                mangaId, pageSize: PAGE_SIZE, savedAt, total: meta.total, lastPage: meta.lastPage, nextPage, chapters,
             }));
         };
         save(nextPage);
