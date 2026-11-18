@@ -172,7 +172,7 @@ abstract class Comix :
     override suspend fun getPopularManga(page: Int): MangasPage {
         val url = baseUrl.toHttpUrl().newBuilder().apply {
             addPathSegment("browse")
-            addQueryParameter("order[score]", "desc")
+            addQueryParameter("sort", "score:desc")
             addQueryParameter("page", page.toString())
             applyPreferenceFilters()
         }.build()
@@ -180,11 +180,9 @@ abstract class Comix :
     }
 
     private suspend fun getMangaListFromBrowse(url: HttpUrl): MangasPage {
-        val expectedKeyword = JSONObject.quote(
-            url.queryParameter("q") ?: url.queryParameter("keyword").orEmpty(),
-        )
+        val expectedKeyword = JSONObject.quote(url.queryParameter("q").orEmpty())
         val searchResponse = runInWebView(
-            url = url.toString(),
+            url = url.joinBrowseParameters().toString(),
             buildScript = { passPayloadName ->
                 """
                     (function () {
@@ -230,8 +228,9 @@ abstract class Comix :
                         const shouldCaptureUrl = rawUrl => {
                             try {
                                 const url = new URL(rawUrl || '', window.location.origin);
-                                if (!url.pathname.includes('/api/v1/manga')) return false;
+                                if (url.pathname !== '/api/v1/manga') return false;
                                 if (!expectedKeyword) return true;
+                                // The browse page uses q, but its manga API still sends keyword.
                                 return url.searchParams.get('keyword') === expectedKeyword;
                             } catch (e) {
                                 return false;
@@ -294,7 +293,7 @@ abstract class Comix :
     override suspend fun getLatestUpdates(page: Int): MangasPage {
         val url = baseUrl.toHttpUrl().newBuilder().apply {
             addPathSegment("browse")
-            addQueryParameter("order[chapter_updated_at]", "desc")
+            addQueryParameter("sort", "chapter_updated_at:desc")
             addQueryParameter("page", page.toString())
             applyPreferenceFilters()
         }.build()
@@ -302,6 +301,7 @@ abstract class Comix :
     }
 
     override suspend fun getSearchMangaList(page: Int, query: String, filters: FilterList): MangasPage {
+        val keyword = query.trim()
         val authorIds = filters.firstInstanceOrNull<Filters.AuthorFilter>()?.state
             ?.let { resolveTagIdsForNames("author", it) }
             .orEmpty()
@@ -316,23 +316,24 @@ abstract class Comix :
         val url = baseUrl.toHttpUrl().newBuilder()
             .addPathSegment("browse")
             .apply {
+                if (keyword.isNotEmpty()) {
+                    addQueryParameter("q", keyword)
+                    addQueryParameter("sort", "relevance:desc")
+                }
+
                 filters.filterIsInstance<Filters.UriFilter>()
                     .filterNot { it is Filters.RequiresTermSelection && !hasTermSelection }
                     .forEach {
                         if (it is Filters.QueryAwareFilter) {
-                            it.addToUri(this, query)
+                            it.addToUri(this, keyword)
                         } else {
                             it.addToUri(this)
                         }
                     }
 
-                authorIds.forEach { addQueryParameter("authors[]", it) }
-                artistIds.forEach { addQueryParameter("artists[]", it) }
-                tagIds.forEach { addQueryParameter("genres_in[]", it) }
-
-                if (query.isNotBlank()) {
-                    addQueryParameter("keyword", query)
-                }
+                authorIds.forEach { addQueryParameter("authors", it) }
+                artistIds.forEach { addQueryParameter("artists", it) }
+                tagIds.forEach { addQueryParameter("genres_in", it) }
 
                 addQueryParameter("page", page.toString())
             }.build()

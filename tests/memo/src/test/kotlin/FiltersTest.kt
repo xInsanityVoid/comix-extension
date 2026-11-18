@@ -24,7 +24,7 @@ class FiltersTest {
 
     private fun uri(vararg filters: Filter<*>) = "https://comix.to/browse".toHttpUrl().newBuilder().apply {
         filters.filterIsInstance<Filters.UriFilter>().forEach { it.addToUri(this) }
-    }.build()
+    }.build().joinBrowseParameters()
 
     @Test fun `partial default demographics hide unticked terms without requiring selected terms`() {
         val filters = filters(demographics = setOf("2", "4"))
@@ -35,8 +35,8 @@ class FiltersTest {
         assertEquals(Filter.TriState.STATE_EXCLUDE, states["Josei"])
 
         val url = uri(filters.named("Demographic"))
-        assertEquals(setOf("1", "3"), url.queryParameterValues("genres_ex[]").toSet())
-        assertNull(url.queryParameter("demographics[]"))
+        assertEquals(listOf("3,1"), url.queryParameterValues("genres_ex"))
+        assertNull(url.queryParameter("demos"))
     }
 
     @Test fun `explicit demographic inclusion and exclusion use their respective site parameters`() {
@@ -45,9 +45,9 @@ class FiltersTest {
         filters.tristates("Demographic").single { it.name == "Josei" }.state = Filter.TriState.STATE_EXCLUDE
 
         val url = uri(filters.named("Demographic"))
-        assertEquals(listOf("2"), url.queryParameterValues("demographics[]"))
-        assertEquals(listOf("3"), url.queryParameterValues("genres_ex[]"))
-        assertNull(url.queryParameter("genres_in[]"))
+        assertEquals(listOf("2"), url.queryParameterValues("demos"))
+        assertEquals(listOf("3"), url.queryParameterValues("genres_ex"))
+        assertNull(url.queryParameter("genres_in"))
     }
 
     @Test fun `clearing demographic states overrides the saved exclusions`() {
@@ -86,9 +86,10 @@ class FiltersTest {
     }
 
     @Test fun `demographic exclusions compose with genre exclusions and existing filters`() {
-        val filters = filters(types = setOf("manhwa"), demographics = setOf("2", "4"), blockedGenres = setOf("6"))
+        val filters = filters(types = setOf("manga", "manhwa"), demographics = setOf("2", "4"), blockedGenres = setOf("6"))
         val statuses = (filters.named("Status") as Filter.Group<*>).state.map { it as Filter.CheckBox }
         statuses.single { it.name == "Releasing" }.state = true
+        statuses.single { it.name == "Finished" }.state = true
         filters.tristates("Formats").single { it.name == "Full Color" }.state = Filter.TriState.STATE_INCLUDE
         (filters.named("Minimum Chapter Length") as Filter.Text).state = "42"
         for ((name, year) in mapOf("From" to "1999", "To" to "2005")) {
@@ -97,16 +98,32 @@ class FiltersTest {
         }
 
         val url = uri(*filters.toTypedArray())
-        assertEquals(setOf("1", "3", "6"), url.queryParameterValues("genres_ex[]").toSet())
-        assertEquals(listOf("93172"), url.queryParameterValues("genres_in[]"))
+        assertEquals(listOf("6,3,1"), url.queryParameterValues("genres_ex"))
+        assertEquals(listOf("93172"), url.queryParameterValues("genres_in"))
         assertEquals("and", url.queryParameter("genres_mode"))
-        assertEquals(listOf("manhwa"), url.queryParameterValues("types[]"))
-        assertEquals(listOf("releasing"), url.queryParameterValues("statuses[]"))
+        assertEquals(listOf("manga,manhwa"), url.queryParameterValues("types"))
+        assertEquals(listOf("releasing,finished"), url.queryParameterValues("statuses"))
         assertEquals("42", url.queryParameter("min_chap"))
         assertEquals("1999", url.queryParameter("year_from"))
         assertEquals("2005", url.queryParameter("year_to"))
-        assertEquals("desc", url.queryParameter("order[chapter_updated_at]"))
-        assertFalse(url.queryParameterNames.contains("demographics[]"))
+        assertEquals("chapter_updated_at:desc", url.queryParameter("sort"))
+        assertFalse(url.queryParameterNames.contains("demos"))
         assertEquals(listOf("safe,suggestive,erotica,pornographic"), url.queryParameterValues("content_rating"))
+    }
+
+    @Test fun `an explicit sort replaces the default search sort without altering the title or page`() {
+        val query = "A Gallery, in the Wild!"
+        val filter = filters().named("Sort By") as Filter.Sort
+        filter.state = Filter.Sort.Selection(filter.values.indexOf("Title"), true)
+        val url = "https://comix.to/browse".toHttpUrl().newBuilder().apply {
+            addQueryParameter("q", query)
+            addQueryParameter("page", "2")
+            addQueryParameter("sort", "relevance:desc")
+            (filter as Filters.QueryAwareFilter).addToUri(this, query)
+        }.build().joinBrowseParameters()
+
+        assertEquals(query, url.queryParameter("q"))
+        assertEquals("2", url.queryParameter("page"))
+        assertEquals(listOf("title:asc"), url.queryParameterValues("sort"))
     }
 }
